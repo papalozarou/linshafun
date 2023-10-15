@@ -27,6 +27,26 @@ echoNb () {
 }
 
 #-------------------------------------------------------------------------------
+# Tells the user an action is taking place and a wait is needed. Takes three
+# mandatory arguments:
+# 
+# 1. "${1:?}" - the service the action is being performed on;
+# 2. "${2:?}" - the action being performed; and
+# 3. "${3:-"60"}" - the length of time, in seconds to wait, defaults to 60.
+#-------------------------------------------------------------------------------
+echoServiceWait () {
+  local SERVICE="${1:?}"
+  local ACTION="${2:?}"
+  local WAIT="${3:-"60"}"
+
+  echoComment "To give $SERVICE time to $ACTION we will wait at least"
+  echoComment "$WAIT seconds."
+  echoNb
+  echoComment 'Please do not stop the script.'
+  sleep "$WAIT"
+}
+
+#-------------------------------------------------------------------------------
 # Echoes that the script is exiting. Takes one optional argument:
 #
 # 1. $1 - flag for if exiting with changes.
