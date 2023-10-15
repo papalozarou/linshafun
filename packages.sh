@@ -110,3 +110,14 @@ installRemovePackages () {
     echoComment "Completed $ACTION for $i"
   done
 }
+
+#-------------------------------------------------------------------------------
+# Updates and upgrades installed packages.
+#-------------------------------------------------------------------------------
+updateUpgrade () {
+  echoComment 'Updating and upgrading packages.'
+  echoSeparator
+  apt update && apt upgrade -y
+  echoSeparator
+  echoComment 'Packages updated and upgraded.'
+}
