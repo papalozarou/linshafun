@@ -13,8 +13,8 @@
 # 3. the setup config directory doesn't exist so the file can't.
 #-------------------------------------------------------------------------------
 checkForSetupConfigFileAndDir () {
-  local SETUP_CONF_TF="$(checkForDirectory "$SETUP_CONF")"
-  local SETUP_CONF_DIR_TF="$(checkForDirectory "$SETUP_CONF_DIR")"
+  local SETUP_CONF_TF="$(checkForFileOrDirectory "$SETUP_CONF")"
+  local SETUP_CONF_DIR_TF="$(checkForFileOrDirectory "$SETUP_CONF_DIR")"
 
   echoComment 'Checking for the setup config file or directory at:'
   echoComment "$SETUP_CONF_DIR"
@@ -44,15 +44,15 @@ checkForSetupConfigFileAndDir () {
 # present in the config file.
 # 
 # N.B.
-# The config option key must be formatted exactly as in the config option file,
-# i.e. using camelCase. A list of the config keys can be found in 
+# The config key must be formatted exactly as in the config option file, i.e. 
+# using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
 #-------------------------------------------------------------------------------
-checkSetupConfigOption () {
-  local CONFIG_KEY="${1:?}"
-  local CONFIG="$(grep "$CONFIG_KEY" "$SETUP_CONF")"
+checkForSetupConfigOption () {
+  local CONF_KEY="${1:?}"
+  local CONF_OPTION="$(grep "$CONF_KEY" "$SETUP_CONF")"
 
-  if [ -z "$CONFIG" ]; then
+  if [ -z "$CONF_OPTION" ]; then
     echo false
   else
     echo true
@@ -80,51 +80,89 @@ createSetupConfigFile () {
 #-------------------------------------------------------------------------------
 # Gets a service name from a given config key. Takes one mandatory argument:
 # 
-# 1. "${1:?}" – the config option key to be used.
+# 1. "${1:?}" – the config key to be used.
 #
 # If the config key contains a service, "$SERVICE" is returned. If not, nothing
 # is returned.
 # 
 # N.B.
-# The config option key must be formatted exactly as in the config option file,
-# i.e. using camelCase. A list of the config keys can be found in 
+# The config key must be formatted exactly as in the config option file, i.e. 
+# using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
 #-------------------------------------------------------------------------------
 getServiceFromConfigKey () {
-  local CONFIG_KEY="${1:?}"
+  local CONF_KEY="${1:?}"
 
-  if [ -z "${CONFIG_KEY##configured*}" ]; then
-    local SERVICE="$(changeCase "${CONFIG_KEY#'configured'}" 'lower')"
+  if [ -z "${CONF_KEY##configured*}" ]; then
+    local SERVICE="$(changeCase "${CONF_KEY#'configured'}" 'lower')"
 
     echo "$SERVICE"
   fi
 }
 
 #-------------------------------------------------------------------------------
-# Reads and returns a setup config option. Takes one mandatory argument:
+# Lists the contents of the setup config file
+#-------------------------------------------------------------------------------
+listSetupConfig () {
+  echoComment 'Listing contents of setup config file:'
+  echoSeparator
+  cat "$SETUP_CONF"
+  echoSeparator
+}
+
+#-------------------------------------------------------------------------------
+# Reads and returns a setup config value. Takes one mandatory argument:
 # 
-# 1. "${1:?}" – the key of the config option.
+# 1. "${1:?}" – the key of the config value.
 # 
 # The config line is read by "grep" and stored in "$CONFIG". This is split by 
-# "set" into it's key, "$1", and it's value, "$2" – the "-f" flag prevents pathname 
-# expansion for safety. Taken from:
+# "set" into it's key, "$1", and it's value, "$2" – the "-f" flag prevents 
+# pathname expansion for safety. Taken from:
 #
 # https://stackoverflow.com/a/1478245
 # 
 # N.B.
 # "$CONFIG" is not quoted as we need word splitting in this instance. 
 #
-# The config option key must be formatted exactly as in the config option file,
-# i.e. using camelCase. A list of the config keys can be found in 
+# The config key must be formatted exactly as in the config option file, i.e. 
+# using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
 #-------------------------------------------------------------------------------
-readSetupConfigOption () {
-  local CONFIG_KEY="${1:?}"
-  local CONFIG="$(grep "$CONFIG_KEY" "$SETUP_CONF")"
+readSetupConfigValue () {
+  local CONF_KEY="${1:?}"
+  local CONF_OPTION="$(grep "$CONF_KEY" "$SETUP_CONF")"
 
-  set -f $CONFIG
+  set -f $CONF_OPTION
   
   echo "$2"
+}
+
+#-------------------------------------------------------------------------------
+# Removes a setup config option. Takes one mandatory argument:
+# 
+# 1. "${1:?}" – the key of the config option.
+# 
+# N.B.
+# The config key must be formatted exactly as in the config option file, i.e. 
+# using camelCase. A list of the config keys can be found in 
+# "setup.conf.example" in the relevant setup directory.
+#-------------------------------------------------------------------------------
+removeSetupConfigOption () {
+  local CONF_KEY="${1:?}"
+  local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
+
+  echoComment "Removing $CONF_KEY from:"
+  echoComment "$SETUP_CONF"
+
+  if [ "$CONF_OPTION_TF" = true ]; then  
+    sed -i '/^'"$CONF_KEY"'/d' "$SETUP_CONF"
+
+    echoComment "$CONF_KEY removed."
+  else
+    echoComment "$CONF_KEY not found, no changes made."
+  fi
+
+  listSetupConfig
 }
 
 #-------------------------------------------------------------------------------
@@ -136,18 +174,50 @@ readSetupConfigOption () {
 # Once the config option is written, the file ownership is set to "$SUDO_USER".
 # 
 # N.B.
-# The config option key must be formatted exactly as in the config option file,
-# i.e. using camelCase. A list of the config keys can be found in 
+# The config key must be formatted exactly as in the config option file, i.e. 
+# using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
 #-------------------------------------------------------------------------------
 writeSetupConfigOption () {
   local CONF_KEY="${1:?}"
   local CONF_VALUE="${2:?}"
+  local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
 
-  echoComment "Writing $CONF_KEY to:"
+  echoComment "Writing $CONF_KEY with value $CONF_VALUE to:"
   echoComment "$SETUP_CONF"
-  echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF"
-  echoComment 'Config written.'
 
-  setOwner "$SUDO_USER" "$SETUP_CONF"
+  if [ "$CONF_OPTION_TF" = true ]; then
+    local EXISTING_CONF_VALUE="$(readSetupConfigValue "$CONF_KEY")"
+
+    echoComment "$CONF_KEY already exists with value $EXISTING_CONF_VALUE."
+  fi
+
+  if [ "$CONF_OPTION_TF" = true ] && [ "$EXISTING_CONF_VALUE" = "$CONF_VALUE" ]; then
+    echoComment 'No changes made.'
+  elif [ "$CONF_OPTION_TF" = true ] && [ "$EXISTING_CONF_VALUE" != "$CONF_VALUE" ]; then
+    echoComment "Overwriting existing value with $CONF_VALUE."
+
+    sed -i '/^'"$CONF_KEY"'/c\'"$CONF_KEY $CONF_VALUE" "$SETUP_CONF"
+
+    echoComment 'Config written.'
+
+    setOwner "$SUDO_USER" "$SETUP_CONF"
+  elif [ "$CONF_OPTION_TF" = false ]; then
+    echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF"
+
+    echoComment 'Config written.'
+
+    setOwner "$SUDO_USER" "$SETUP_CONF"
+  else
+    echoComment 'Something went wrong. Please check your setup config at:'
+    echoComment "$SETUP_CONF."
+    echoComment 'You may need to manually add the following to the setup config:'
+    echoComment "$CONF_KEY $CONF_VALUE"
+
+    echoScriptExiting true
+
+    exit 1
+  fi
+
+  listSetupConfig
 }

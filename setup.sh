@@ -9,16 +9,16 @@
 # mandatory argument:
 # 
 # 1. "${1:?}" – the config key to be written.
-#
+# 
 # N.B.
-# The config option key must be formatted exactly as in the config option file,
-# i.e. using camelCase. A list of the config keys can be found in 
+# The config key must be formatted exactly as in the config option file, i.e. 
+# using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
 #-------------------------------------------------------------------------------
 finaliseScript () {
-  local CONFIG_KEY="${1:?}"
+  local CONF_KEY="${1:?}"
 
-  writeSetupConfigOption "$CONFIG_KEY" true
+  writeSetupConfigOption "$CONF_KEY" true
 
   echoScriptFinished
 }
@@ -34,24 +34,24 @@ finaliseScript () {
 # exit the script.
 # 
 # N.B.
-# The config option key must be formatted exactly as in the config option file,
-# i.e. using camelCase. A list of the config keys can be found in 
-# "setup.conf.example".
+# The config key must be formatted exactly as in the config option file, i.e. 
+# using camelCase. A list of the config keys can be found in 
+# "setup.conf.example" in the relevant setup directory.
 #-------------------------------------------------------------------------------
 initialiseScript () {
-  local CONFIG_KEY="${1:?}"
-  local CONFIG_KEY_TF="$(checkSetupConfigOption "$CONFIG_KEY")"
+  local CONF_KEY="${1:?}"
+  local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
 
   echoComment 'Checking the setup config to see if this step has already been'
   echoComment 'performed…'
-  echoComment "Check returned $CONFIG_KEY_TF."
+  echoComment "Check returned $CONF_OPTION_TF."
 
-  if [ "$CONFIG_KEY_TF" = true ]; then
+  if [ "$CONF_OPTION_TF" = true ]; then
     echoComment 'You have already performed this step.'
     echoScriptExiting
 
     exit 1
-  elif [ "$CONFIG_KEY_TF" = false ]; then
+  elif [ "$CONF_OPTION_TF" = false ]; then
     echoComment 'You have not performed this step. Running script.'
     echoSeparator
   else
