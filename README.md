@@ -13,7 +13,7 @@ Functions try to use `verbValue` or `verbObject` as naming conventions, for exam
 * "readFooBar" - reads an already set value
 * "setFooBar" - sets a value
 
-To make this setup as portable as possible all scripts are POSIX compliant, i.e they use `#!/bin/sh` not `#!/bin/bash`, with some cheeky liberties taken for readability – usually using `local` variable declarations.
+To make this setup as portable as possible all scripts are POSIX compliant, i.e they use `#!/bin/sh` not `#!/bin/bash`, with some cheeky liberties taken for readability – usually using `local` variable declarations within functions for readability.
 
 *N.B.*
 There is little to no error checking within these scripts. I may get around to that one day.
