@@ -19,12 +19,12 @@ addRuleToUfw () {
   if [ -z "$PROTOCOL" ]; then
       echoComment "Adding rule $ACTION $PORT to UFW."
       echoSeparator
-      ufw "$ACTION" "$PORT"
+      sh -c "ufw $ACTION $PORT"
       echoSeparator
   else
     echoComment "Adding rule $ACTION $PORT/$PROTOCOL to UFW."
     echoSeparator
-    ufw "$ACTION" "$PORT/$PROTOCOL"
+    sh -c "ufw $ACTION $PORT/$PROTOCOL"
     echoSeparator
   fi
 
@@ -37,6 +37,6 @@ addRuleToUfw () {
 listUfwRules () {
   echoComment 'Listing UFW rules…'
   echoSeparator
-  ufw status numbered
+  sh -c "ufw status numbered"
   echoSeparator
 }

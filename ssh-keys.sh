@@ -19,11 +19,13 @@ generateSshKey () {
   echoSeparator
 
   if [ -z "$KEY_EMAIL" ]; then
-    ssh-keygen -t ed25519 -f "$KEY_PATH"
+    sh -c "ssh-keygen -t ed25519 -f $KEY_PATH"
   else
-    ssh-keygen -t ed25519 -f "$KEY_PATH" -C "$KEY_EMAIL"
+    sh -c "ssh-keygen -t ed25519 -f $KEY_PATH -C $KEY_EMAIL"
   fi
 
   echoSeparator
   echoComment 'Key generated.'
+
+  listDirectories "$KEY_PATH"
 }

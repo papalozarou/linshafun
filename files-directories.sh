@@ -11,7 +11,9 @@
 # 1. "{1:?}" - the file or directory to check for.
 #-------------------------------------------------------------------------------
 checkForFileOrDirectory () {
-  if [ -f "${1:?}" ] || [ -d "${1:?}" ]; then
+  local FILE_DIR="${1:?}"
+
+  if [ -f "$FILE_DIR" ] || [ -d "${1:?}" ]; then
     echo true
   else
     echo false
@@ -36,8 +38,8 @@ checkForFileOrDirectory () {
 # And yes it's a nested loop. What of it?
 #-------------------------------------------------------------------------------
 createDirectories () {
-  local MAIN_DIRS=${1:?}
-  local SUB_DIRS=$2
+  local MAIN_DIRS="${1:?}"
+  local SUB_DIRS="$2"
 
   if [ -z "$SUB_DIRS" ]; then
     for DIR in $MAIN_DIRS; do
@@ -63,11 +65,15 @@ createDirectories () {
 # 1. "${1:?}" - the directory to create.
 # 
 # Parent directories are created if required.
+# 
+# N.B.
+# A shell command, "sh", is invoked to enable shell expansion in any variables,
+# i.e. wildcards.
 #-------------------------------------------------------------------------------
 createDirectory () {
   echoComment 'Creating directory at:'
   echoComment "${1:?}"
-  mkdir -p "${1:?}"
+  sh -c "mkdir -p ${1:?}"
 }
 
 #-------------------------------------------------------------------------------
@@ -76,12 +82,16 @@ createDirectory () {
 # 1. "$@" - one or more files to be created.
 # 
 # The function loops through each passed argument and creates the file.
+# 
+# N.B.
+# A shell command, "sh", is invoked to enable shell expansion in any variables,
+# i.e. wildcards.
 #-------------------------------------------------------------------------------
 createFiles () {
   for FILE in "$@"; do
     echoComment 'Creating file at:'
     echoComment "$FILE"
-    touch "$FILE"
+    sh -c "touch $FILE"
 
     echoSeparator
     listDirectories "$FILE"
@@ -97,6 +107,9 @@ createFiles () {
 # 
 # N.B.
 # "$DIR" is not quoted as we explicitly want word splitting here.
+# 
+# A shell command, "sh", is invoked to enable shell expansion in any variables,
+# i.e. wildcards.
 #-------------------------------------------------------------------------------
 listDirectories () {
   local DIRS=${1:?}
@@ -104,7 +117,7 @@ listDirectories () {
   for DIR in $DIRS; do
     echoComment 'Listing directory:'
     echoSeparator
-    ls -lna "$DIR"
+    sh -c "ls -lna $DIR"
     echoSeparator
   done
 }
@@ -121,7 +134,7 @@ removeFileOrDirectory () {
   for FILE_DIR in "$@"; do
     echoComment 'Removing file or directory at:'
     echoComment "$FILE_DIR"
-    rm -R "$FILE_DIR"
+    sh -c "rm -R $FILE_DIR"
 
     echoComment 'File or directory removed.'
   done    

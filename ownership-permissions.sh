@@ -9,6 +9,10 @@
 # 
 # 1. "${1:?}" – the owner, also used for the group; and
 # 2. "${2:?}" – the path of the file or directory.
+#
+# N.B.
+# A shell command, "sh", is invoked to enable shell expansion in any variables,
+# i.e. wildcards.
 #-------------------------------------------------------------------------------
 setOwner () {
   local USER="${1:?}"
@@ -18,7 +22,7 @@ setOwner () {
   echoComment "Setting ownership of:"
   echoComment "$FILE_FOLDER"
   echoComment "to $USER:$GROUP."
-  chown -R "$USER:$GROUP" "$FILE_FOLDER"
+  sh -c "chown -R $USER:$GROUP $FILE_FOLDER"
 }
 
 #-------------------------------------------------------------------------------
@@ -26,6 +30,10 @@ setOwner () {
 # 
 # 1. "${1:?}" – a user; and
 # 2. "${2:?}" – the path of the file or directory.
+#
+# N.B.
+# A shell command, "sh", is invoked to enable shell expansion in any variables,
+# i.e. wildcards.
 #-------------------------------------------------------------------------------
 setPermissions () {
   local PERMISSIONS="${1:?}"
@@ -34,5 +42,5 @@ setPermissions () {
   echoComment "Setting permissions of:"
   echoComment "$FILE_FOLDER"
   echoComment "to $PERMISSIONS."
-  chmod -R "$PERMISSIONS" "$FILE_FOLDER"
+  sh -c "chmod -R $PERMISSIONS $FILE_FOLDER"
 }

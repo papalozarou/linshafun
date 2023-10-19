@@ -8,7 +8,7 @@
 # Checks whether a given package is already installed. Takes one mandatory
 # argument:
 # 
-# 1. "${@:?}" – the package to be checked. 
+# 1. "${1:?}" – the package to be checked. 
 # 
 # Returns false if the package is not installed, returns true if the package is 
 # installed. As per:
@@ -19,8 +19,8 @@
 # This function explicitly checks a single package to allow for a simple true or 
 # false check.
 #-------------------------------------------------------------------------------
-checkForPackages () {
-  local PACKAGE=${1:?}
+checkForPackage () {
+  local PACKAGE="${1:?}"
 
   if ! type "$PACKAGE" > /dev/null; then
     echo false
@@ -105,7 +105,7 @@ installRemovePackages () {
   for i; do
     echoComment "Performing $ACTION for $i."
     echoSeparator
-    apt "$ACTION" "$i" -y
+    sh -c "apt $ACTION $i -y"
     echoSeparator
     echoComment "Completed $ACTION for $i"
   done
@@ -117,7 +117,7 @@ installRemovePackages () {
 updateUpgrade () {
   echoComment 'Updating and upgrading packages.'
   echoSeparator
-  apt update && apt upgrade -y
+  sh -c "apt update && apt upgrade -y"
   echoSeparator
   echoComment 'Packages updated and upgraded.'
 }

@@ -21,11 +21,11 @@ changeCase () {
   local CASE="${2:?}"
 
   if [ "$CASE" = 'upper' ]; then
-    STRING=$(echo "$STRING" | tr '[:lower:]' '[:upper:]')
+    STRING="$(echo "$STRING" | tr '[:lower:]' '[:upper:]')"
   elif [ "$CASE" = 'lower' ]; then
-    STRING=$(echo "$STRING" | tr '[:upper:]' '[:lower:]')
+    STRING="$(echo "$STRING" | tr '[:upper:]' '[:lower:]')"
   elif [ "$CASE" = 'sentence' ]; then
-    STRING=$(echo "$STRING" | sed 's/\<\([[:lower:]]\)\([^[:punct:]]*\)/\u\1\2/g')
+    STRING="$(echo "$STRING" | sed 's/\<\([[:lower:]]\)\([^[:punct:]]*\)/\u\1\2/g')"
   fi
 
   echo "$STRING"
@@ -38,8 +38,7 @@ changeCase () {
 #-------------------------------------------------------------------------------
 generateRandomString () {
   local LENGTH="${1:-"64"}"
-
-  STRING="$(tr -cd '[:alnum:]' < /dev/urandom | fold -w "${LENGTH}" | head -n 1 | tr -d '\n')"
+  local STRING="$(tr -cd '[:alnum:]' < /dev/urandom | fold -w "${LENGTH}" | head -n 1 | tr -d '\n')"
 
   echo "$STRING"
 }

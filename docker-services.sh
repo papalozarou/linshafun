@@ -23,6 +23,9 @@
 #
 # - https://stackoverflow.com/a/19897118
 # - https://www.shellscript.sh/case.html?cmdf=how+to+use+case+statement+sh
+# 
+# N.B.
+# In both the above cases the optional flags are not quoted as we want 
 #-------------------------------------------------------------------------------
 controlDockerService () {
   case "${1:?}" in
@@ -30,13 +33,13 @@ controlDockerService () {
         local COMPOSE_FILE="{$1:?}"
         local ACTION="${2:?}"
         local SERVICE="${3:?}"
-        local FLAGS=$4
+        local FLAGS="$4"
       ;;
       *)
         local COMPOSE_FILE="$COMPOSE_FILE"
         local ACTION="${2:?}"
         local SERVICE="${3:?}"
-        local FLAGS=$4
+        local FLAGS="$4"
       ;; 
   esac
 

@@ -69,7 +69,7 @@ setHostEnvVariable () {
 
     echoComment 'Checking value added.'
     echoSeparator
-    grep "$ENV_VARIABLE" "$PROFILE"
+    sh -c "grep $ENV_VARIABLE $PROFILE"
     echoSeparator
     echoComment "$ENV_VARIABLE added."
 

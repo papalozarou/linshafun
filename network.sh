@@ -19,7 +19,7 @@
 checkAgainstExistingPortNumber () {
   local PORT="${1:?}"
   local SERVICE="${2:?}Port"
-  local SERVICE_PORT="$(readSetupConfigOption "$SERVICE")"
+  local SERVICE_PORT="$(readSetupConfigValue "$SERVICE")"
 
   if [ "$PORT" = "$SERVICE_PORT" ]; then
     echo true
@@ -43,7 +43,7 @@ generateAndCheckPort () {
   if [ "$PORT_TF" = true ]; then
     echoComment "Port check returned $PORT_TF. Re-running to generate" 
     echoComment 'another port number.'
-    checkAndSetPort
+    generateAndCheckPort
   elif [ "$PORT_TF" = false ]; then
     echo "$PORT_NO"    
   fi
@@ -55,12 +55,16 @@ generateAndCheckPort () {
 # - https://unix.stackexchange.com/questions/140750/generate-random-numbers-in-specific-range
 #-------------------------------------------------------------------------------
 generatePortNumber () {
-  echo "$(shuf -i 2000-65000 -n 1)"
+  local PORT="$(shuf -i 2000-65000 -n 1)"
+
+  echo $PORT
 }
 
 #-------------------------------------------------------------------------------
 # Reads and returns the IP address of the host machine.
 #-------------------------------------------------------------------------------
-readIPAddress () {
-  ip route get 8.8.8.8 | grep -oP 'src \K[^ ]+'
+readIpAddress () {
+  local IP_ADDRESS="$(ip route get 8.8.8.8 | grep -oP 'src \K[^ ]+')"
+
+  echo $IP_ADDRESS
 }
