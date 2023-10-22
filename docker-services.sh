@@ -25,7 +25,8 @@
 # - https://www.shellscript.sh/case.html?cmdf=how+to+use+case+statement+sh
 # 
 # N.B.
-# In both the above cases the optional flags are not quoted as we want 
+# In both the above cases the optional flags are not quoted as we explicitly
+# want word splitting.
 #-------------------------------------------------------------------------------
 controlDockerService () {
   case "${1:?}" in
@@ -47,9 +48,9 @@ controlDockerService () {
   echoSeparator
 
   if [ "$ACTION" = "up" ]; then
-    sh -c "docker compose -f $COMPOSE_FILE $ACTION -d $SERVICE $FLAGS"
+    docker compose -f "$COMPOSE_FILE" "$ACTION" -d "$SERVICE" $FLAGS
   else
-    sh -c "docker compose -f $COMPOSE_FILE $ACTION $SERVICE $FLAGS"
+    docker compose -f "$COMPOSE_FILE" "$ACTION" "$SERVICE" $FLAGS
   fi
 
   echoSeparator

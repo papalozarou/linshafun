@@ -57,7 +57,7 @@ generateAndCheckPort () {
 generatePortNumber () {
   local PORT="$(shuf -i 2000-65000 -n 1)"
 
-  echo $PORT
+  echo "$PORT"
 }
 
 #-------------------------------------------------------------------------------
@@ -66,5 +66,5 @@ generatePortNumber () {
 readIpAddress () {
   local IP_ADDRESS="$(ip route get 8.8.8.8 | grep -oP 'src \K[^ ]+')"
 
-  echo $IP_ADDRESS
+  echo "$IP_ADDRESS"
 }

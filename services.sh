@@ -17,9 +17,9 @@ controlService () {
   echoComment "Performing $ACTION for $SERVICE."
 
   if [ "$SERVICE" = 'ufw' ]; then
-    sh -c "$SERVICE $ACTION"
+    "$SERVICE" "$ACTION"
   else
-    sh -c "systemctl $ACTION $SERVICE"
+    systemctl "$ACTION" "$SERVICE"
   fi
   
   echoComment "$ACTION performed for $SERVICE."

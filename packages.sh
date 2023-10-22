@@ -105,7 +105,7 @@ installRemovePackages () {
   for i; do
     echoComment "Performing $ACTION for $i."
     echoSeparator
-    sh -c "apt $ACTION $i -y"
+    apt "$ACTION" "$i" -y
     echoSeparator
     echoComment "Completed $ACTION for $i"
   done
@@ -117,7 +117,7 @@ installRemovePackages () {
 updateUpgrade () {
   echoComment 'Updating and upgrading packages.'
   echoSeparator
-  sh -c "apt update && apt upgrade -y"
+  apt update && apt upgrade -y
   echoSeparator
   echoComment 'Packages updated and upgraded.'
 }

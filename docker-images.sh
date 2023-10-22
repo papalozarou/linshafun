@@ -36,7 +36,7 @@ buildDockerImages () {
 listDockerImages () {
   echoComment 'Listing docker images.'
   echoSeparator
-  sh -c "docker image ls"
+  docker image ls
   echoSeparator
 }
 
@@ -51,7 +51,7 @@ removeDockerImages () {
 
   for IMAGE in "$@"; do
     echoSeparator
-    sh -c "docker rm $IMAGE"
+    docker rm "$IMAGE"
     echoSeparator
   done
 }

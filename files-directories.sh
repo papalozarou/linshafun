@@ -65,15 +65,12 @@ createDirectories () {
 # 1. "${1:?}" - the directory to create.
 # 
 # Parent directories are created if required.
-# 
-# N.B.
-# A shell command, "sh", is invoked to enable shell expansion in any variables,
-# i.e. wildcards.
 #-------------------------------------------------------------------------------
 createDirectory () {
+  local DIR="${1:?}"
   echoComment 'Creating directory at:'
-  echoComment "${1:?}"
-  sh -c "mkdir -p ${1:?}"
+  echoComment "$DIR"
+  mkdir -p "$DIR"
 }
 
 #-------------------------------------------------------------------------------
@@ -82,16 +79,12 @@ createDirectory () {
 # 1. "$@" - one or more files to be created.
 # 
 # The function loops through each passed argument and creates the file.
-# 
-# N.B.
-# A shell command, "sh", is invoked to enable shell expansion in any variables,
-# i.e. wildcards.
 #-------------------------------------------------------------------------------
 createFiles () {
   for FILE in "$@"; do
     echoComment 'Creating file at:'
     echoComment "$FILE"
-    sh -c "touch $FILE"
+    touch "$FILE"
 
     echoSeparator
     listDirectories "$FILE"
@@ -107,9 +100,6 @@ createFiles () {
 # 
 # N.B.
 # "$DIR" is not quoted as we explicitly want word splitting here.
-# 
-# A shell command, "sh", is invoked to enable shell expansion in any variables,
-# i.e. wildcards.
 #-------------------------------------------------------------------------------
 listDirectories () {
   local DIRS=${1:?}
@@ -117,7 +107,7 @@ listDirectories () {
   for DIR in $DIRS; do
     echoComment 'Listing directory:'
     echoSeparator
-    sh -c "ls -lna $DIR"
+    ls -lna "$DIR"
     echoSeparator
   done
 }
@@ -134,7 +124,7 @@ removeFileOrDirectory () {
   for FILE_DIR in "$@"; do
     echoComment 'Removing file or directory at:'
     echoComment "$FILE_DIR"
-    sh -c "rm -R $FILE_DIR"
+    rm -R $FILE_DIR
 
     echoComment 'File or directory removed.'
   done    
