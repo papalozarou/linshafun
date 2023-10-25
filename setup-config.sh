@@ -110,7 +110,6 @@ listSetupConfig () {
   echoComment 'Listing contents of setup config file:'
   echoSeparator
   cat "$SETUP_CONF"
-  echoSeparator
 }
 
 #-------------------------------------------------------------------------------
