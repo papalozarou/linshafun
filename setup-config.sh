@@ -9,8 +9,8 @@
 # nothing. If either doesn't exist, create them. There are three possibilities:
 # 
 # 1. the setup config file exists so the directory must exist;
-# 2. the setup config directory exists and the file doesn't; or
-# 3. the setup config directory doesn't exist so the file can't.
+# 2. the setup config directory doesn't exist so the file can't; or
+# 3. the setup config directory exists and the file doesn't.
 #-------------------------------------------------------------------------------
 checkForSetupConfigFileAndDir () {
   local SETUP_CONF_TF="$(checkForFileOrDirectory "$SETUP_CONF")"
@@ -24,14 +24,14 @@ checkForSetupConfigFileAndDir () {
 
   if [ "$SETUP_CONF_TF" = true ]; then
     echoComment 'The setup config file and directory exist.'
-  elif [ "$SETUP_CONF_TF" = false ] && [ "$SETUP_CONF_DIR_TF" = true ]; then
-    echoComment 'The setup config file does not exist.'
-
-    createSetupConfigFile
   elif [ "$SETUP_CONF_DIR_TF" = false]; then
     echoComment 'The setup config file and directory do not exist.'
 
     createSetupConfigDirectory
+    createSetupConfigFile
+  elif [ "$SETUP_CONF_TF" = false ]; then
+    echoComment 'The setup config file does not exist.'
+
     createSetupConfigFile
   fi
 
