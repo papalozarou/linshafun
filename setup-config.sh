@@ -24,11 +24,11 @@ checkForSetupConfigFileAndDir () {
 
   if [ "$SETUP_CONF_TF" = true ]; then
     echoComment 'The setup config file and directory exist.'
-  elif [ "$SETUP_CONF_DIR_TF" = false]; then
+  elif [ "$SETUP_CONF_DIR_TF" = false ]; then
     echoComment 'The setup config file and directory do not exist.'
 
     createSetupConfigDirectory
-    createSetupConfigFile
+    createSetupConfigFilegit pu
   elif [ "$SETUP_CONF_TF" = false ]; then
     echoComment 'The setup config file does not exist.'
 
