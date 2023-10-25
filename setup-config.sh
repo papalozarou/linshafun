@@ -28,7 +28,7 @@ checkForSetupConfigFileAndDir () {
     echoComment 'The setup config file and directory do not exist.'
 
     createSetupConfigDirectory
-    createSetupConfigFilegit pu
+    createSetupConfigFile
   elif [ "$SETUP_CONF_TF" = false ]; then
     echoComment 'The setup config file does not exist.'
 
