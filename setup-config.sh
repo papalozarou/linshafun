@@ -19,6 +19,9 @@ checkForSetupConfigFileAndDir () {
   echoComment 'Checking for the setup config file or directory at:'
   echoComment "$SETUP_CONF_DIR"
 
+  echoComment "Check for config file returned $SETUP_CONF_TF."
+  echoComment "Check for config directory returned $SETUP_CONF_DIR_TF."
+
   if [ "$SETUP_CONF_TF" = true ]; then
     echoComment 'The setup config file and directory exist.'
   elif [ "$SETUP_CONF_TF" = false ] && [ "$SETUP_CONF_DIR_TF" = true ]; then
