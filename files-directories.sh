@@ -129,3 +129,42 @@ removeFileOrDirectory () {
     echoComment 'File or directory removed.'
   done    
 }
+
+#-------------------------------------------------------------------------------
+# Removes a given postfix from a directory of files. Takes two mandatory 
+# arguments:
+# 
+# 1. "${1:?}" – the directory that contains the file; and
+# 2. "${2:?}" – the postfix to remove, defaults to "example".
+# 
+# "find" is used to capture the files, then spawns a shell to copy and remove 
+# the postfix from each file. From:
+#
+# https://unix.stackexchange.com/a/287554
+# 
+# As "setup.conf.example" is also copied, we delete it as it's not needed.
+#
+# N.B.
+# "find" can only directly "exec" functions that are known to the global scope, 
+# requiring exporting them, which is a bash only feature. Because of this the
+# command we want to "exec" is written inline.
+#-------------------------------------------------------------------------------
+removePostfixFromFiles () {
+  local DIR="${1:?}"
+  local POSTFIX="${2:-"example"}"
+
+  echoComment "Preparing following service files by removing the $POSTFIX postfix"
+  echoComment 'from the filenames:'
+  echoSeparator
+  find "$DIR" -name "*.$POSTFIX"
+  echoSeparator
+
+  echoComment 'Copying files and removing postfixes.'
+  echoSeparator
+  find "$DIR" -type f -name "*.$POSTFIX" -exec sh -c 'cp -p "$0" "${0%.*}" && echo "Copying $0 to ${0%.*}"' {} \;
+  echoSeparator
+
+  rm "$DIR/setup/setup.conf"
+
+  echoComment 'Files copied and postfixes removed.'
+}
