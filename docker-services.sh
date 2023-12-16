@@ -29,7 +29,7 @@
 # want word splitting.
 #-------------------------------------------------------------------------------
 controlDockerService () {
-  case "${1:?}" in
+  case "$1" in
       *".yml")
         local COMPOSE_FILE="{$1:?}"
         local ACTION="${2:?}"
