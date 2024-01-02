@@ -67,7 +67,6 @@ checkForSetupConfigOption () {
 #-------------------------------------------------------------------------------
 createSetupConfigDirectory () {
   createDirectory "$SETUP_CONF_DIR"
-  setOwner "$SUDO_USER" "$CONF_DIR"
   setOwner "$SUDO_USER" "$SETUP_CONF_DIR"
 }
 
