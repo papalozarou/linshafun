@@ -5,6 +5,15 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+# Adds the newly generated public key to the "authorized_keys" file.
+#-------------------------------------------------------------------------------
+addKeyToAuthorizedKeys () {
+  echoComment "Adding public key to $SSH_DIR/authorized_keys."
+  cat "$SSH_KEY.pub" >> "$SSH_DIR/authorized_keys"
+  echoComment 'Key added.'
+}
+
+#-------------------------------------------------------------------------------
 # Generates an ssh key. Takes two arguments:
 #
 # 1. "${1:?}" – specify a file path; and
