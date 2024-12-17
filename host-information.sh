@@ -21,7 +21,7 @@
 #-------------------------------------------------------------------------------
 compareOsVersion () {
   local COMPARISON_OS="$(echo "${1:?}" | cut -d'.' -f1)"
-  local CURRENT_OS="$(getOSVersion | cut -d'.' -f1)"
+  local CURRENT_OS="$(getOsVersion | cut -d'.' -f1)"
 
   if [ "$CURRENT_OS" -gt "$COMPARISON_OS" ] ; then
     echo false
