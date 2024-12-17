@@ -20,7 +20,7 @@
 # https://unix.stackexchange.com/a/569768
 #-------------------------------------------------------------------------------
 compareOsVersion () {
-  local COMPARISON_OS="$(echo ${1:?} | cut -d'.' -f1)"
+  local COMPARISON_OS="$(echo "${1:?}" | cut -d'.' -f1)"
   local CURRENT_OS="$(getOSVersion | cut -d'.' -f1)"
 
   if [ "$CURRENT_OS" -gt "$COMPARISON_OS" ] ; then
@@ -38,7 +38,7 @@ compareOsVersion () {
 # built for.
 #-------------------------------------------------------------------------------
 getOsVersion () {
-  local OS_VERSION="$(grep VERSION_ID* /etc/os-release | cut -d'"' -f2)"
+  local OS_VERSION="$(grep "VERSION_ID*" /etc/os-release | cut -d'"' -f2)"
 
   echo "$OS_VERSION"
 }
