@@ -6,7 +6,7 @@
 
 #-------------------------------------------------------------------------------
 # Check to see if a generated port number has already been used for another 
-# service. Takes two mandatory arguement:
+# service. Takes two mandatory argument:
 # 
 # 1. "${1:?}" – the port to check; and
 # 2. "${2:?}" – the config option key for the service to check against.

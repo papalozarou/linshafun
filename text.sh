@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Changes the case of text. Takes two mandatory arguements:
+# Changes the case of text. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – a text string; and
 # 2. "${2:?}" – the required case.
@@ -32,7 +32,7 @@ changeCase () {
 }
 
 #-------------------------------------------------------------------------------
-# Generates a random alphanumeric string of a given length. Takes one arguement:
+# Generates a random alphanumeric string of a given length. Takes one argument:
 # 
 # 1. "${1:-"64"}" – the string length, defaults to 64.
 #-------------------------------------------------------------------------------

@@ -150,7 +150,7 @@ listDirectories () {
 }
 
 #-------------------------------------------------------------------------------
-# Removes files or directories. Takes one or more arguements:
+# Removes files or directories. Takes one or more arguments:
 # 
 # 1. "$@" - one or more files or directories to be removed.
 # 

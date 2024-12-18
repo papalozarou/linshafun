@@ -6,7 +6,7 @@
 
 #-------------------------------------------------------------------------------
 # Adds a "env_keep" statement for a given environment variable. Takes one 
-# mandatory arguement:
+# mandatory argument:
 # 
 # 1. "${1:?}" -the  name of the environment variable.
 # 

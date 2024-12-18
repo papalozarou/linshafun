@@ -6,7 +6,7 @@
 
 #-------------------------------------------------------------------------------
 # Asks the user if they want to re-set an existing docker environment variable. 
-# Takes two mandatory arguements:
+# Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the environment file; and
 # 2. "${2:?}" – the existing variable.
@@ -38,7 +38,7 @@ changeDockerEnvVariable () {
 
 #-------------------------------------------------------------------------------
 # Checks for and sets multiple docker environment variables. Takes at least two 
-# arguements:
+# arguments:
 # 
 # 1. "${1:?}" – the environment file; and
 # 2. "$i" – one or more environment variables to set.
@@ -66,7 +66,7 @@ checkAndSetDockerEnvVariables () {
 
 #-------------------------------------------------------------------------------
 # Checks whether a docker environment variable has been set. Takes two mandatory 
-# arguements:
+# arguments:
 # 
 # 1. "${1:?}" – the environment file; and
 # 2. "${2:?}" – the required variable.
@@ -87,8 +87,20 @@ checkIfDockerEnvVariableSet () {
 }
 
 #-------------------------------------------------------------------------------
+# Compares multiple docker env variables and values, using 
+# "compareDockerEnvVariableWithValue". Takes at least two mandatory arguments:
+#
+# 1. "${1:?}" - the file containing the environment variable; and
+# 2. "$@" - one or more environment variable and value pairs;
+#
+# The environment variable and value to check against must be passed as as a 
+# space separated list. The function loops through each passed argument, after 
+# the first one, to test
+#-------------------------------------------------------------------------------
+
+#-------------------------------------------------------------------------------
 # Compares a docker env variable with a given value. Takes three mandatory 
-# arguements:
+# arguments:
 # 
 # 1. "${1:?}" - the file containing the environment variable;
 # 2. "${2:?}" - an environment variable to check; and

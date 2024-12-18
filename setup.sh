@@ -25,7 +25,7 @@ finaliseScript () {
 
 #-------------------------------------------------------------------------------
 # Checks the config file to see if the script has been run and completed before.
-# Takes one mandatory arguement:
+# Takes one mandatory argument:
 #
 # 1. "${1:?}" – the config option key to be used.
 #
