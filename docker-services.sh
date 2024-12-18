@@ -38,9 +38,9 @@ controlDockerService () {
       ;;
       *)
         local COMPOSE_FILE="$COMPOSE_FILE"
-        local ACTION="${2:?}"
-        local SERVICE="${3:?}"
-        local FLAGS="$4"
+        local ACTION="${1:?}"
+        local SERVICE="${2:?}"
+        local FLAGS="$3"
       ;; 
   esac
 
