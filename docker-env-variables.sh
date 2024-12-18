@@ -87,9 +87,33 @@ checkIfDockerEnvVariableSet () {
 }
 
 #-------------------------------------------------------------------------------
+# Compares a docker env variable with a given value. Takes three mandatory 
+# arguements:
+# 
+# 1. "${1:?}" - the file containing the environment variable;
+# 2. "${2:?}" - an environment variable to check; and
+# 3. "${3:?}" - a value to compare against.
+# 
+# Returns true if the variable matches the comparison value, returns false 
+# otherwise.
+#-------------------------------------------------------------------------------
+compareDockerEnvVariableWithValue () {
+  local ENV_FILE="${1:?}"
+  local ENV_VARIABLE="${2:?}"
+  local ENV_COMPARISON="${3:?}"
+  local ENV_VALUE="$(grep -m 1 "$ENV_VARIABLE=" "$ENV_FILE" | cut -d'=' -f2)"
+
+  if [ "$ENV_VALUE" -eq "$ENV_COMPARISON" ]; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+#-------------------------------------------------------------------------------
 # Reads an environment variable from a file. Takes two mandatory arguments:
 # 
-# 1. "${1:?}" - the file containing the environment value; and
+# 1. "${1:?}" - the file containing the environment variable; and
 # 2. "${2:?}" - an environment variable to check.
 # 
 # The variable and value are read from the file with "grep" as a single string, 
