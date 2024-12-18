@@ -44,7 +44,8 @@ controlDockerService () {
       ;; 
   esac
 
-  echoComment "Performing $ACTION for $SERVICE."
+  echoComment "Performing $ACTION for $SERVICE, using compose file:"
+  echoComment "$COMPOSE_FILE"
   echoSeparator
 
   if [ "$ACTION" = "up" ]; then
