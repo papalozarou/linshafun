@@ -37,7 +37,7 @@ controlDockerService () {
         local FLAGS="$4"
       ;;
       *)
-        local COMPOSE_FILE="$COMPOSE_FILE"
+        local COMPOSE_FILE="$DOCKER_COMPOSE_FILE"
         local ACTION="${1:?}"
         local SERVICE="${2:?}"
         local FLAGS="$3"
