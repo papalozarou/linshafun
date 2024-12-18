@@ -87,6 +87,60 @@ checkIfDockerEnvVariableSet () {
 }
 
 #-------------------------------------------------------------------------------
+# Compares the an environment file value with a given value and updates the 
+# environment value if requested. Takes two or more mandatory arguements:
+# 
+# 1. "${1:?}" – the environment file; and
+# 2. "$@" – the name(s) of the environment variable(s).
+#
+# The function takes the first argument and stores it as the environment 
+# variable file. It then shifts the argument position by 1, and loops through 
+# each of the rest of the arguments. Taken from:
+# 
+# - https://unix.stackexchange.com/a/225951
+# 
+# "eval" is used to indirectly reference a variable value, stored within 
+# "$ENV_VARIABLE", as per:
+# - https://unix.stackexchange.com/a/41418
+# 
+# N.B.
+# This comparison function expects the indirect referenced variable to already 
+# have been set in the global scope of the script that calls this function.
+#-------------------------------------------------------------------------------
+compareAndUpdateDockerEnvVariables () {
+  local ENV_FILE="${1:?}"
+
+  shift
+
+  for ENV_VARIABLE in "$@"; do
+    local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE")"
+
+    eval "local ENV_COMPARISON=\${$ENV_VARIABLE}"
+
+    local ENV_NEWER_TF="$(compareDockerEnvVariableWithValue "$ENV_FILE" "$ENV_VARIABLE" "$ENV_COMPARISON")"
+
+    echoComment "Comparing the env variable for $ENV_VARIABLE with the comparison value…"
+
+    if [ "$ENV_NEWER_TF" -eq true ]; then
+      echoComment "The current value of $ENV_VARIABLE is the same as the comparison value:"
+      echoSeparator
+      echoComment "Environment file value: $ENV_VALUE"
+      echoComment "Comparison value:       $ENV_COMPARISON"
+      echoSeparator
+      echoComment "No changes to $ENV_VARIABLE made."
+    else
+      echoComment "The current value of $ENV_VARIABLE is different to the comparison value:"
+      echoSeparator
+      echoComment "Environment file value: $ENV_VALUE"
+      echoComment "Comparison value:       $ENV_COMPARISON"
+      echoSeparator
+
+      changeDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE"
+    fi
+  done
+}
+
+#-------------------------------------------------------------------------------
 # Compares a docker env variable with a given value. Takes three mandatory 
 # arguments:
 # 
