@@ -6,5 +6,4 @@ DOCKER_SECRETS_DIR="/var/lib/docker/secrets"
 #-------------------------------------------------------------------------------
 # File variables.
 #-------------------------------------------------------------------------------
-DOCKER_ENV_FILE="$(dirname $PWD)/.env"
 DOCKER_COMPOSE_FILE='compose.yml'
