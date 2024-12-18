@@ -30,7 +30,7 @@ checkForFileOrDirectory () {
 # "find" is used to capture the files, then spawns a shell to copy and remove 
 # the postfix from each file. From:
 #
-# https://unix.stackexchange.com/a/287554
+# - https://unix.stackexchange.com/a/287554
 # 
 # As "setup.conf.example" is also copied, we delete it as it's not needed.
 #

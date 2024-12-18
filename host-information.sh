@@ -17,7 +17,7 @@
 # As shell can't compare floating decimal points, both the comparison OS and the
 # current OS are stripped to their major version number. As per:
 #
-# https://unix.stackexchange.com/a/569768
+# - https://unix.stackexchange.com/a/569768
 #-------------------------------------------------------------------------------
 compareOsVersion () {
   local COMPARISON_OS="$(echo "${1:?}" | cut -d'.' -f1)"

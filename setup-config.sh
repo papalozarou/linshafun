@@ -120,7 +120,7 @@ listSetupConfig () {
 # "set" into it's key, "$1", and it's value, "$2" – the "-f" flag prevents 
 # pathname expansion for safety. Taken from:
 #
-# https://stackoverflow.com/a/1478245
+# - https://stackoverflow.com/a/1478245
 # 
 # N.B.
 # "$CONFIG" is not quoted as we need word splitting in this instance. 
