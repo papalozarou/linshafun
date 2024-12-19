@@ -121,7 +121,7 @@ compareAndUpdateDockerEnvVariables () {
 
     echoComment "Comparing the env variable for $ENV_VARIABLE with the comparison value…"
 
-    if [ "$ENV_NEWER_TF" -eq true ]; then
+    if [ "$ENV_NEWER_TF" = true ]; then
       echoComment "The current value of $ENV_VARIABLE is the same as the comparison value:"
       echoSeparator
       echoComment "Environment file value: $ENV_VALUE"
@@ -157,7 +157,7 @@ compareDockerEnvVariableWithValue () {
   local ENV_COMPARISON="${3:?}"
   local ENV_VALUE="$(grep -m 1 "$ENV_VARIABLE=" "$ENV_FILE" | cut -d'=' -f2)"
 
-  if [ "$ENV_VALUE" -eq "$ENV_COMPARISON" ]; then
+  if [ "$ENV_VALUE" = "$ENV_COMPARISON" ]; then
     echo true
   else
     echo false
