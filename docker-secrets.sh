@@ -9,7 +9,7 @@
 # it exists, do nothing. If it doesn't create it.
 #-------------------------------------------------------------------------------
 createDockerSecretsDir () {
-  local DOCKER_SECRETS_DIR_TF="$(checkForFileOrDirectory "SDOCKER_SERCRETS_DIR")"
+  local DOCKER_SECRETS_DIR_TF="$(checkForFileOrDirectory "SDOCKER_SECRETS_DIR")"
 
   echoComment 'Checking for a docker secrets directory at:'
   echoComment "$DOCKER_SECRETS_DIR"
