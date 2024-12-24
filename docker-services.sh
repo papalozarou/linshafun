@@ -79,3 +79,21 @@ controlRelatedDockerServices () {
     fi
   done
 }
+
+#-------------------------------------------------------------------------------
+# Stops all running service containers and runs "docker compose ps -a" as 
+# a check.
+#-------------------------------------------------------------------------------
+stopRunningContainers () {
+  echoComment 'Stopping all running service containers…'
+  echoSeparator
+  docker compose down
+
+  echoCommment 'Running "docker compose ps -a" to check containers have stopped…'
+  echoSeparator
+  docker compose ps -a
+  echoSeparator
+
+  echoComment 'Assuming no containers are listed above, all containers have'
+  echoComment 'been stopped.'
+}
