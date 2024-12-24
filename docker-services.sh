@@ -89,7 +89,7 @@ stopRunningContainers () {
   echoSeparator
   docker compose down
 
-  echoCommment 'Running "docker compose ps -a" to check containers have stopped…'
+  echoComment 'Running "docker compose ps -a" to check containers have stopped…'
   echoSeparator
   docker compose ps -a
   echoSeparator

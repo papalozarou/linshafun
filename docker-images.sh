@@ -46,12 +46,11 @@ listDockerImages () {
 # 1. "$@" - the image or images to be removed.
 #-------------------------------------------------------------------------------
 removeDockerImages () {
-  echoComment 'Removing the following docker images:'
-  echoComment "$@"
-
   for IMAGE in "$@"; do
+    echoComment 'Removing the following docker image:'
+    echoComment "$IMAGE"
     echoSeparator
-    docker rm "$IMAGE"
+    docker image rm "$IMAGE"
     echoSeparator
   done
 }
