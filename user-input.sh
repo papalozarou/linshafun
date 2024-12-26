@@ -14,6 +14,23 @@ getUserInput () {
 }
 
 #-------------------------------------------------------------------------------
+# Specifically gets "y/Y" or "n/N" input, forcing user to chose one. Returns
+# true for "y/Y" and false for "n/N".
+#-------------------------------------------------------------------------------
+getUserInputYN () {
+  local INPUT_YN="$(getUserInput)"
+
+  if [ "$INPUT_YN" = "y" -o "$INPUT_YN" = "Y" ]; then
+    echo true
+  elif [ "$INPUT_YN" = "n" -o "$INPUT_YN" = "N" ]; then
+    echo false
+  else
+    echoComment 'You must respond y/Y or n/N to proceed.'
+    getUserInputYN
+  fi
+}
+
+#-------------------------------------------------------------------------------
 # Prompts for user input for consistency. Takes one or more arguments:
 # 
 # 1. "${1:?}" - the question to ask the user; and
