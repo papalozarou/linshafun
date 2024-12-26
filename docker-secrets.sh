@@ -74,9 +74,8 @@ getAndSetDockerSecrets () {
     if [ "$SECRET_FILE_TF" = true ]; then
       echoComment 'The docker secret file already exists.'
     elif [ "$SECRET_FILE_TF" = false ]; then
+      echoComment 'The docker secret file does not exist.'
       echoComment "What value do you want to set for $FILE?"
-      echoNb
-
       SECRET_VALUE="$(getUserInput)"
 
       echoComment 'Generating a secret file at:'
