@@ -5,6 +5,59 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+# Checks to see if a file or directory exists. If the file or directory doesn't 
+# exist, or it does exist and the user wants to replace it, (re)create it. Takes 
+# two mandatory arguments and up to three optional ones:
+# 
+# 1. "${1:?}" - the file or directory to check for and create or replace;
+# 2. "${2:?}" - the function to execute if the file or directory doesn't exist, 
+#    or the user chooses to replace it; and
+# 3 "$3|4|5" - optional lines to be echoed as an "N.B." comments.
+#
+# Variables used as pointers to functions taken from:
+# 
+# - https://stackoverflow.com/a/33202350
+#-------------------------------------------------------------------------------
+checkAndCreateOrAskToReplaceFileOrDirectory () {
+  local FILE_OR_DIR="${1:?}"
+  local FUNCTION="${2:?}"
+  local NB_LINE_1="$3"
+  local NB_LINE_2="$4"
+  local NB_LINE_3="$5"
+
+  echoComment 'Checking for file or directory at:'
+  echoSeparator
+  echoComment "$FILE_OR_DIR"
+  echoSeparator
+  local FILE_OR_DIR_TF="$(checkForFileOrDirectory $FILE_OR_DIR)"
+
+  echoComment "The check returned $FILE_OR_DIR_TF."
+
+  if [ "$FILE_OR_DIR_TF" = true ]; then
+    promptForUserInput 'The file or directory exists. Do you want to recreate it (y/n)?' 'This cannot be undone if you answer y/Y.'
+    local REPLACE_YN="$(getUserInputYN)"
+  fi
+
+  if [ "$REPLACE_YN" = true -a "$FILE_OR_DIR_TF" = true ]; then 
+    echoComment "Replacing file or directory at:"
+  elif [ "$FILE_OR_DIR_TF" = false ]; then
+    echoComment "The file or directory does not exist. Creating at:"
+  fi
+
+  if [ "$REPLACE_YN" = true -a "$FILE_OR_DIR_TF" = true ] || [ "$FILE_OR_DIR_TF" = false ]; then
+    echoSeparator
+    echoComment "$FILE_OR_DIR"
+    echoSeparator
+
+    ("$FUNCTION" "$FILE_OR_DIR" "$NB_LINE_1" "$NB_LINE_2" "$NB_LINE_3")
+  else
+    echoComment 'No changes were made.'
+  fi
+
+  listDirectories "$FILE_OR_DIR"
+}
+
+#-------------------------------------------------------------------------------
 # Checks for a file or directory. Returns true of it is present, false if it 
 # not. Takes one mandatory argument.
 # 
