@@ -23,68 +23,54 @@ createDockerSecretsDir () {
 }
 
 #-------------------------------------------------------------------------------
-# Generates given named secrets, using a random string. Takes at least one 
-# mandatory argument:
+# Generates a given named secret, using a random string. Takes one mandatory 
+# argument:
 # 
-# 1. "$@" - the name(s) of the secrets file(s), all lowercase.
-#
-# The function checks to see if the given secret file exists. If it exists, do
-# nothing. If it doesn't exist, create it.
+# 1. "${1:?}" - the name of the secrets file, all lowercase.
 #-------------------------------------------------------------------------------
 generateRandomDockerSecrets () {
-  for FILE in "$@"; do
-    local SECRET_FILE="$DOCKER_SECRETS_DIR/$FILE"
-    local SECRET_VALUE="$(generateRandomString)"
-    local SECRET_FILE_TF="$(checkForFileOrDirectory "$SECRET_FILE")"
+  local SECRET_FILE="$DOCKER_SECRETS_DIR/${1:?}"
+  local SECRET_VALUE="$(generateRandomString)"
 
-    echoComment 'Checking for a docker secret file at:'
-    echoComment "$SECRET_FILE"
+  echoComment 'Generating a secret file at:'
+  echoComment "$SECRET_FILE"
+  echo "$SECRET_VALUE" >> "$SECRET_FILE"
 
-    if [ "$SECRET_FILE_TF" = true ]; then
-      echoComment 'The docker secret file already exists.'
-    elif [ "$SECRET_FILE_TF" = false ]; then
-      echoComment 'Generating a secret file at:'
-      echoComment "$SECRET_FILE"
-      echo "$SECRET_VALUE" >> "$SECRET_FILE"
-
-      setPermissions '644' "$SECRET_FILE"
-    fi
-  done
+  setPermissions '644' "$SECRET_FILE"
 
   listDirectories "$DOCKER_SECRETS_DIR"
 }
 
 #-------------------------------------------------------------------------------
-# Creates given named secrets by asking for user input. Takes at least one 
-# mandatory argument:
+# Creates given named secrets by asking for user input. Takes one mandatory 
+# argument and up to three optional ones:
 # 
-# 1. "$@" - the name(s) of the secrets file(s), all lowercase.
+# 1. "${1:?}" - the name of the secrets file, all lowercase; and
+# 2. "$2|3|4" - optional lines to be echoed as "N.B." comments.
 #
-# The function checks to see if the given secret file exists. If it exists, do
-# nothing. If it doesn't exist, create it.
+# The function checks to see if "$NB_LINE_1" is non-zero, and if so passes the
+# three optional arguments to the "echoNb" function.
 #-------------------------------------------------------------------------------
 getAndSetDockerSecrets () {
-  for FILE in "$@"; do
-    local SECRET_FILE="$DOCKER_SECRETS_DIR/$FILE"
-    local SECRET_FILE_TF="$(checkForFileOrDirectory "$SECRET_FILE")"
+  local SECRET_FILE="$DOCKER_SECRETS_DIR/${1:?}"
+  local SECRET_FILE_TF="$(checkForFileOrDirectory "$SECRET_FILE")"
+  local NB_LINE_1="$2"
+  local NB_LINE_2="$3"
+  local NB_LINE_3="$4"
 
-    echoComment 'Checking for a docker secret file at:'
-    echoComment "$SECRET_FILE"
-    
-    if [ "$SECRET_FILE_TF" = true ]; then
-      echoComment 'The docker secret file already exists.'
-    elif [ "$SECRET_FILE_TF" = false ]; then
-      echoComment 'The docker secret file does not exist.'
-      echoComment "What value do you want to set for $FILE?"
-      SECRET_VALUE="$(getUserInput)"
+  echoComment "What value do you want to set for $FILE?"
 
-      echoComment 'Generating a secret file at:'
-      echoComment "$SECRET_FILE"
-      echo "$SECRET_VALUE" >> "$SECRET_FILE"
+  if [ -n "$NB_LINE_1" ]; then
+    echoNb "$NB_LINE_1" "$NB_LINE_2" "$NB_LINE_3"
+  fi
 
-      setPermissions '644' "$SECRET_FILE"
-    fi
-  done
+  SECRET_VALUE="$(getUserInput)"
+
+  echoComment 'Generating a secret file at:'
+  echoComment "$SECRET_FILE"
+  echo "$SECRET_VALUE" >> "$SECRET_FILE"
+
+  setPermissions '644' "$SECRET_FILE"
 
   listDirectories "$DOCKER_SECRETS_DIR"
 }
