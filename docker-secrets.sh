@@ -48,8 +48,8 @@ generateRandomDockerSecrets () {
 # 1. "${1:?}" - the name of the secrets file, all lowercase; and
 # 2. "$2|3|4" - optional lines to be echoed as "N.B." comments.
 #
-# The function checks to see if "$NB_LINE_1" is non-zero, and if so passes the
-# three optional arguments to the "echoNb" function.
+# The function checks to see if "$2|3|4" are non-zero, and if so passes the
+# optional arguments to the "echoNb" function.
 #-------------------------------------------------------------------------------
 getAndSetDockerSecrets () {
   local SECRET_FILE="$DOCKER_SECRETS_DIR/${1:?}"
@@ -60,8 +60,12 @@ getAndSetDockerSecrets () {
 
   echoComment "What value do you want to set for $FILE?"
 
-  if [ -n "$NB_LINE_1" ]; then
+  if [ -n "$NB_LINE_3" ]; then
     echoNb "$NB_LINE_1" "$NB_LINE_2" "$NB_LINE_3"
+  elif [ -n "$NB_LINE_2" ]; then
+    echoNb "$NB_LINE_1" "$NB_LINE_2"
+  else
+    echoNb "$NB_LINE_1"
   fi
 
   SECRET_VALUE="$(getUserInput)"
