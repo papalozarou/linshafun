@@ -12,7 +12,7 @@
 # 1. "${1:?}" - the file or directory to check for and create or replace;
 # 2. "${2:?}" - the function to execute if the file or directory doesn't exist, 
 #    or the user chooses to replace it; and
-# 3 "$3|4|5" - optional lines to be echoed as an "N.B." comments.
+# 3 "$3|4|5" - optional lines to be echoed as "N.B." comments.
 #
 # Variables used as pointers to functions taken from:
 # 
