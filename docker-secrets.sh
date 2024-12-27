@@ -52,7 +52,8 @@ generateRandomDockerSecrets () {
 # optional arguments to the "echoNb" function.
 #-------------------------------------------------------------------------------
 getAndSetDockerSecrets () {
-  local SECRET_FILE="$DOCKER_SECRETS_DIR/${1:?}"
+  local FILE="${1:?}"
+  local SECRET_FILE="$DOCKER_SECRETS_DIR/$FILE"
   local NB_LINE_1="$2"
   local NB_LINE_2="$3"
   local NB_LINE_3="$4"
