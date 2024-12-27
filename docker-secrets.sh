@@ -53,7 +53,6 @@ generateRandomDockerSecrets () {
 #-------------------------------------------------------------------------------
 getAndSetDockerSecrets () {
   local SECRET_FILE="$DOCKER_SECRETS_DIR/${1:?}"
-  local SECRET_FILE_TF="$(checkForFileOrDirectory "$SECRET_FILE")"
   local NB_LINE_1="$2"
   local NB_LINE_2="$3"
   local NB_LINE_3="$4"
@@ -68,7 +67,7 @@ getAndSetDockerSecrets () {
     echoNb "$NB_LINE_1"
   fi
 
-  SECRET_VALUE="$(getUserInput)"
+  local SECRET_VALUE="$(getUserInput)"
 
   echoComment 'Generating a secret file at:'
   echoComment "$SECRET_FILE"
