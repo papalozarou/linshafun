@@ -34,6 +34,7 @@ generateRandomDockerSecrets () {
 
   echoComment 'Generating a secret file at:'
   echoComment "$SECRET_FILE"
+  touch "$SECRET_FILE"
   echo "$SECRET_VALUE" >> "$SECRET_FILE"
 
   setPermissions '644' "$SECRET_FILE"
@@ -72,6 +73,7 @@ getAndSetDockerSecrets () {
 
   echoComment 'Generating a secret file at:'
   echoComment "$SECRET_FILE"
+  touch "$SECRET_FILE"
   echo "$SECRET_VALUE" >> "$SECRET_FILE"
 
   setPermissions '644' "$SECRET_FILE"
