@@ -36,7 +36,9 @@ generateRandomDockerSecrets () {
   local SECRET_VALUE="$(generateRandomString)"
 
   echoComment 'Generating a secret file at:'
+  echoSeparator
   echoComment "$SECRET_FILE"
+  echoSeparator
   
   if [ -f "$SECRET_FILE" ]; then
     removeFileOrDirectory "$SECRET_FILE"
@@ -82,7 +84,9 @@ getAndSetDockerSecrets () {
   local SECRET_VALUE="$(getUserInput)"
 
   echoComment 'Generating a secret file at:'
+  echoSeparator
   echoComment "$SECRET_FILE"
+  echoSeparator
 
   if [ -f "$SECRET_FILE" ]; then
     removeFileOrDirectory "$SECRET_FILE"
