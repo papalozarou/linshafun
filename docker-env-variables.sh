@@ -28,7 +28,7 @@ changeDockerEnvVariable () {
 
   case "$ENV_VALUE" in
       '$HOST'*)
-        eval "ENV_VALUE=\${$ENV_VALUE}"
+        eval "ENV_VALUE=${ENV_VALUE}"
         ;;
   esac
 
