@@ -22,10 +22,16 @@ echoComment () {
 }
 
 #-------------------------------------------------------------------------------
-# Echose an "N.B." line for consistency.
+# Echoes an "N.B." lines for consistency. Takes one or more arguments:
+# 
+# 1. "$@" – one or more comment lines to echo after the "N.B." header.
 #-------------------------------------------------------------------------------
 echoNb () {
-  echo "$COMMENT_PREFIX ****** N.B. ******"
+  echoComment '****** N.B. ******'
+
+  for COMMENT in "$@"; do
+    echoComment "$COMMENT"
+  done
 }
 
 #-------------------------------------------------------------------------------
