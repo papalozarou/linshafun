@@ -56,8 +56,11 @@ generateRandomDockerSecrets () {
 # 1. "${1:?}" - the name of the secrets file, all lowercase; and
 # 2. "$2|3|4" - optional lines to be echoed as "N.B." comments.
 #
-# The function checks to see if "$2|3|4" are non-zero, and if so passes the
-# optional arguments to the "echoNb" function.
+# "shift" is used to move variable "$2" to variable position "$1", to allow the 
+# remaining variables to be passed through to ""promptForUserInput" as a group 
+# using "$@". As per:
+#
+# - https://unix.stackexchange.com/a/174568
 # 
 # N.B.
 # If the file already exists it is removed and recreated.
@@ -69,21 +72,14 @@ getAndSetDockerSecrets () {
   local NB_LINE_2="$3"
   local NB_LINE_3="$4"
 
-  echoComment "What value do you want to set for $FILE?"
-
-  if [ -n "$NB_LINE_3" ]; then
-    echoNb "$NB_LINE_1" "$NB_LINE_2" "$NB_LINE_3"
-  elif [ -n "$NB_LINE_2" ]; then
-    echoNb "$NB_LINE_1" "$NB_LINE_2"
-  else
-    echoNb "$NB_LINE_1"
-  fi
-
-  local SECRET_VALUE="$(getUserInput)"
-
   if [ -f "$SECRET_FILE" ]; then
     removeFileOrDirectory "$SECRET_FILE"
   fi
+
+  shift
+
+  promptForUserInput "What value do you want to set for $FILE?" "$@"
+  local SECRET_VALUE="$(getUserInput)"
 
   echoComment 'Generating a secret file at:'
   echoComment "$SECRET_FILE"
