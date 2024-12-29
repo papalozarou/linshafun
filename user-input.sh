@@ -53,10 +53,6 @@ promptForUserInput () {
   shift
 
   if  [ "$#" -ge 1 ] ; then
-    echoNb
-
-    for i; do
-      echoComment "$i"
-    done
+    echoNb "$@"
   fi
 }
