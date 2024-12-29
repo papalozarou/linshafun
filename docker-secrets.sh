@@ -27,6 +27,9 @@ createDockerSecretsDir () {
 # argument:
 # 
 # 1. "${1:?}" - the name of the secrets file, all lowercase.
+#
+# N.B.
+# If the file already exists it is removed and recreted.
 #-------------------------------------------------------------------------------
 generateRandomDockerSecrets () {
   local SECRET_FILE="$DOCKER_SECRETS_DIR/${1:?}"
@@ -34,7 +37,11 @@ generateRandomDockerSecrets () {
 
   echoComment 'Generating a secret file at:'
   echoComment "$SECRET_FILE"
-  touch "$SECRET_FILE"
+  
+  if [ -f "$SECRET_FILE" ]; then
+    removeFileOrDirectory "$SECRET_FILE"
+  fi
+
   echo "$SECRET_VALUE" >> "$SECRET_FILE"
 
   setPermissions '644' "$SECRET_FILE"
@@ -51,6 +58,9 @@ generateRandomDockerSecrets () {
 #
 # The function checks to see if "$2|3|4" are non-zero, and if so passes the
 # optional arguments to the "echoNb" function.
+# 
+# N.B.
+# If the file already exists it is removed and recreted.
 #-------------------------------------------------------------------------------
 getAndSetDockerSecrets () {
   local FILE="${1:?}"
@@ -73,7 +83,11 @@ getAndSetDockerSecrets () {
 
   echoComment 'Generating a secret file at:'
   echoComment "$SECRET_FILE"
-  touch "$SECRET_FILE"
+
+  if [ -f "$SECRET_FILE" ]; then
+    removeFileOrDirectory "$SECRET_FILE"
+  fi
+
   echo "$SECRET_VALUE" >> "$SECRET_FILE"
 
   setPermissions '644' "$SECRET_FILE"
