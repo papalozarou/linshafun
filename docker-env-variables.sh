@@ -12,11 +12,20 @@
 # 2. "${2:?}" – the existing variable.
 # 
 # If a user choses "y/Y" the variable is set via "setEnvVariable".
+# 
+# If "$ENV_VALUE" is "$HOST_SUBDOMAIN", "eval" is used to indirectly reference 
+# the host env variable stored in "$HOST_SUBDOMAIN", as per:
+# 
+# - https://unix.stackexchange.com/a/41418
 #-------------------------------------------------------------------------------
 changeDockerEnvVariable () {
   local ENV_FILE="${1:?}"
   local ENV_VARIABLE="${2:?}"
   local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE")"
+
+  if [ "$ENV_VALUE" = '$HOST_SUBDOMAIN' ]; then
+    eval "ENV_VALUE=\${$ENV_VALUE}"
+  fi
 
   echoComment "The current value of $ENV_VARIABLE is:"
   echoSeparator
@@ -24,9 +33,9 @@ changeDockerEnvVariable () {
   echoSeparator
 
   promptForUserInput "Do you want to change $ENV_VARIABLE?"
-  ENV_VARIABLE_SET_YN="$(getUserInput)"
+  ENV_VARIABLE_SET_YN="$(getUserInputYN)"
 
-  if [ "$ENV_VARIABLE_SET_YN" = 'y' -o  "$ENV_VARIABLE_SET_YN" = 'Y' ]; then
+  if [ "$ENV_VARIABLE_SET_YN" = true ]; then
     promptForUserInput "What value do you require for $ENV_VARIABLE?"
     ENV_VALUE="$(getUserInput)"
 
@@ -101,6 +110,7 @@ checkIfDockerEnvVariableSet () {
 # 
 # "eval" is used to indirectly reference a variable, the name of which is stored 
 # within "$ENV_VARIABLE", as per:
+# 
 # - https://unix.stackexchange.com/a/41418
 # 
 # N.B.
