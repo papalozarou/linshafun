@@ -14,18 +14,23 @@
 # If a user choses "y/Y" the variable is set via "setEnvVariable".
 # 
 # If "$ENV_VALUE" is "$HOST_SUBDOMAIN", "eval" is used to indirectly reference 
-# the host env variable stored in "$HOST_SUBDOMAIN", as per:
+# the host env variable stored in "$HOST_SUBDOMAIN", using "case", as per:
 # 
 # - https://unix.stackexchange.com/a/41418
+# - https://stackoverflow.com/a/229585
+# - https://stackoverflow.com/a/19897118
+# - https://www.shellscript.sh/case.html?cmdf=how+to+use+case+statement+sh
 #-------------------------------------------------------------------------------
 changeDockerEnvVariable () {
   local ENV_FILE="${1:?}"
   local ENV_VARIABLE="${2:?}"
   local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE")"
 
-  if [ "$ENV_VALUE" = '$HOST_SUBDOMAIN' ]; then
-    eval "ENV_VALUE=\${$ENV_VALUE}"
-  fi
+  case "$ENV_VALUE" in
+      '$HOST'*)
+        eval "ENV_VALUE=\${$ENV_VALUE}"
+        ;;
+  esac
 
   echoComment "The current value of $ENV_VARIABLE is:"
   echoSeparator
