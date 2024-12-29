@@ -14,9 +14,12 @@
 #    or the user chooses to replace it; and
 # 3 "$3|4|5" - optional lines to be echoed as "N.B." comments.
 #
-# Variables used as pointers to functions taken from:
+# If the file is to be replaced or recreated, "shift 2" is used to move variable
+# "$3" to variable position "$1", to allow the remaining variables to be 
+# passed through to "$FUNCTION" as a group using "$@". As per:
 # 
 # - https://stackoverflow.com/a/33202350
+# - https://unix.stackexchange.com/a/174568
 #-------------------------------------------------------------------------------
 checkAndCreateOrAskToReplaceFileOrDirectory () {
   local FILE_OR_DIR="${1:?}"
@@ -26,9 +29,8 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   local NB_LINE_3="$5"
 
   echoComment 'Checking for file or directory at:'
-  echoSeparator
   echoComment "$FILE_OR_DIR"
-  echoSeparator
+  
   local FILE_OR_DIR_TF="$(checkForFileOrDirectory $FILE_OR_DIR)"
 
   echoComment "The check returned $FILE_OR_DIR_TF."
@@ -36,20 +38,14 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   if [ "$FILE_OR_DIR_TF" = true ]; then
     promptForUserInput 'The file or directory exists. Do you want to recreate it (y/n)?' 'This cannot be undone if you answer y/Y.'
     local REPLACE_YN="$(getUserInputYN)"
-  fi
-
-  if [ "$REPLACE_YN" = true -a "$FILE_OR_DIR_TF" = true ]; then 
-    echoComment "Replacing file or directory at:"
   elif [ "$FILE_OR_DIR_TF" = false ]; then
-    echoComment "The file or directory does not exist. Creating at:"
+    echoComment "The file or directory does not exist."
   fi
 
   if [ "$REPLACE_YN" = true -a "$FILE_OR_DIR_TF" = true ] || [ "$FILE_OR_DIR_TF" = false ]; then
-    echoSeparator
-    echoComment "$FILE_OR_DIR"
-    echoSeparator
+    shift 2
 
-    ("$FUNCTION" "$FILE_OR_DIR" "$NB_LINE_1" "$NB_LINE_2" "$NB_LINE_3")
+    ("$FUNCTION" "$FILE_OR_DIR" "$@")
   else
     echoComment 'No changes were made.'
   fi
