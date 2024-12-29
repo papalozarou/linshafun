@@ -49,8 +49,8 @@ echoServiceWait () {
 
   echoComment "To give $SERVICE time to $ACTION we will wait at least"
   echoComment "$WAIT seconds."
-  echoNb
-  echoComment 'Please do not stop the script.'
+  echoNb 'Please do not stop the script.'
+  
   sleep "$WAIT"
 }
 
