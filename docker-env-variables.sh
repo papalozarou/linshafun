@@ -28,7 +28,7 @@ changeDockerEnvVariable () {
 
   case "$ENV_VALUE" in
       '$HOST'*)
-        eval "ENV_VALUE=${ENV_VALUE}"
+        eval "ENV_VALUE=$ENV_VALUE"
         ;;
   esac
 
@@ -101,7 +101,7 @@ checkIfDockerEnvVariableSet () {
 }
 
 #-------------------------------------------------------------------------------
-# Compares the an environment file value with a given value and updates the 
+# Compares an environment file value with a given value and updates the 
 # environment value if requested. Takes two or more mandatory arguements:
 # 
 # 1. "${1:?}" – the environment file; and
