@@ -5,6 +5,41 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+# Adds a prefix to a string. Takes two mandatory arguments:
+# 
+# 1. "${1:?}" – the string; and
+# 2. "${2:?}" – the prefix to add.
+#-------------------------------------------------------------------------------
+addPrefix () {
+  local STRING="${1:?}"
+  local PREFIX="${2:?}"
+
+  local STRING="$PREFIX$STRING"
+
+  echo "$STRING"
+}
+
+
+#-------------------------------------------------------------------------------
+# Adds a postfix to a string. Takes two mandatory arguments:
+# 
+# 1. "${1:?}" – the string; and
+# 2. "${2:?}" – the postix to add.
+# 
+# N.B.
+# If adding a file extension, you must include the "." at the start of the 
+# second argument.
+#-------------------------------------------------------------------------------
+addPostfix () {
+  local STRING="${1:?}"
+  local POSTFIX="${2:?}"
+
+  local STRING="$STRING$POSTFIX"
+
+  echo "$STRING"
+}
+
+#-------------------------------------------------------------------------------
 # Changes the case of text. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – a text string; and
@@ -39,6 +74,49 @@ changeCase () {
 generateRandomString () {
   local LENGTH="${1:-"64"}"
   local STRING="$(tr -cd '[:alnum:]' < /dev/urandom | fold -w "${LENGTH}" | head -n 1 | tr -d '\n')"
+
+  echo "$STRING"
+}
+
+#-------------------------------------------------------------------------------
+# Removes a prefix from a string. Takes two mandatory arguments:
+# 
+# 1. "${1:?}" – the string; and
+# 2. "${2:?}" – the prefix to remove.
+# 
+# The function uses pattern matching to trim the string, as per:
+# 
+# - https://unix.stackexchange.com/a/638638
+#-------------------------------------------------------------------------------
+removePrefix () {
+  local STRING="${1:?}"
+  local PREFIX="${2:?}"
+
+  local STRING="${STRING#"$PREFIX"}"
+
+  echo "$STRING"
+}
+
+
+#-------------------------------------------------------------------------------
+# Removes a postfix from a string. Takes two mandatory arguments:
+# 
+# 1. "${1:?}" – the string; and
+# 2. "${2:?}" – the postix to remove.
+# 
+# The function uses pattern matching to trim the string, as per:
+# 
+# - https://unix.stackexchange.com/a/638638
+# 
+# N.B.
+# If removing a file extension, you must include the "." at the start of the 
+# second argument.
+#-------------------------------------------------------------------------------
+removePostfix () {
+  local STRING="${1:?}"
+  local POSTFIX="${2:?}"
+
+  local STRING="${STRING%"$POSTFIX"}"
 
   echo "$STRING"
 }
