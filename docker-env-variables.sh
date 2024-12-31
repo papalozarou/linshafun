@@ -37,13 +37,17 @@ changeDockerEnvVariable () {
   echoComment "$ENV_VALUE"
   echoSeparator
 
-  promptForUserInput "Do you want to change $ENV_VARIABLE?"
+  promptForUserInput "Do you want to change $ENV_VARIABLE?" 'This may break existing setups if running these scripts again.'
   ENV_VARIABLE_SET_YN="$(getUserInputYN)"
 
-  if [ "$ENV_VARIABLE_SET_YN" = true ]; then
+  if [ "$ENV_VARIABLE_SET_YN" = true -a "$ENV_VARIABLE" = "H_RTT_PORT" ]; then
+    ENV_VALUE="$(generateAndCheckPort "ssh")"
+  elif [ "$ENV_VARIABLE_SET_YN" = true ]; then
     promptForUserInput "What value do you require for $ENV_VARIABLE?"
     ENV_VALUE="$(getUserInput)"
+  fi
 
+  if [ "$ENV_VARIABLE_SET_YN" = true ]; then
     setDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE" "$ENV_VALUE"
   else
     echoComment "No changes to $ENV_VARIABLE made."
