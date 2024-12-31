@@ -52,7 +52,7 @@ promptForUserInput () {
 
   shift
 
-  if  [ "$#" -ge 1 ] ; then
+  if  [ "$#" -ge 1 ]; then
     echoNb "$@"
   fi
 }
