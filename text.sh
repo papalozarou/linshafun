@@ -23,10 +23,10 @@ addPrefix () {
 # Adds a postfix to a string. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the string; and
-# 2. "${2:?}" – the postix to add.
+# 2. "${2:?}" – the postfix to add.
 # 
 # N.B.
-# If adding a file extension, you must include the "." at the start of the 
+# If adding a file extension, the "." must be included at the start of the 
 # second argument.
 #-------------------------------------------------------------------------------
 addPostfix () {
