@@ -31,7 +31,7 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   echoComment 'Checking for file or directory at:'
   echoComment "$FILE_OR_DIR"
   
-  local FILE_OR_DIR_TF="$(checkForFileOrDirectory $FILE_OR_DIR)"
+  local FILE_OR_DIR_TF="$(checkForFileOrDirectory "$FILE_OR_DIR")"
 
   echoComment "The check returned $FILE_OR_DIR_TF."
 
@@ -81,7 +81,7 @@ checkForFileOrDirectory () {
 #
 # - https://unix.stackexchange.com/a/287554
 # 
-# As "setup.conf.example" is also copied, we delete it as it's not needed.
+# As "*setup.conf.example" is also copied, we delete it as it's not needed.
 #
 # N.B.
 # "find" can only directly "exec" functions that are known to the global scope, 
@@ -104,6 +104,8 @@ copyAndRemovePostfixFromFiles () {
   echoSeparator
 
   echoComment 'Files copied and postfixes removed.'
+
+  removeFileOrDirectory "$SEEDBOX_DIR/setup/*setup.conf"
 }
 
 #-------------------------------------------------------------------------------
