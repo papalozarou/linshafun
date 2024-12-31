@@ -181,6 +181,52 @@ createFiles () {
 }
 
 #-------------------------------------------------------------------------------
+# Gets a list of files with a given prefix. Takes two mandatory arguments:
+# 
+# 1. "${1:?}" – the prefix to search for; and
+# 2. "${2:?}" – the directory that contains the files, defaulting to the users 
+#    home directory.
+# 
+# N.B.
+# The returned "$FILES" variable will:
+# 
+# - be returned with directory paths which may require removing; and
+# - need iterating over with explicit word splitting, i.e. without quotes in any
+#   "for" loop.
+#-------------------------------------------------------------------------------
+getListOfFilesByPrefix () {
+  local PREFIX="${1:?}"
+  local DIR="${2:-"$USER_DIR"}"
+
+  local FILES="$(find "$DIR" -name "$PREFIX*")"
+
+  echo "$FILES"
+}
+
+#-------------------------------------------------------------------------------
+# Gets a list of files with a given postfix. Takes two mandatory arguments:
+# 
+# 1. "${1:?}" – the postfix to search for, defaulting to ".example"; and
+# 2. "${2:?}" – the directory that contains the files, defaulting to the users 
+#    home directory.
+# 
+# N.B.
+# The returned "$FILES" variable will:
+# 
+# - be returned with directory paths which may require removing; and
+# - need iterating over with explicit word splitting, i.e. without quotes in any
+#   "for" loop.
+#-------------------------------------------------------------------------------
+getListOfFilesByPostfix () {
+  local POSTFIX="${1:-".example"}"
+  local DIR="${2:-"$USER_DIR"}"
+
+  local FILES="$(find "$DIR" -name "*$POSTFIX")"
+
+  echo "$FILES"
+}
+
+#-------------------------------------------------------------------------------
 # Lists one or more directories. Takes one mandatory argument:
 # 
 # 1. "${1:?}" - a single directory path, or a list of multiple directory paths
