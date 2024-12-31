@@ -70,42 +70,65 @@ checkForFileOrDirectory () {
 }
 
 #-------------------------------------------------------------------------------
-# Copys a set of files and removes a given postfix. Takes two mandatory 
-# arguments:
-# 
-# 1. "${1:?}" – the directory that contains the file; and
-# 2. "${2:?}" – the postfix to remove, defaults to "example".
-# 
-# "find" is used to capture the files, then spawns a shell to copy and remove 
-# the postfix from each file. From:
+# Copies file(s) and adds a given postfix. Takes two mandatory arguments:
 #
-# - https://unix.stackexchange.com/a/287554
+# 1. "${1:?}" – the file or files; and
+# 2. "${2:?}" – the postfix to add, defaulting to ".backup".
 # 
-# As "*setup.conf.example" is also copied, we delete it as it's not needed.
-#
 # N.B.
-# "find" can only directly "exec" functions that are known to the global scope, 
-# requiring exporting them, which is a bash only feature. Because of this the
-# command we want to "exec" is written inline.
+# In the "for" loop, "$FILES" is not quoted as we explicitly want word 
+# splitting.
+#
+# If adding a file extension, the "." must be included at the start of the 
+# second argument.
+#-------------------------------------------------------------------------------
+copyAndAddPostfixToFiles () {
+  local FILES="${1:?}"
+  local POSTFIX="${2:-".backup"}"
+
+  for FILE in $FILES; do
+    echoComment "Copying and adding $POSTFIX to the file:"
+    echoSeparator
+    echoComment "$FILE"
+    echoSeparator
+
+    local FILE_COPY="$(addPostfix "$FILE" "$POSTFIX")"
+
+    cp -p "$FILE" "$FILE_COPY"
+
+    echoComment 'File copied and postfix added.'
+  done
+}
+
+#-------------------------------------------------------------------------------
+# Copies file(s) and removes a given postfix. Takes two mandatory arguments:
+#
+# 1. "${1:?}" – the file or files; and
+# 2. "${2:?}" – the postfix to remove, defaulting to ".example".
+# 
+# N.B.
+# In the "for" loop, "$FILES" is not quoted as we explicitly want word 
+# splitting.
+#
+# If removing a file extension, the "." must be included at the start of the 
+# second argument.
 #-------------------------------------------------------------------------------
 copyAndRemovePostfixFromFiles () {
-  local DIR="${1:?}"
-  local POSTFIX="${2:-"example"}"
+  local FILES="${1:?}"
+  local POSTFIX="${2:-".example"}"
 
-  echoComment "Preparing following service files by removing the $POSTFIX postfix"
-  echoComment 'from the filenames:'
-  echoSeparator
-  find "$DIR" -name "*.$POSTFIX"
-  echoSeparator
+  for FILE in $FILES; do
+    echoComment "Copying and removing $POSTFIX from the file:"
+    echoSeparator
+    echoComment "$FILE"
+    echoSeparator
 
-  echoComment 'Copying files and removing postfixes.'
-  echoSeparator
-  find "$DIR" -type f -name "*.$POSTFIX" -exec sh -c 'cp -p "$0" "${0%.*}" && echo "Copying $0 to ${0%.*}"' {} \;
-  echoSeparator
+    local FILE_COPY="$(removePostfix "$FILE" "$POSTFIX")"
 
-  echoComment 'Files copied and postfixes removed.'
+    cp -p "$FILE" "$FILE_COPY"
 
-  removeFileOrDirectory "$SEEDBOX_DIR/setup/*setup.conf"
+    echoComment 'File copied and postfix removed.'
+  done
 }
 
 #-------------------------------------------------------------------------------
