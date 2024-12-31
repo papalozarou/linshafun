@@ -183,7 +183,7 @@ createFiles () {
 #-------------------------------------------------------------------------------
 # Gets a list of files with a given prefix. Takes two mandatory arguments:
 # 
-# 1. "${1:?}" – the prefix to search for; and
+# 1. "${1:?}" – the prefix to search for, excluding wildcard; and
 # 2. "${2:?}" – the directory that contains the files, defaulting to the users 
 #    home directory.
 # 
@@ -206,7 +206,8 @@ getListOfFilesByPrefix () {
 #-------------------------------------------------------------------------------
 # Gets a list of files with a given postfix. Takes two mandatory arguments:
 # 
-# 1. "${1:?}" – the postfix to search for, defaulting to ".example"; and
+# 1. "${1:?}" – the postfix to search for, excluding wildcard, defaulting to 
+#    ".example"; and
 # 2. "${2:?}" – the directory that contains the files, defaulting to the users 
 #    home directory.
 # 
