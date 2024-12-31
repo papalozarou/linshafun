@@ -60,9 +60,9 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
 # 1. "{1:?}" - the file or directory to check for.
 #-------------------------------------------------------------------------------
 checkForFileOrDirectory () {
-  local FILE_DIR="${1:?}"
+  local FILE_OR_DIR="${1:?}"
 
-  if [ -f "$FILE_DIR" ] || [ -d "${1:?}" ]; then
+  if [ -f "$FILE_OR_DIR" ] || [ -d "$FILE_OR_DIR" ]; then
     echo true
   else
     echo false

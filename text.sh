@@ -19,7 +19,6 @@ addPrefix () {
   echo "$STRING"
 }
 
-
 #-------------------------------------------------------------------------------
 # Adds a postfix to a string. Takes two mandatory arguments:
 # 
