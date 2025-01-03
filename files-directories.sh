@@ -41,11 +41,15 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   elif [ "$FILE_OR_DIR_TF" = false ]; then
     echoComment "The file or directory does not exist."
   fi
-
-  if [ "$REPLACE_YN" = true -a "$FILE_OR_DIR_TF" = true ] || [ "$FILE_OR_DIR_TF" = false ]; then
+  
+  if [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ]; then
     shift 2
+  fi
 
+  if [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ] && [ "$#" -ge 1 ]; then
     ("$FUNCTION" "$FILE_OR_DIR" "$@")
+  elif [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ] && [ "$#" -eq 0 ]; then
+    ("$FUNCTION" "$FILE_OR_DIR")
   else
     echoComment 'No changes were made.'
   fi
