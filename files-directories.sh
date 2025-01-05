@@ -10,12 +10,13 @@
 # two mandatory arguments and up to three optional ones:
 # 
 # 1. "${1:?}" - the file or directory to check for and create or replace;
-# 2. "${2:?}" - the function to execute if the file or directory doesn't exist, 
-#    or the user chooses to replace it; and
-# 3 "$3|4|5" - optional lines to be echoed as "N.B." comments.
+# 2. "${2:?" - the action being performed, all lowercase; and
+# 2. "${3:?}" - the function to execute if the file or directory doesn't exist, 
+#    or the user chooses to replace it; 
+# 3 "$4|5|6" - optional lines to be echoed as "N.B." comments.
 #
-# If the file is to be replaced or recreated, "shift 2" is used to move variable
-# "$3" to variable position "$1", to allow the remaining variables to be 
+# If the file is to be replaced or recreated, "shift 3" is used to move variable
+# "$4" to variable position "$1", to allow the remaining variables to be 
 # passed through to "$FUNCTION" as a group using "$@". As per:
 # 
 # - https://stackoverflow.com/a/33202350
@@ -23,10 +24,11 @@
 #-------------------------------------------------------------------------------
 checkAndCreateOrAskToReplaceFileOrDirectory () {
   local FILE_OR_DIR="${1:?}"
-  local FUNCTION="${2:?}"
-  local NB_LINE_1="$3"
-  local NB_LINE_2="$4"
-  local NB_LINE_3="$5"
+  local ACTION="${2:?}"
+  local FUNCTION="${3:?}"
+  local NB_LINE_1="$4"
+  local NB_LINE_2="$5"
+  local NB_LINE_3="$6"
 
   echoComment 'Checking for file or directory at:'
   echoComment "$FILE_OR_DIR"
@@ -36,14 +38,14 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   echoComment "The check returned $FILE_OR_DIR_TF."
 
   if [ "$FILE_OR_DIR_TF" = true ]; then
-    promptForUserInput 'The file or directory exists. Do you want to recreate it (y/n)?' 'This cannot be undone if you answer y/Y.'
+    promptForUserInput "The file or directory exists. Do you want to $ACTION it (y/n)?" 'This cannot be undone if you answer y/Y.'
     local REPLACE_YN="$(getUserInputYN)"
   elif [ "$FILE_OR_DIR_TF" = false ]; then
     echoComment "The file or directory does not exist."
   fi
   
   if [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ]; then
-    shift 2
+    shift 3
   fi
 
   if [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ] && [ "$#" -ge 1 ]; then
