@@ -53,7 +53,7 @@ controlDockerService () {
   else
     docker compose -f "$COMPOSE_FILE" "$ACTION" "$SERVICE" $FLAGS
   fi
-  ACTION="$(changeCase "$ACTION" 'upper')"
+  ACTION="$(changeCase "$ACTION" 'sentence')"
   echoSeparator
   echoComment "$ACTION performed for $SERVICE."
 }

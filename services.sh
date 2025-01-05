@@ -22,5 +22,7 @@ controlService () {
     systemctl "$ACTION" "$SERVICE"
   fi
   
+  ACTION="$(changeCase "$ACTION" 'sentence')"
+  echoSeparator
   echoComment "$ACTION performed for $SERVICE."
 }
