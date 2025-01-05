@@ -10,9 +10,10 @@
 # two mandatory arguments and up to three optional ones:
 # 
 # 1. "${1:?}" - the file or directory to check for and create or replace;
-# 2. "${2:?" - the action being performed, all lowercase; and
-# 2. "${3:?}" - the function to execute if the file or directory doesn't exist, 
+# 2. "${2:?}" - the function to execute if the file or directory doesn't exist, 
 #    or the user chooses to replace it; 
+# 3. "${3:?" - the action being performed, all lowercase, defaulting to 
+#    'replace'; and
 # 3 "$4|5|6" - optional lines to be echoed as "N.B." comments.
 #
 # If the file is to be replaced or recreated, "shift 3" is used to move variable
@@ -21,11 +22,14 @@
 # 
 # - https://stackoverflow.com/a/33202350
 # - https://unix.stackexchange.com/a/174568
+# 
+# N.B.
+# The "$ACTION" variable is third so 
 #-------------------------------------------------------------------------------
 checkAndCreateOrAskToReplaceFileOrDirectory () {
   local FILE_OR_DIR="${1:?}"
-  local ACTION="${2:?}"
-  local FUNCTION="${3:?}"
+  local FUNCTION="${2:?}"
+  local ACTION="${3:-"replace"}"
   local NB_LINE_1="$4"
   local NB_LINE_2="$5"
   local NB_LINE_3="$6"
