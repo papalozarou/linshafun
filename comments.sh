@@ -47,8 +47,8 @@ echoServiceWait () {
   local ACTION="${2:?}"
   local WAIT="${3:-"60"}"
 
-  echoComment "To give $SERVICE time to $ACTION we will wait at least"
-  echoComment "$WAIT seconds."
+  echoComment "To give $SERVICE time to $ACTION we will wait at"
+  echoComment "least $WAIT seconds."
   echoNb 'Please do not stop the script.'
   
   sleep "$WAIT"
