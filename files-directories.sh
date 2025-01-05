@@ -29,7 +29,7 @@
 checkAndCreateOrAskToReplaceFileOrDirectory () {
   local FILE_OR_DIR="${1:?}"
   local FUNCTION="${2:?}"
-  local ACTION="${3:-"replace"}"
+  local ACTION="${3:-"recreate"}"
   local NB_LINE_1="$4"
   local NB_LINE_2="$5"
   local NB_LINE_3="$6"
