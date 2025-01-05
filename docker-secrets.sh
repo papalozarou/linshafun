@@ -26,18 +26,16 @@ createDockerSecretsDir () {
 # Generates a given named secret, using a random string. Takes one mandatory 
 # argument:
 # 
-# 1. "${1:?}" - the name of the secrets file, all lowercase.
+# 1. "${1:?}" - the secret file, including directory path.
 #
 # N.B.
 # If the file already exists it is removed and recreated.
 #-------------------------------------------------------------------------------
-generateRandomDockerSecrets () {
-  local SECRET_FILE="$DOCKER_SECRETS_DIR/${1:?}"
+generateRandomDockerSecret () {
+  local SECRET_FILE="${1:?}"
   local SECRET_VALUE="$(generateRandomString)"
 
-  if [ -f "$SECRET_FILE" ]; then
-    removeFileOrDirectory "$SECRET_FILE"
-  fi
+  removeSecretFile "$SECRET_FILE"
 
   echoComment 'Generating a secret file at:'
   echoComment "$SECRET_FILE"
@@ -53,7 +51,7 @@ generateRandomDockerSecrets () {
 # Creates given named secrets by asking for user input. Takes one mandatory 
 # argument and up to three optional ones:
 # 
-# 1. "${1:?}" - the name of the secrets file, all lowercase; and
+# 1. "${1:?}" - the secret file, including directory path; and
 # 2. "$2|3|4" - optional lines to be echoed as "N.B." comments.
 #
 # "shift" is used to move variable "$2" to variable position "$1", to allow the 
@@ -65,16 +63,13 @@ generateRandomDockerSecrets () {
 # N.B.
 # If the file already exists it is removed and recreated.
 #-------------------------------------------------------------------------------
-getAndSetDockerSecrets () {
-  local FILE="${1:?}"
-  local SECRET_FILE="$DOCKER_SECRETS_DIR/$FILE"
+getAndSetDockerSecret () {
+  local SECRET_FILE="${1:?}"
   local NB_LINE_1="$2"
   local NB_LINE_2="$3"
   local NB_LINE_3="$4"
 
-  if [ -f "$SECRET_FILE" ]; then
-    removeFileOrDirectory "$SECRET_FILE"
-  fi
+  removeSecretFile "$SECRET_FILE"
 
   shift
 
@@ -88,4 +83,17 @@ getAndSetDockerSecrets () {
   setPermissions '644' "$SECRET_FILE"
 
   listDirectories "$DOCKER_SECRETS_DIR"
+}
+
+#-------------------------------------------------------------------------------
+# Removes a given secret file. Takes one mandatory argument:
+# 
+# 1. "${1:?}" - the secrets file, including directory path.
+#-------------------------------------------------------------------------------
+removeSecretFile () {
+  local SECRET_FILE="${1:?}"
+
+  if [ -f "$SECRET_FILE" ]; then
+    removeFileOrDirectory "$SECRET_FILE"
+  fi
 }
