@@ -10,12 +10,12 @@
 #
 # 1. When Passing a compose file:
 #    a. "${1:?}" – the compose file;
-#    b. "${2:?}" - the action to perform;
-#    c. "${3:?}" - the service to perform the action on; and
+#    b. "${2:?}" – the action to perform;
+#    c. "${3:?}" – the service to perform the action on; and
 #    d. $4 - any optional flags.
 # 2. Without passing a compose file:
-#    a. "${1:?}" - the action to perform;
-#    b. "${2:?}" - the service to perform the action on; and
+#    a. "${1:?}" – the action to perform;
+#    b. "${2:?}" – the service to perform the action on; and
 #    c. $3 - any optional flags.
 # 
 # Because we are trying to be POSIX compliant "case" is used instead of "if" to 
