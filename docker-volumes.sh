@@ -34,23 +34,24 @@ listVolumeContents () {
 #-------------------------------------------------------------------------------
 manageDockerVolumes () {
   local ACTION="${1:?}"
-  local PREFIX="${2:?}"
+  local PREFIX="$(changeCase "${2:?}" 'lower')_"
+
+  echoComment "$ACTION and $PREFIX"
 
   shift 2
 
   for i; do
-    local VOLUME="$PREFIX_$i"
+    local VOLUME="$PREFIX$i"
 
-    echoComment "Performing $ACTION on the following docker volume $VOLUME"
+    echoComment "Performing $ACTION on the following docker volume:"
+    echoComment "$VOLUME"
     echoSeparator
 
     if [ "$ACTION" = 'rm' ]; then 
-      docker image $ACTION -f $VOLUME
+      docker volume $ACTION -f $VOLUME
     else
-      docker image $ACTION $VOLUME
+      docker volume $ACTION $VOLUME
     fi
-
-    ACTION="$(changeCase "$ACTION" 'sentence')"
 
     echoSeparator
     echoComment "$ACTION performed on $VOLUME."
