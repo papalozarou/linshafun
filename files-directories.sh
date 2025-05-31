@@ -297,3 +297,19 @@ removeFileOrDirectory () {
     echoComment 'File or directory removed.'
   done    
 }
+
+#-------------------------------------------------------------------------------
+# Renames a file or directory. Takes three arguments, two of which are mandatory:
+#
+# 1. "${1:?}" - the directory path to the file or directory, defaulting to the
+#    current directory, ".";
+# 2. "${2:?}" - the current file or directory name; and
+# 3. "${3:?}" - the new file or directory name.
+#-------------------------------------------------------------------------------
+renameFileOrDirectory () {
+	local DIR="${1:-"."}"
+	local CURRENT_NAME="${2:?}"
+	local NEW_NAME="${3:?}"
+	
+	mv "$DIR/$CURRENT_NAME" "$DIR/$NEW_NAME"
+}
