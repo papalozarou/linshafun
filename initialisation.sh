@@ -27,9 +27,7 @@ checkAndCreateServiceFiles () {
 }
 
 #-------------------------------------------------------------------------------
-# Creates services files from "*.example" files. Takes one mandatory argument:
-#
-# 1. "${1:?}" – the example file, including directory path.
+# Creates services files from "*.example" files.
 # 
 # The function first checks if a service file exists, and if so backs it up, 
 # then creates the new service file from the respective "*.example" file.
