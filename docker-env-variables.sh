@@ -231,6 +231,10 @@ replaceDockerEnvPlaceholderVariable () {
 
   echoComment "Replacing placholder $ENV_VARIABLE in:"
   echoComment "$ENV_FILE"
+  echoSeparator
+  grep "$ENV_VARIABLE" "$ENV_FILE"
+  echoSeparator
+
   sed -i "s|\${DKR_ENV: \$"$ENV_VARIABLE"}|"$ENV_VALUE"|g" "$ENV_FILE"
 
   echoComment 'Checking variables have been replaced.'
