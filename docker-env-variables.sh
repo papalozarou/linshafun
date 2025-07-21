@@ -226,7 +226,7 @@ readDockerEnvVariable () {
 #-------------------------------------------------------------------------------
 replaceDockerEnvPlaceholderVariable () {
   local ENV_FILE="${1:?}"
-  local ENV_VARIABLE="${2:?}"
+  local ENV_VARIABLE='${DKR_ENV: '"${2:?}"'}'
   local ENV_VALUE="${3:?}"
 
   echoComment "Replacing placholder $ENV_VARIABLE with value $ENV_VALUE, in:"
@@ -235,7 +235,7 @@ replaceDockerEnvPlaceholderVariable () {
   grep "$ENV_VARIABLE" "$ENV_FILE"
   echoSeparator
 
-  sed -i "s|\${DKR_ENV: \$"$ENV_VARIABLE"}|"$ENV_VALUE"|g" "$ENV_FILE"
+  sed -i 's|'"$ENV_VARIABLE"'|'"$ENV_VALUE"'|g' "$ENV_FILE"
 
   echoComment 'Checking variables have been replaced.'
   echoSeparator
