@@ -73,7 +73,7 @@ getAndSetDockerSecret () {
 
   shift
 
-  promptForUserInput "What value do you want to set for $FILE?" "$@"
+  promptForUserInput "What value do you want to set for $SECRET_FILE?" "$@"
   local SECRET_VALUE="$(getUserInput)"
 
   echoComment 'Generating a secret file at:'
