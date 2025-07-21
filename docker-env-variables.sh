@@ -229,7 +229,7 @@ replaceDockerEnvPlaceholderVariable () {
   local ENV_VARIABLE="${2:?}"
   local ENV_VALUE="${3:?}"
 
-  echoComment "Replacing placholder $ENV_VARIABLE in:"
+  echoComment "Replacing placholder $ENV_VARIABLE with value $ENV_VALUE, in:"
   echoComment "$ENV_FILE"
   echoSeparator
   grep "$ENV_VARIABLE" "$ENV_FILE"
