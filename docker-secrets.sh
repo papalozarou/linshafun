@@ -5,6 +5,25 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+# Creates a docker secret. Takes two mandatory arguments:
+# 
+# 1. "${1:?}" - the secret value; and
+# 2. "${2:?}" - the secret file, including directory path.
+#-------------------------------------------------------------------------------
+createDockerSecret () {
+  local SECRET_VALUE="${1:?}"
+  local SECRET_FILE="${2:?}"
+
+  echoComment 'Generating a secret file at:'
+  echoComment "$SECRET_FILE"
+  echo "$SECRET_VALUE" >> "$SECRET_FILE"
+
+  setPermissions '644' "$SECRET_FILE"
+
+  listDirectories "$DOCKER_SECRETS_DIR"
+}
+
+#-------------------------------------------------------------------------------
 # Creates "$DOCKER_SECRETS_DIR", first checking to see if it already exists. If
 # it exists, do nothing. If it doesn't create it.
 #-------------------------------------------------------------------------------
@@ -76,13 +95,7 @@ getAndSetDockerSecret () {
   promptForUserInput "What value do you want to set for $SECRET_FILE?" "$@"
   local SECRET_VALUE="$(getUserInput)"
 
-  echoComment 'Generating a secret file at:'
-  echoComment "$SECRET_FILE"
-  echo "$SECRET_VALUE" >> "$SECRET_FILE"
-
-  setPermissions '644' "$SECRET_FILE"
-
-  listDirectories "$DOCKER_SECRETS_DIR"
+  createDockerSecret "$SECRET_VALUE" "$SECRET_FILE"
 }
 
 #-------------------------------------------------------------------------------
