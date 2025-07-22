@@ -10,7 +10,7 @@
 # 1. "${1:?}" - the secret value; and
 # 2. "${2:?}" - the secret file, including directory path.
 #-------------------------------------------------------------------------------
-createDockerSecret () {
+createDockerSecretFile () {
   local SECRET_VALUE="${1:?}"
   local SECRET_FILE="${2:?}"
 
@@ -95,7 +95,7 @@ getAndSetDockerSecret () {
   promptForUserInput "What value do you want to set for $SECRET_FILE?" "$@"
   local SECRET_VALUE="$(getUserInput)"
 
-  createDockerSecret "$SECRET_VALUE" "$SECRET_FILE"
+  createDockerSecretFile "$SECRET_VALUE" "$SECRET_FILE"
 }
 
 #-------------------------------------------------------------------------------
