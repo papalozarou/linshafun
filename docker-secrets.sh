@@ -54,7 +54,7 @@ generateRandomDockerSecret () {
   local SECRET_FILE="${1:?}"
   local SECRET_VALUE="$(generateRandomString)"
 
-  removeSecretFile "$SECRET_FILE"
+  removeDockerSecretFile "$SECRET_FILE"
 
   echoComment 'Generating a secret file at:'
   echoComment "$SECRET_FILE"
@@ -88,7 +88,7 @@ getAndSetDockerSecret () {
   local NB_LINE_2="$3"
   local NB_LINE_3="$4"
 
-  removeSecretFile "$SECRET_FILE"
+  removeDockerSecretFile "$SECRET_FILE"
 
   shift
 
@@ -99,11 +99,23 @@ getAndSetDockerSecret () {
 }
 
 #-------------------------------------------------------------------------------
+# Reads the value of a given secret file. Takes one mandatory argument:
+# 
+# 1. "${1:?}" - the secrets file, including directory path.
+#-------------------------------------------------------------------------------
+readDockerSecretFile () {
+  local SECRET_FILE="${1:?}"
+  local SECRET_VALUE="$(cat "$SECRET_FILE")"
+
+  echo "$SECRET_VALUE"
+}
+
+#-------------------------------------------------------------------------------
 # Removes a given secret file. Takes one mandatory argument:
 # 
 # 1. "${1:?}" - the secrets file, including directory path.
 #-------------------------------------------------------------------------------
-removeSecretFile () {
+removeDockerSecretFile () {
   local SECRET_FILE="${1:?}"
 
   if [ -f "$SECRET_FILE" ]; then
