@@ -36,7 +36,7 @@ buildDockerImages () {
 listDockerImages () {
   echoComment 'Listing docker images.'
   echoSeparator
-  docker compose -f "$DOCKER_COMPOSE_FILE" images
+  docker compose -f "$SERVICES_DIR/$DOCKER_COMPOSE_FILE" images
   echoSeparator
 }
 
