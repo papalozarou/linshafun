@@ -7,7 +7,7 @@
 #-------------------------------------------------------------------------------
 # Creates one or more images. Takes at least two or more arguments:
 # 
-# 1. "${1:?}" - the compose file; and
+# 1. "${1:?}" - the compose file, including directory path; and
 # 2. "$i" – one or more images to be built.
 # 
 # The function takes the first argument and stores it as the compose file. It 
