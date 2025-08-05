@@ -40,7 +40,7 @@ COMMENT_SEPARATOR='-------------------------------------------------------------
 # "$COMMENT_LINE" is not quoted in the for loop to allow for word splitting when
 # it is parsed.
 #-------------------------------------------------------------------------------
-echoComment () {
+printComment () {
   local COMMENT="${1:?}"
   local WARN_TF="${2:-false}"
 
@@ -58,18 +58,18 @@ echoComment () {
     elif [ $((${#CURRENT_LINE} + ${#WORD} + 1)) -le "$LINE_LENGTH" ]; then
       CURRENT_LINE="$CURRENT_LINE $WORD"
     elif [ "$WARN_TF" = true ]; then
-      printComment "$CURRENT_LINE" true
+      printLine "$CURRENT_LINE" true
       CURRENT_LINE="$WORD"
     else
-      printComment "$CURRENT_LINE"
+      printLine "$CURRENT_LINE"
       CURRENT_LINE="$WORD"
     fi
   done
 
   if [ -n "$CURRENT_LINE" ] && [ "$WARN_TF" = true ]; then
-    printComment "$CURRENT_LINE" true
+    printLine "$CURRENT_LINE" true
   elif [ -n "$CURRENT_LINE" ]; then
-    printComment "$CURRENT_LINE"
+    printLine "$CURRENT_LINE"
   fi
 }
 
@@ -81,7 +81,7 @@ echoComment () {
 # 2. "${2:?}" - the action being performed; and
 # 3. "${3:-"60"}" - the length of time, in seconds to wait, defaults to 60.
 #-------------------------------------------------------------------------------
-echoServiceWait () {
+printServiceWait () {
   local SERVICE="${1:?}"
   local ACTION="${2:?}"
   local WAIT="${3:-"60"}"
@@ -93,14 +93,14 @@ echoServiceWait () {
 }
 
 #-------------------------------------------------------------------------------
-# Echoes that the script is exiting. Takes one optional argument:
+# Tells the user that the script is exiting. Takes one optional argument:
 #
 # 1. $1 - flag for if exiting with changes.
 # 
 # If the flag is "true" the function will print the additional "changes were
 # made" output.
 #-------------------------------------------------------------------------------
-echoScriptExiting () {
+printScriptExiting () {
   echoSeparator
 
   if [ "$1" = true ]; then
@@ -113,9 +113,9 @@ echoScriptExiting () {
 }
 
 #-------------------------------------------------------------------------------
-# Echoes that the script has finished. Takes no arguments.
+# Tells the user that the script has finished. Takes no arguments.
 #-------------------------------------------------------------------------------
-echoScriptFinished () {
+printScriptFinished () {
   echoSeparator
   echoComment 'Script finished.'
   echoSeparator
@@ -124,7 +124,7 @@ echoScriptFinished () {
 #-------------------------------------------------------------------------------
 # Echoes comment separator. Takes no arguments.
 #-------------------------------------------------------------------------------
-echoSeparator () {
+printSeparator () {
   echoComment "$COMMENT_SEPARATOR"
 }
 
@@ -152,7 +152,7 @@ echoSeparator () {
 # - "\n" is used to ensure that each line ends properly, especially when the 
 #   last line does not reach the maximum length.
 #-------------------------------------------------------------------------------
-printComment () {
+printLine () {
   local LINE="${1:?}"
   local WARN_TF="${2:-false}"
 
