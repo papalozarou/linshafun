@@ -5,8 +5,8 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Writes the config key and echoes that the script has finished. Takes one 
-# mandatory argument:
+# Writes the config key and tells the user that the script has finished. Takes 
+# one mandatory argument:
 # 
 # 1. "${1:?}" – the config key to be written.
 # 

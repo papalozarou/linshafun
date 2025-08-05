@@ -122,7 +122,7 @@ printScriptFinished () {
 }
 
 #-------------------------------------------------------------------------------
-# Echoes comment separator. Takes no arguments.
+# Prints comment separator. Takes no arguments.
 #-------------------------------------------------------------------------------
 printSeparator () {
   printComment "$COMMENT_SEPARATOR"
