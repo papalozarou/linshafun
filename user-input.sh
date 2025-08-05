@@ -20,12 +20,12 @@ getUserInput () {
 getUserInputYN () {
   local INPUT_YN="$(getUserInput)"
 
-  if [ "$INPUT_YN" = "y" -o "$INPUT_YN" = "Y" ]; then
+  if [ "$INPUT_YN" = "y" ] || [ "$INPUT_YN" = "Y" ]; then
     echo true
-  elif [ "$INPUT_YN" = "n" -o "$INPUT_YN" = "N" ]; then
+  elif [ "$INPUT_YN" = "n" ] || [ "$INPUT_YN" = "N" ]; then
     echo false
   else
-    echoComment 'You must respond y/Y or n/N to proceed.' true
+    printComment 'You must respond y/Y or n/N to proceed.' true
     getUserInputYN
   fi
 }
@@ -46,11 +46,11 @@ getUserInputYN () {
 promptForUserInput () {
   local QUESTION="${1:?}"
   
-  echoComment "$QUESTION"
+  printComment "$QUESTION"
 
   shift
 
   if  [ "$#" -ge 1 ]; then
-    echoComment "$1" true
+    printComment "$1" true
   fi
 }
