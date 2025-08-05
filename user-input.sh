@@ -10,7 +10,7 @@
 getUserInput () {
   read -r USER_INPUT
 
-  echo "$USER_INPUT"
+  printf "%s\n" "$USER_INPUT"
 }
 
 #-------------------------------------------------------------------------------
@@ -25,21 +25,19 @@ getUserInputYN () {
   elif [ "$INPUT_YN" = "n" -o "$INPUT_YN" = "N" ]; then
     echo false
   else
-    echoComment 'You must respond y/Y or n/N to proceed.'
+    echoComment 'You must respond y/Y or n/N to proceed.' true
     getUserInputYN
   fi
 }
 
 #-------------------------------------------------------------------------------
-# Prompts for user input for consistency. Takes one or more arguments:
+# Prompts for user input for consistency. Takes two arguments:
 # 
 # 1. "${1:?}" - the question to ask the user; and
-# 2. "$i" – one or more warning lines, to allow for multiple lines.
+# 2. "$2" – an optional warning message.
 # 
 # The function takes the first argument as the question, then shifts the
-# argument position by one and loops through each warning lines, as per:
-# 
-# - https://unix.stackexchange.com/a/225951
+# argument position by one and prints any warning line.
 # 
 # N.B.
 # This function does not capture any user input, so must be used in conjunction 
@@ -53,6 +51,6 @@ promptForUserInput () {
   shift
 
   if  [ "$#" -ge 1 ]; then
-    echoNb "$@"
+    echoComment "$1" true
   fi
 }
