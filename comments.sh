@@ -9,14 +9,18 @@
 #
 # N.B.
 # "COMMENT_COLOUR_PREFIX" and "COMMENT_COLOUR_WARN" use the ANSI escape code for
-# green and red respectively. The "COMMENT_COLOUR_RESET" variable resets the 
+# green and yellow respectively. The "COMMENT_COLOUR_RESET" variable resets the 
 # ANSI colour.
+# 
+# Yes, yes we are using the latin phrase, not the abbreviation, for 
+# "COMMENT_PREFIX_WARN".
 #-------------------------------------------------------------------------------
 COMMENT_COLOUR_PREFIX='\033[32m'
 COMMENT_COLOUR_WARN='\033[33m'
 COMMENT_COLOUR_ERROR='\033[31m'
 COMMENT_COLOUR_RESET='\033[0m'
-COMMENT_PREFIX="SETUP SCRIPT: "
+COMMENT_PREFIX='SETUP SCRIPT: '
+COMMENT_PREFIX_WARN='NOTA BENE: '
 COMMENT_SEPARATOR='------------------------------------------------------------------'
 
 #-------------------------------------------------------------------------------
@@ -33,7 +37,8 @@ COMMENT_SEPARATOR='-------------------------------------------------------------
 # even if it does not reach the maximum length, via the last for loop.
 # 
 # N.B.
-# "$COMMENT_LINE" is not quoted in the for loop to allow for word splitting.
+# "$COMMENT_LINE" is not quoted in the for loop to allow for word splitting when
+# it is parsed.
 # 
 # In the "printf" commands:
 # 
@@ -81,21 +86,22 @@ echoComment () {
 # arguments:
 # 
 # 1. "${1:?}" – the comment line to print; and
-# 2. "${2:-false}" – a flag indicating if the line is an "N.B." line, defaulting
+# 2. "${2:-false}" – a flag indicating if the line is a warning line, defaulting
 #    to "false".
 #
 # The comment line is printed in the specified colour, with the appropriate 
-# prefix. If the second argument is "true", it uses the "N.B." prefix and colour.
+# prefix. If the second argument is "true", it uses the warning prefix and 
+# colour.
 # 
 # N.B.
 # The "COMMENT_COLOUR_PREFIX" and "COMMENT_COLOUR_WARN" variables are used to
-# differentiate between regular comments and "N.B." comments.
+# differentiate between regular comments and warning comments.
 #-------------------------------------------------------------------------------
 printComment () {
   local LINE="${1:?}"
-  local NB_TF="${2:-false}"
+  local WARN_TF="${2:-false}"
 
-  if [ "$NB_TF" = true ]; then
+  if [ "$WARN_TF" = true ]; then
     printf "%b%s\n" "$COMMENT_COLOUR_WARN$COMMENT_PREFIX_WARN$LINE"
   else
     printf "%b%s\n" "$COMMENT_COLOUR_PREFIX$COMMENT_PREFIX$COMMENT_COLOUR_RESET$LINE"
