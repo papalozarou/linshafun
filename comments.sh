@@ -6,32 +6,100 @@
 
 #-------------------------------------------------------------------------------
 # Comment variables.
+#
+# N.B.
+# "COMMENT_COLOUR_PREFIX" and "COMMENT_COLOUR_WARN" use the ANSI escape code for
+# green and red respectively. The "COMMENT_COLOUR_RESET" variable resets the 
+# ANSI colour.
 #-------------------------------------------------------------------------------
-COMMENT_PREFIX='SETUP SCRIPT:'
+COMMENT_COLOUR_PREFIX='\033[32m'
+COMMENT_COLOUR_WARN='\033[33m'
+COMMENT_COLOUR_ERROR='\033[31m'
+COMMENT_COLOUR_RESET='\033[0m'
+COMMENT_PREFIX="SETUP SCRIPT: "
 COMMENT_SEPARATOR='------------------------------------------------------------------'
 
 #-------------------------------------------------------------------------------
-# Echoes comments. Takes one mandatory argument:
+# Prints a comment. Takes two arguments:
 # 
-# 1. "${1:?}" – a comment.
+# 1. "${1:?}" – the full comment to echo; and
+# 2. "${2:-false}" – a flag indicating if the comment is a warning, defaulting 
+#    to false.
+# 
+# The comment is split into words and printed in lines that do not exceed the
+# standard terminal length of 80 characters, including prefix.
+# 
+# The function handles line breaks and ensures that the last line is printed 
+# even if it does not reach the maximum length, via the last for loop.
+# 
+# N.B.
+# "$COMMENT_LINE" is not quoted in the for loop to allow for word splitting.
+# 
+# In the "printf" commands:
+# 
+# - "%b" in the printf command interprets escape sequences, allowing the use of 
+#    ANSI escape codes for colour formatting;
+# - "%s" prints the string, and "\n" adds a newline at the end; and
+# - "\n" is used to ensure that each line ends properly, especially when the 
+#   last line does not reach the maximum length.
 #-------------------------------------------------------------------------------
 echoComment () {
   local COMMENT="${1:?}"
-  
-  echo "$COMMENT_PREFIX $COMMENT"
+  local WARN_TF="${2:-false}"
+
+  if [ "$WARN_TF" = true ]; then
+    local LINE_LENGTH=69
+  else
+    local LINE_LENGTH=66
+  fi
+
+  CURRENT_LINE=
+
+  for WORD in $COMMENT; do
+    if [ -z "$CURRENT_LINE" ]; then
+      CURRENT_LINE="$WORD"
+    elif [ $((${#CURRENT_LINE} + ${#WORD} + 1)) -le "$LINE_LENGTH" ]; then
+      CURRENT_LINE="$CURRENT_LINE $WORD"
+    elif [ "$WARN_TF" = true ]; then
+      printComment "$CURRENT_LINE" true
+      CURRENT_LINE="$WORD"
+    else
+      printComment "$CURRENT_LINE"
+      CURRENT_LINE="$WORD"
+    fi
+  done
+
+  if [ -n "$CURRENT_LINE" ] && [ "$WARN_TF" = true ]; then
+    printComment "$CURRENT_LINE" true
+  elif [ -n "$CURRENT_LINE" ]; then
+    printComment "$CURRENT_LINE"
+  fi
 }
 
 #-------------------------------------------------------------------------------
-# Echoes an "N.B." lines for consistency. Takes one or more arguments:
+# Prints a comment line with the specified prefix and colour. Takes two
+# arguments:
 # 
-# 1. "$@" – one or more comment lines to echo after the "N.B." header.
+# 1. "${1:?}" – the comment line to print; and
+# 2. "${2:-false}" – a flag indicating if the line is an "N.B." line, defaulting
+#    to "false".
+#
+# The comment line is printed in the specified colour, with the appropriate 
+# prefix. If the second argument is "true", it uses the "N.B." prefix and colour.
+# 
+# N.B.
+# The "COMMENT_COLOUR_PREFIX" and "COMMENT_COLOUR_WARN" variables are used to
+# differentiate between regular comments and "N.B." comments.
 #-------------------------------------------------------------------------------
-echoNb () {
-  echoComment '****** N.B. ******'
+printComment () {
+  local LINE="${1:?}"
+  local NB_TF="${2:-false}"
 
-  for COMMENT in "$@"; do
-    echoComment "$COMMENT"
-  done
+  if [ "$NB_TF" = true ]; then
+    printf "%b%s\n" "$COMMENT_COLOUR_WARN$COMMENT_PREFIX_WARN$LINE"
+  else
+    printf "%b%s\n" "$COMMENT_COLOUR_PREFIX$COMMENT_PREFIX$COMMENT_COLOUR_RESET$LINE"
+  fi
 }
 
 #-------------------------------------------------------------------------------
@@ -47,9 +115,8 @@ echoServiceWait () {
   local ACTION="${2:?}"
   local WAIT="${3:-"60"}"
 
-  echoComment "To give $SERVICE time to $ACTION we will wait at"
-  echoComment "least $WAIT seconds."
-  echoNb 'Please do not stop the script.'
+  echoComment "To give $SERVICE time to $ACTION we will wait at least $WAIT seconds."
+  echoComment 'Please do not stop the script.' true
   
   sleep "$WAIT"
 }
@@ -66,8 +133,7 @@ echoScriptExiting () {
   echoSeparator
 
   if [ "$1" = true ]; then
-    echoComment 'Exiting script, however some changes were made – please review'
-    echoComment 'the script output.'
+    echoComment 'Exiting script, however some changes were made – please review the script output.' true
   else
     echoComment 'Exiting script with no changes.'
   fi
