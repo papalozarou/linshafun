@@ -74,41 +74,6 @@ echoComment () {
 }
 
 #-------------------------------------------------------------------------------
-# Prints a comment line with the specified prefix and colour. Takes two
-# arguments:
-# 
-# 1. "${1:?}" – the comment line to print; and
-# 2. "${2:-false}" – a flag indicating if the line is a warning line, defaulting
-#    to "false".
-#
-# The comment line is printed in the specified colour, with the appropriate 
-# prefix. If the second argument is "true", it uses the warning prefix and 
-# colour.
-# 
-# N.B.
-# The "COMMENT_COLOUR_PREFIX" and "COMMENT_COLOUR_WARN" variables are used to
-# differentiate between regular comments and warning comments.
-# 
-# In the "printf" commands:
-# 
-# - "%b" interprets escape sequences in the corresponding argument, allowing the
-#   use of ANSI escape codes for colour formatting;
-# - "%s" prints a string; and
-# - "\n" is used to ensure that each line ends properly, especially when the 
-#   last line does not reach the maximum length.
-#-------------------------------------------------------------------------------
-printComment () {
-  local LINE="${1:?}"
-  local WARN_TF="${2:-false}"
-
-  if [ "$WARN_TF" = true ]; then
-    printf "%b%s%s\n" "$COMMENT_COLOUR_WARN" "$COMMENT_PREFIX_WARN" "$LINE"
-  else
-    printf "%b%s%b%s\n" "$COMMENT_COLOUR_PREFIX" "$COMMENT_PREFIX" "$COMMENT_COLOUR_RESET" "$LINE"
-  fi
-}
-
-#-------------------------------------------------------------------------------
 # Tells the user an action is taking place and a wait is needed. Takes three
 # mandatory arguments:
 # 
@@ -161,4 +126,39 @@ echoScriptFinished () {
 #-------------------------------------------------------------------------------
 echoSeparator () {
   echoComment "$COMMENT_SEPARATOR"
+}
+
+#-------------------------------------------------------------------------------
+# Prints a comment line with the specified prefix and colour. Takes two
+# arguments:
+# 
+# 1. "${1:?}" – the comment line to print; and
+# 2. "${2:-false}" – a flag indicating if the line is a warning line, defaulting
+#    to "false".
+#
+# The comment line is printed in the specified colour, with the appropriate 
+# prefix. If the second argument is "true", it uses the warning prefix and 
+# colour.
+# 
+# N.B.
+# The "COMMENT_COLOUR_PREFIX" and "COMMENT_COLOUR_WARN" variables are used to
+# differentiate between regular comments and warning comments.
+# 
+# In the "printf" commands:
+# 
+# - "%b" interprets escape sequences in the corresponding argument, allowing the
+#   use of ANSI escape codes for colour formatting;
+# - "%s" prints a string; and
+# - "\n" is used to ensure that each line ends properly, especially when the 
+#   last line does not reach the maximum length.
+#-------------------------------------------------------------------------------
+printComment () {
+  local LINE="${1:?}"
+  local WARN_TF="${2:-false}"
+
+  if [ "$WARN_TF" = true ]; then
+    printf "%b%s%s\n" "$COMMENT_COLOUR_WARN" "$COMMENT_PREFIX_WARN" "$LINE"
+  else
+    printf "%b%s%b%s\n" "$COMMENT_COLOUR_PREFIX" "$COMMENT_PREFIX" "$COMMENT_COLOUR_RESET" "$LINE"
+  fi
 }
