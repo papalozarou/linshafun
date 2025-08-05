@@ -39,14 +39,6 @@ COMMENT_SEPARATOR='-------------------------------------------------------------
 # N.B.
 # "$COMMENT_LINE" is not quoted in the for loop to allow for word splitting when
 # it is parsed.
-# 
-# In the "printf" commands:
-# 
-# - "%b" in the printf command interprets escape sequences, allowing the use of 
-#    ANSI escape codes for colour formatting;
-# - "%s" prints the string, and "\n" adds a newline at the end; and
-# - "\n" is used to ensure that each line ends properly, especially when the 
-#   last line does not reach the maximum length.
 #-------------------------------------------------------------------------------
 echoComment () {
   local COMMENT="${1:?}"
@@ -96,15 +88,23 @@ echoComment () {
 # N.B.
 # The "COMMENT_COLOUR_PREFIX" and "COMMENT_COLOUR_WARN" variables are used to
 # differentiate between regular comments and warning comments.
+# 
+# In the "printf" commands:
+# 
+# - "%b" interprets escape sequences in the corresponding argument, allowing the
+#   use of ANSI escape codes for colour formatting;
+# - "%s" prints a string; and
+# - "\n" is used to ensure that each line ends properly, especially when the 
+#   last line does not reach the maximum length.
 #-------------------------------------------------------------------------------
 printComment () {
   local LINE="${1:?}"
   local WARN_TF="${2:-false}"
 
   if [ "$WARN_TF" = true ]; then
-    printf "%b%s\n" "$COMMENT_COLOUR_WARN$COMMENT_PREFIX_WARN$LINE"
+    printf "%b%s%s\n" "$COMMENT_COLOUR_WARN" "$COMMENT_PREFIX_WARN" "$LINE"
   else
-    printf "%b%s\n" "$COMMENT_COLOUR_PREFIX$COMMENT_PREFIX$COMMENT_COLOUR_RESET$LINE"
+    printf "%b%s%b%s\n" "$COMMENT_COLOUR_PREFIX" "$COMMENT_PREFIX" "$COMMENT_COLOUR_RESET" "$LINE"
   fi
 }
 
