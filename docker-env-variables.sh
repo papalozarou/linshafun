@@ -32,10 +32,10 @@ changeDockerEnvVariable () {
         ;;
   esac
 
-  echoComment "The current value of $ENV_VARIABLE is:"
-  echoSeparator
-  echoComment "$ENV_VALUE"
-  echoSeparator
+  printComment "The current value of $ENV_VARIABLE is:"
+  printSeparator
+  printComment "$ENV_VALUE"
+  printSeparator
 
   promptForUserInput "Do you want to set a new value for $ENV_VARIABLE?" 'This may break existing setups if running these scripts again.'
   ENV_VARIABLE_SET_YN="$(getUserInputYN)"
@@ -50,7 +50,7 @@ changeDockerEnvVariable () {
   if [ "$ENV_VARIABLE_SET_YN" = true ]; then
     setDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE" "$ENV_VALUE"
   else
-    echoComment "No changes to $ENV_VARIABLE made."
+    printComment "No changes to $ENV_VARIABLE made."
   fi
 }
 
@@ -75,8 +75,8 @@ checkAndSetDockerEnvVariables () {
   for i; do
     local ENV_VARIABLE_TF="$(checkIfDockerEnvVariableSet "$ENV_FILE" "$i")"
 
-    echoComment "Checking to see if $i is set…"
-    echoComment "Check returned $ENV_VARIABLE_TF."
+    printComment "Checking to see if $i is set…"
+    printComment "Check returned $ENV_VARIABLE_TF."
 
     changeDockerEnvVariable "$ENV_FILE" "$i"
   done
@@ -138,21 +138,21 @@ compareAndUpdateDockerEnvVariables () {
 
     local ENV_NEWER_TF="$(compareDockerEnvVariableWithValue "$ENV_FILE" "$ENV_VARIABLE" "$ENV_COMPARISON")"
 
-    echoComment "Comparing the env variable for $ENV_VARIABLE with the comparison value…"
+    printComment "Comparing the env variable for $ENV_VARIABLE with the comparison value…"
 
     if [ "$ENV_NEWER_TF" = true ]; then
-      echoComment "The current value of $ENV_VARIABLE is the same as the comparison value:"
-      echoSeparator
-      echoComment "Environment file value: $ENV_VALUE"
-      echoComment "Comparison value:       $ENV_COMPARISON"
-      echoSeparator
-      echoComment "No changes to $ENV_VARIABLE made."
+      printComment "The current value of $ENV_VARIABLE is the same as the comparison value:"
+      printSeparator
+      printComment "Environment file value: $ENV_VALUE"
+      printComment "Comparison value:       $ENV_COMPARISON"
+      printSeparator
+      printComment "No changes to $ENV_VARIABLE made."
     else
-      echoComment "The current value of $ENV_VARIABLE is different to the comparison value:"
-      echoSeparator
-      echoComment "Environment file value: $ENV_VALUE"
-      echoComment "Comparison value:       $ENV_COMPARISON"
-      echoSeparator
+      printComment "The current value of $ENV_VARIABLE is different to the comparison value:"
+      printSeparator
+      printComment "Environment file value: $ENV_VALUE"
+      printComment "Comparison value:       $ENV_COMPARISON"
+      printSeparator
 
       changeDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE"
     fi
@@ -229,19 +229,19 @@ replaceDockerEnvPlaceholderVariable () {
   local ENV_VARIABLE='${DKR_ENV: '"${2:?}"'}'
   local ENV_VALUE="${3:?}"
 
-  echoComment "Replacing placholder $ENV_VARIABLE with value $ENV_VALUE, in:"
-  echoComment "$ENV_FILE"
-  echoSeparator
+  printComment "Replacing placholder $ENV_VARIABLE with value $ENV_VALUE, in:"
+  printComment "$ENV_FILE"
+  printSeparator
   grep "$ENV_VARIABLE" "$ENV_FILE"
-  echoSeparator
+  printSeparator
 
   sed -i 's|'"$ENV_VARIABLE"'|'"$ENV_VALUE"'|g' "$ENV_FILE"
 
-  echoComment 'Checking variables have been replaced.'
-  echoSeparator
+  printComment 'Checking variables have been replaced.'
+  printSeparator
   grep "$ENV_VALUE" "$ENV_FILE"
-  echoSeparator
-  echoComment "Placeholder variable replaced."
+  printSeparator
+  printComment "Placeholder variable replaced."
 }
 
 #-------------------------------------------------------------------------------
@@ -266,11 +266,11 @@ setDockerEnvVariable () {
   local ENV_VARIABLE="${2:?}"
   local ENV_VALUE="${3:?}"
 
-  echoComment "Setting $ENV_VARIABLE to $ENV_VALUE in:"
-  echoComment "$ENV_FILE"
+  printComment "Setting $ENV_VARIABLE to $ENV_VALUE in:"
+  printComment "$ENV_FILE"
   sed -i '/'"$ENV_VARIABLE"='/c\\'"$ENV_VARIABLE=$ENV_VALUE" "$ENV_FILE"
-  echoSeparator
+  printSeparator
   grep "$ENV_VALUE" "$ENV_FILE"
-  echoSeparator
-  echoComment 'Variable updated.'
+  printSeparator
+  printComment 'Variable updated.'
 }

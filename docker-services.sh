@@ -44,9 +44,9 @@ controlDockerService () {
       ;; 
   esac
 
-  echoComment "Performing $ACTION for $SERVICE, using compose file:"
-  echoComment "$COMPOSE_FILE"
-  echoSeparator
+  printComment "Performing $ACTION for $SERVICE, using compose file:"
+  printComment "$COMPOSE_FILE"
+  printSeparator
 
   if [ "$ACTION" = "up" ]; then
     docker compose -f "$COMPOSE_FILE" "$ACTION" -d "$SERVICE" $FLAGS
@@ -54,8 +54,8 @@ controlDockerService () {
     docker compose -f "$COMPOSE_FILE" "$ACTION" "$SERVICE" $FLAGS
   fi
   ACTION="$(changeCase "$ACTION" 'sentence')"
-  echoSeparator
-  echoComment "$ACTION performed for $SERVICE."
+  printSeparator
+  printComment "$ACTION performed for $SERVICE."
 }
 
 #-------------------------------------------------------------------------------
@@ -85,15 +85,15 @@ controlRelatedDockerServices () {
 # a check.
 #-------------------------------------------------------------------------------
 stopRunningContainers () {
-  echoComment 'Stopping all running service containers…'
-  echoSeparator
+  printComment 'Stopping all running service containers…'
+  printSeparator
   docker compose down
 
-  echoComment 'Running "docker compose ps -a" to check containers have stopped…'
-  echoSeparator
+  printComment 'Running "docker compose ps -a" to check containers have stopped…'
+  printSeparator
   docker compose ps -a
-  echoSeparator
+  printSeparator
 
-  echoComment 'Assuming no containers are listed above, all containers have'
-  echoComment 'been stopped.'
+  printComment 'Assuming no containers are listed above, all containers have'
+  printComment 'been stopped.'
 }

@@ -20,7 +20,7 @@ finaliseScript () {
 
   writeSetupConfigOption "$CONF_KEY" true
 
-  echoScriptFinished
+  printScriptFinished
 }
 
 #-------------------------------------------------------------------------------
@@ -42,22 +42,22 @@ initialiseScript () {
   local CONF_KEY="${1:?}"
   local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
 
-  echoComment 'Checking the setup config to see if this step has already been'
-  echoComment 'performed…'
-  echoComment "Check returned $CONF_OPTION_TF."
+  printComment 'Checking the setup config to see if this step has already been'
+  printComment 'performed…'
+  printComment "Check returned $CONF_OPTION_TF."
 
   if [ "$CONF_OPTION_TF" = true ]; then
-    echoComment 'You have already performed this step.'
-    echoScriptExiting
+    printComment 'You have already performed this step.'
+    printScriptExiting
 
     exit 1
   elif [ "$CONF_OPTION_TF" = false ]; then
-    echoComment 'You have not performed this step. Running script.'
-    echoSeparator
+    printComment 'You have not performed this step. Running script.'
+    printSeparator
   else
-    echoComment 'Something went wrong. Please check your setup config at:'
-    echoComment "$SETUP_CONF."
-    echoScriptExiting
+    printComment 'Something went wrong. Please check your setup config at:'
+    printComment "$SETUP_CONF."
+    printScriptExiting
 
     exit 1
   fi

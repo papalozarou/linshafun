@@ -16,21 +16,21 @@ checkForSetupConfigFileAndDir () {
   local SETUP_CONF_TF="$(checkForFileOrDirectory "$SETUP_CONF")"
   local SETUP_CONF_DIR_TF="$(checkForFileOrDirectory "$SETUP_CONF_DIR")"
 
-  echoComment 'Checking for the setup config file or directory at:'
-  echoComment "$SETUP_CONF_DIR"
+  printComment 'Checking for the setup config file or directory at:'
+  printComment "$SETUP_CONF_DIR"
 
-  echoComment "Check for config file returned $SETUP_CONF_TF."
-  echoComment "Check for config directory returned $SETUP_CONF_DIR_TF."
+  printComment "Check for config file returned $SETUP_CONF_TF."
+  printComment "Check for config directory returned $SETUP_CONF_DIR_TF."
 
   if [ "$SETUP_CONF_TF" = true ]; then
-    echoComment 'The setup config file and directory exist.'
+    printComment 'The setup config file and directory exist.'
   elif [ "$SETUP_CONF_DIR_TF" = false ]; then
-    echoComment 'The setup config file and directory do not exist.'
+    printComment 'The setup config file and directory do not exist.'
 
     createSetupConfigDirectory
     createSetupConfigFile
   elif [ "$SETUP_CONF_TF" = false ]; then
-    echoComment 'The setup config file does not exist.'
+    printComment 'The setup config file does not exist.'
 
     createSetupConfigFile
   fi
@@ -106,8 +106,8 @@ getServiceFromConfigKey () {
 # Lists the contents of the setup config file
 #-------------------------------------------------------------------------------
 listSetupConfig () {
-  echoComment 'Listing contents of setup config file:'
-  echoSeparator
+  printComment 'Listing contents of setup config file:'
+  printSeparator
   cat "$SETUP_CONF"
 }
 
@@ -152,15 +152,15 @@ removeSetupConfigOption () {
   local CONF_KEY="${1:?}"
   local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
 
-  echoComment "Removing $CONF_KEY from:"
-  echoComment "$SETUP_CONF"
+  printComment "Removing $CONF_KEY from:"
+  printComment "$SETUP_CONF"
 
   if [ "$CONF_OPTION_TF" = true ]; then  
     sed -i '/^'"$CONF_KEY"'/d' "$SETUP_CONF"
 
-    echoComment "$CONF_KEY removed."
+    printComment "$CONF_KEY removed."
   else
-    echoComment "$CONF_KEY not found, no changes made."
+    printComment "$CONF_KEY not found, no changes made."
   fi
 
   listSetupConfig
@@ -184,38 +184,38 @@ writeSetupConfigOption () {
   local CONF_VALUE="${2:?}"
   local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
 
-  echoComment "Writing $CONF_KEY with value $CONF_VALUE to:"
-  echoComment "$SETUP_CONF"
+  printComment "Writing $CONF_KEY with value $CONF_VALUE to:"
+  printComment "$SETUP_CONF"
 
   if [ "$CONF_OPTION_TF" = true ]; then
     local EXISTING_CONF_VALUE="$(readSetupConfigValue "$CONF_KEY")"
 
-    echoComment "$CONF_KEY already exists with value $EXISTING_CONF_VALUE."
+    printComment "$CONF_KEY already exists with value $EXISTING_CONF_VALUE."
   fi
 
   if [ "$CONF_OPTION_TF" = true ] && [ "$EXISTING_CONF_VALUE" = "$CONF_VALUE" ]; then
-    echoComment 'No changes made.'
+    printComment 'No changes made.'
   elif [ "$CONF_OPTION_TF" = true ] && [ "$EXISTING_CONF_VALUE" != "$CONF_VALUE" ]; then
-    echoComment "Overwriting existing value with $CONF_VALUE."
+    printComment "Overwriting existing value with $CONF_VALUE."
 
     sed -i '/^'"$CONF_KEY"'/c\'"$CONF_KEY $CONF_VALUE" "$SETUP_CONF"
 
-    echoComment 'Config written.'
+    printComment 'Config written.'
 
     setOwner "$SUDO_USER" "$SETUP_CONF"
   elif [ "$CONF_OPTION_TF" = false ]; then
     echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF"
 
-    echoComment 'Config written.'
+    printComment 'Config written.'
 
     setOwner "$SUDO_USER" "$SETUP_CONF"
   else
-    echoComment 'Something went wrong. Please check your setup config at:'
-    echoComment "$SETUP_CONF."
-    echoComment 'You may need to manually add the following to the setup config:'
-    echoComment "$CONF_KEY $CONF_VALUE"
+    printComment 'Something went wrong. Please check your setup config at:'
+    printComment "$SETUP_CONF."
+    printComment 'You may need to manually add the following to the setup config:'
+    printComment "$CONF_KEY $CONF_VALUE"
 
-    echoScriptExiting true
+    printScriptExiting true
 
     exit 1
   fi

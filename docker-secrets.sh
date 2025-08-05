@@ -14,8 +14,8 @@ createDockerSecretFile () {
   local SECRET_VALUE="${1:?}"
   local SECRET_FILE="${2:?}"
 
-  echoComment 'Generating a secret file at:'
-  echoComment "$SECRET_FILE"
+  printComment 'Generating a secret file at:'
+  printComment "$SECRET_FILE"
   echo "$SECRET_VALUE" >> "$SECRET_FILE"
 
   setPermissions '644' "$SECRET_FILE"
@@ -30,11 +30,11 @@ createDockerSecretFile () {
 createDockerSecretsDir () {
   local DOCKER_SECRETS_DIR_TF="$(checkForFileOrDirectory "$DOCKER_SECRETS_DIR")"
 
-  echoComment 'Checking for a docker secrets directory at:'
-  echoComment "$DOCKER_SECRETS_DIR"
+  printComment 'Checking for a docker secrets directory at:'
+  printComment "$DOCKER_SECRETS_DIR"
 
   if [ "$DOCKER_SECRETS_DIR_TF" = true ]; then
-    echoComment 'The docker secrets directory already exists.'
+    printComment 'The docker secrets directory already exists.'
   elif [ "$DOCKER_SECRETS_DIR_TF" = false ]; then
     createDirectory "$DOCKER_SECRETS_DIR"
     setPermissions '600' "$DOCKER_SECRETS_DIR"
@@ -56,8 +56,8 @@ generateRandomDockerSecret () {
 
   removeDockerSecretFile "$SECRET_FILE"
 
-  echoComment 'Generating a secret file at:'
-  echoComment "$SECRET_FILE"
+  printComment 'Generating a secret file at:'
+  printComment "$SECRET_FILE"
 
   echo "$SECRET_VALUE" >> "$SECRET_FILE"
 

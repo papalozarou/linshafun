@@ -61,19 +61,19 @@ setHostEnvVariable () {
   local EXPORT="export $ENV_VARIABLE=$ENV_VALUE"
 
   if [ "$ENV_TF" = true ]; then
-    echoComment "Already added $ENV_VARIABLE. No changes made."
+    printComment "Already added $ENV_VARIABLE. No changes made."
   elif [ "$ENV_TF" = false ]; then
-    echoComment "Adding $ENV_VARIABLE=$ENV_VALUE to:"
-    echoComment "$PROFILE"
+    printComment "Adding $ENV_VARIABLE=$ENV_VALUE to:"
+    printComment "$PROFILE"
     echo "$EXPORT" >> "$PROFILE"
 
-    echoComment 'Checking value added.'
-    echoSeparator
+    printComment 'Checking value added.'
+    printSeparator
     grep "$ENV_VARIABLE" "$PROFILE"
-    echoSeparator
-    echoComment "$ENV_VARIABLE added."
+    printSeparator
+    printComment "$ENV_VARIABLE added."
 
-    echoSeparator
-    echoComment 'This variable will not be recognised until you log out and back in.'
+    printSeparator
+    printComment 'This variable will not be recognised until you log out and back in.'
   fi
 }

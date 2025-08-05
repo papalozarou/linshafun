@@ -86,8 +86,8 @@ printServiceWait () {
   local ACTION="${2:?}"
   local WAIT="${3:-"60"}"
 
-  echoComment "To give $SERVICE time to $ACTION we will wait at least $WAIT seconds."
-  echoComment 'Please do not stop the script.' true
+  printComment "To give $SERVICE time to $ACTION we will wait at least $WAIT seconds."
+  printComment 'Please do not stop the script.' true
   
   sleep "$WAIT"
 }
@@ -101,31 +101,31 @@ printServiceWait () {
 # made" output.
 #-------------------------------------------------------------------------------
 printScriptExiting () {
-  echoSeparator
+  printSeparator
 
   if [ "$1" = true ]; then
-    echoComment 'Exiting script, however some changes were made – please review the script output.' true
+    printComment 'Exiting script, however some changes were made – please review the script output.' true
   else
-    echoComment 'Exiting script with no changes.'
+    printComment 'Exiting script with no changes.'
   fi
 
-  echoSeparator
+  printSeparator
 }
 
 #-------------------------------------------------------------------------------
 # Tells the user that the script has finished. Takes no arguments.
 #-------------------------------------------------------------------------------
 printScriptFinished () {
-  echoSeparator
-  echoComment 'Script finished.'
-  echoSeparator
+  printSeparator
+  printComment 'Script finished.'
+  printSeparator
 }
 
 #-------------------------------------------------------------------------------
 # Echoes comment separator. Takes no arguments.
 #-------------------------------------------------------------------------------
 printSeparator () {
-  echoComment "$COMMENT_SEPARATOR"
+  printComment "$COMMENT_SEPARATOR"
 }
 
 #-------------------------------------------------------------------------------

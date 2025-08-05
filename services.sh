@@ -14,7 +14,7 @@ controlService () {
   local ACTION="${1:?}"
   local SERVICE="${2:?}"
 
-  echoComment "Performing $ACTION for $SERVICE."
+  printComment "Performing $ACTION for $SERVICE."
 
   if [ "$SERVICE" = 'ufw' ]; then
     "$SERVICE" "$ACTION"
@@ -23,6 +23,6 @@ controlService () {
   fi
   
   ACTION="$(changeCase "$ACTION" 'sentence')"
-  echoSeparator
-  echoComment "$ACTION performed for $SERVICE."
+  printSeparator
+  printComment "$ACTION performed for $SERVICE."
 }

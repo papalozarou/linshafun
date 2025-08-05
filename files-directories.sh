@@ -34,18 +34,18 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   local NB_LINE_2="$5"
   local NB_LINE_3="$6"
 
-  echoComment 'Checking for file or directory at:'
-  echoComment "$FILE_OR_DIR"
+  printComment 'Checking for file or directory at:'
+  printComment "$FILE_OR_DIR"
   
   local FILE_OR_DIR_TF="$(checkForFileOrDirectory "$FILE_OR_DIR")"
 
-  echoComment "The check returned $FILE_OR_DIR_TF."
+  printComment "The check returned $FILE_OR_DIR_TF."
 
   if [ "$FILE_OR_DIR_TF" = true ]; then
     promptForUserInput "The file or directory exists. Do you want to $ACTION it (y/n)?" 'This cannot be undone if you answer y/Y.'
     local REPLACE_YN="$(getUserInputYN)"
   elif [ "$FILE_OR_DIR_TF" = false ]; then
-    echoComment "The file or directory does not exist."
+    printComment "The file or directory does not exist."
   fi
   
   if [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ]; then
@@ -57,7 +57,7 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   elif [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ] && [ "$#" -eq 0 ]; then
     ("$FUNCTION" "$FILE_OR_DIR")
   else
-    echoComment 'No changes were made.'
+    printComment 'No changes were made.'
   fi
 
   listDirectories "$FILE_OR_DIR"
@@ -97,16 +97,16 @@ copyAndAddPostfixToFiles () {
   local POSTFIX="${2:-".backup"}"
 
   for FILE in $FILES; do
-    echoComment "Copying and adding $POSTFIX to the file:"
-    echoSeparator
-    echoComment "$FILE"
-    echoSeparator
+    printComment "Copying and adding $POSTFIX to the file:"
+    printSeparator
+    printComment "$FILE"
+    printSeparator
 
     local FILE_COPY="$(addPostfix "$FILE" "$POSTFIX")"
 
     cp -p "$FILE" "$FILE_COPY"
 
-    echoComment 'File copied and postfix added.'
+    printComment 'File copied and postfix added.'
   done
 }
 
@@ -128,16 +128,16 @@ copyAndRemovePostfixFromFiles () {
   local POSTFIX="${2:-".example"}"
 
   for FILE in $FILES; do
-    echoComment "Copying and removing $POSTFIX from the file:"
-    echoSeparator
-    echoComment "$FILE"
-    echoSeparator
+    printComment "Copying and removing $POSTFIX from the file:"
+    printSeparator
+    printComment "$FILE"
+    printSeparator
 
     local FILE_COPY="$(removePostfix "$FILE" "$POSTFIX")"
 
     cp -p "$FILE" "$FILE_COPY"
 
-    echoComment 'File copied and postfix removed.'
+    printComment 'File copied and postfix removed.'
   done
 }
 
@@ -189,8 +189,8 @@ createDirectories () {
 #-------------------------------------------------------------------------------
 createDirectory () {
   local DIR="${1:?}"
-  echoComment 'Creating directory at:'
-  echoComment "$DIR"
+  printComment 'Creating directory at:'
+  printComment "$DIR"
   mkdir -p "$DIR"
 }
 
@@ -203,13 +203,13 @@ createDirectory () {
 #-------------------------------------------------------------------------------
 createFiles () {
   for FILE in "$@"; do
-    echoComment 'Creating file at:'
-    echoComment "$FILE"
+    printComment 'Creating file at:'
+    printComment "$FILE"
     touch "$FILE"
 
-    echoSeparator
+    printSeparator
     listDirectories "$FILE"
-    echoComment 'File created.'
+    printComment 'File created.'
   done
 }
 
@@ -273,10 +273,10 @@ listDirectories () {
   local DIRS=${1:?}
 
   for DIR in $DIRS; do
-    echoComment 'Listing directory:'
-    echoSeparator
+    printComment 'Listing directory:'
+    printSeparator
     ls -lna "$DIR"
-    echoSeparator
+    printSeparator
   done
 }
 
@@ -290,11 +290,11 @@ listDirectories () {
 #-------------------------------------------------------------------------------
 removeFileOrDirectory () {
   for FILE_DIR in "$@"; do
-    echoComment 'Removing file or directory at:'
-    echoComment "$FILE_DIR"
+    printComment 'Removing file or directory at:'
+    printComment "$FILE_DIR"
     rm -R $FILE_DIR
 
-    echoComment 'File or directory removed.'
+    printComment 'File or directory removed.'
   done    
 }
 

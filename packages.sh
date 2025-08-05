@@ -36,18 +36,18 @@ checkForPackage () {
 # 1. "$@" – the package or packages to be installed.
 #-------------------------------------------------------------------------------
 checkForPackagesAndInstall () {
-  echoComment 'Starting installation of the following packages:'
-  echoComment "$@"
+  printComment 'Starting installation of the following packages:'
+  printComment "$@"
 
   for PACKAGE in "$@"; do
     local PACKAGE_TF="$(checkForPackage "$PACKAGE")"
-    echoComment "Checking for $PACKAGE."
-    echoComment "Check returned $PACKAGE_TF."
+    printComment "Checking for $PACKAGE."
+    printComment "Check returned $PACKAGE_TF."
 
     if [ "$PACKAGE_TF" = true ]; then
-      echoComment "You have already installed $PACKAGE."
+      printComment "You have already installed $PACKAGE."
     elif [ "$PACKAGE_TF" = false ]; then
-      echoComment "You need to install $PACKAGE."
+      printComment "You need to install $PACKAGE."
       installRemovePackages "install" "$PACKAGE"
     fi
   done
@@ -60,19 +60,19 @@ checkForPackagesAndInstall () {
 # 1. "$@" – the package or packages to be removed.
 #-------------------------------------------------------------------------------
 checkForPackagesAndRemove () {
-  echoComment 'Starting removal of the following packages:'
-  echoComment "$@"
+  printComment 'Starting removal of the following packages:'
+  printComment "$@"
 
   for PACKAGE in "$@"; do
     local PACKAGE_TF="$(checkForPackage "$PACKAGE")"
-    echoComment "Checking for $PACKAGE."
-    echoComment "Check returned $PACKAGE_TF."
+    printComment "Checking for $PACKAGE."
+    printComment "Check returned $PACKAGE_TF."
 
     if [ "$PACKAGE_TF" = true ]; then
-      echoComment "You need to remove $PACKAGE."
+      printComment "You need to remove $PACKAGE."
       installRemovePackages "remove" "$PACKAGE"
     elif [ "$PACKAGE_TF" = false ]; then
-      echoComment "You have already removed $PACKAGE."
+      printComment "You have already removed $PACKAGE."
     fi
   done
 }
@@ -96,18 +96,18 @@ installRemovePackages () {
   
     shift
   else
-    echoComment "You must pass either install or remove as the first argument."
-    echoScriptExiting
+    printComment "You must pass either install or remove as the first argument."
+    printScriptExiting
     
     exit 1
   fi
 
   for i; do
-    echoComment "Performing $ACTION for $i."
-    echoSeparator
+    printComment "Performing $ACTION for $i."
+    printSeparator
     apt "$ACTION" "$i" -y
-    echoSeparator
-    echoComment "Completed $ACTION for $i"
+    printSeparator
+    printComment "Completed $ACTION for $i"
   done
 }
 
@@ -115,9 +115,9 @@ installRemovePackages () {
 # Updates and upgrades installed packages.
 #-------------------------------------------------------------------------------
 updateUpgrade () {
-  echoComment 'Updating and upgrading packages.'
-  echoSeparator
+  printComment 'Updating and upgrading packages.'
+  printSeparator
   apt update && apt upgrade -y
-  echoSeparator
-  echoComment 'Packages updated and upgraded.'
+  printSeparator
+  printComment 'Packages updated and upgraded.'
 }

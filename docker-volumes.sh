@@ -16,12 +16,12 @@ listVolumeContents () {
   for i; do
     local VOLUME="$PREFIX_$i"
 
-    echoComment 'Listing contents of the following docker volume:'
-    echoComment "$VOLUME"
+    printComment 'Listing contents of the following docker volume:'
+    printComment "$VOLUME"
 
-    echoSeparator
+    printSeparator
     docker run --rm -i -v="$VOLUME":/tmp/myvolume busybox ls -lna -R /tmp/myvolume
-    echoSeparator
+    printSeparator
   done
 }
 
@@ -36,16 +36,16 @@ manageDockerVolumes () {
   local ACTION="${1:?}"
   local PREFIX="$(changeCase "${2:?}" 'lower')_"
 
-  echoComment "$ACTION and $PREFIX"
+  printComment "$ACTION and $PREFIX"
 
   shift 2
 
   for i; do
     local VOLUME="$PREFIX$i"
 
-    echoComment "Performing $ACTION on the following docker volume:"
-    echoComment "$VOLUME"
-    echoSeparator
+    printComment "Performing $ACTION on the following docker volume:"
+    printComment "$VOLUME"
+    printSeparator
 
     if [ "$ACTION" = 'rm' ]; then 
       docker volume $ACTION -f $VOLUME
@@ -53,11 +53,11 @@ manageDockerVolumes () {
       docker volume $ACTION $VOLUME
     fi
 
-    echoSeparator
-    echoComment "$ACTION performed on $VOLUME."
+    printSeparator
+    printComment "$ACTION performed on $VOLUME."
   done
 
-  echoSeparator
+  printSeparator
   docker image ls
-  echoSeparator
+  printSeparator
 }

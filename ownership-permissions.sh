@@ -15,9 +15,9 @@ setOwner () {
   local GROUP="$USER"
   local FILE_FOLDER="${2:?}"
 
-  echoComment "Setting ownership of:"
-  echoComment "$FILE_FOLDER"
-  echoComment "to $USER:$GROUP."
+  printComment "Setting ownership of:"
+  printComment "$FILE_FOLDER"
+  printComment "to $USER:$GROUP."
   chown -R "$USER:$GROUP" "$FILE_FOLDER"
 }
 
@@ -31,8 +31,8 @@ setPermissions () {
   local PERMISSIONS="${1:?}"
   local FILE_FOLDER="${2:?}"
 
-  echoComment "Setting permissions of:"
-  echoComment "$FILE_FOLDER"
-  echoComment "to $PERMISSIONS."
+  printComment "Setting permissions of:"
+  printComment "$FILE_FOLDER"
+  printComment "to $PERMISSIONS."
   chmod -R "$PERMISSIONS" "$FILE_FOLDER"
 }

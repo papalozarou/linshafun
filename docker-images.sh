@@ -22,11 +22,11 @@ buildDockerImages () {
   shift
 
   for i; do
-    echoComment "Building $i."
-    echoSeparator
+    printComment "Building $i."
+    printSeparator
     controlDockerService "$COMPOSE_FILE" "build" "$i" "--no-cache"
-    echoSeparator
-    echoComment 'Assuming there are no errors above, the image was built.'
+    printSeparator
+    printComment 'Assuming there are no errors above, the image was built.'
   done
 }
 
@@ -34,10 +34,10 @@ buildDockerImages () {
 # Lists images.
 #-------------------------------------------------------------------------------
 listDockerImages () {
-  echoComment 'Listing docker images.'
-  echoSeparator
+  printComment 'Listing docker images.'
+  printSeparator
   docker compose -f "$DOCKER_COMPOSE_FILE" images
-  echoSeparator
+  printSeparator
 }
 
 #-------------------------------------------------------------------------------
@@ -47,10 +47,10 @@ listDockerImages () {
 #-------------------------------------------------------------------------------
 removeDockerImages () {
   for IMAGE in "$@"; do
-    echoComment 'Removing the following docker image:'
-    echoComment "$IMAGE"
-    echoSeparator
+    printComment 'Removing the following docker image:'
+    printComment "$IMAGE"
+    printSeparator
     docker image rm "$IMAGE"
-    echoSeparator
+    printSeparator
   done
 }

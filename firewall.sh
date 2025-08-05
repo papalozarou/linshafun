@@ -17,26 +17,26 @@ addRuleToUfw () {
   local PROTOCOL="$3"
 
   if [ -z "$PROTOCOL" ]; then
-      echoComment "Adding rule $ACTION $PORT to UFW."
-      echoSeparator
+      printComment "Adding rule $ACTION $PORT to UFW."
+      printSeparator
       ufw "$ACTION" "$PORT"
-      echoSeparator
+      printSeparator
   else
-    echoComment "Adding rule $ACTION $PORT/$PROTOCOL to UFW."
-    echoSeparator
+    printComment "Adding rule $ACTION $PORT/$PROTOCOL to UFW."
+    printSeparator
     ufw "$ACTION" "$PORT/$PROTOCOL"
-    echoSeparator
+    printSeparator
   fi
 
-  echoComment 'Rule added.'
+  printComment 'Rule added.'
 }
 
 #-------------------------------------------------------------------------------
 # Lists current ufw rules, with numbers.
 #-------------------------------------------------------------------------------
 listUfwRules () {
-  echoComment 'Listing UFW rules…'
-  echoSeparator
+  printComment 'Listing UFW rules…'
+  printSeparator
   ufw status numbered
-  echoSeparator
+  printSeparator
 }
