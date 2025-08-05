@@ -41,8 +41,7 @@ generateAndCheckPort () {
   local PORT_TF="$(checkAgainstExistingPortNumber "$PORT_NO" "$CHECK_AGAINST")"
 
   if [ "$PORT_TF" = true ]; then
-    printComment "Port check returned $PORT_TF. Re-running to generate" 
-    printComment 'another port number.'
+    printComment "Port check returned $PORT_TF. Re-running to generate another port number."
     generateAndCheckPort
   elif [ "$PORT_TF" = false ]; then
     echo "$PORT_NO"    

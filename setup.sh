@@ -42,8 +42,7 @@ initialiseScript () {
   local CONF_KEY="${1:?}"
   local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
 
-  printComment 'Checking the setup config to see if this step has already been'
-  printComment 'performed…'
+  printComment 'Checking the setup config to see if this step has already been performed…'
   printComment "Check returned $CONF_OPTION_TF."
 
   if [ "$CONF_OPTION_TF" = true ]; then
@@ -55,8 +54,8 @@ initialiseScript () {
     printComment 'You have not performed this step. Running script.'
     printSeparator
   else
-    printComment 'Something went wrong. Please check your setup config at:'
-    printComment "$SETUP_CONF."
+    printComment 'Something went wrong. Please check your setup config at:' true
+    printComment "$SETUP_CONF." true
     printScriptExiting
 
     exit 1

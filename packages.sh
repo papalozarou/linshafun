@@ -47,7 +47,7 @@ checkForPackagesAndInstall () {
     if [ "$PACKAGE_TF" = true ]; then
       printComment "You have already installed $PACKAGE."
     elif [ "$PACKAGE_TF" = false ]; then
-      printComment "You need to install $PACKAGE."
+      printComment "You need to install $PACKAGE." true
       installRemovePackages "install" "$PACKAGE"
     fi
   done
@@ -69,7 +69,7 @@ checkForPackagesAndRemove () {
     printComment "Check returned $PACKAGE_TF."
 
     if [ "$PACKAGE_TF" = true ]; then
-      printComment "You need to remove $PACKAGE."
+      printComment "You need to remove $PACKAGE." true
       installRemovePackages "remove" "$PACKAGE"
     elif [ "$PACKAGE_TF" = false ]; then
       printComment "You have already removed $PACKAGE."
@@ -96,7 +96,7 @@ installRemovePackages () {
   
     shift
   else
-    printComment "You must pass either install or remove as the first argument."
+    printComment 'You must pass either install or remove as the first argument.' true
     printScriptExiting
     
     exit 1

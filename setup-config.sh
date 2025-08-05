@@ -25,12 +25,12 @@ checkForSetupConfigFileAndDir () {
   if [ "$SETUP_CONF_TF" = true ]; then
     printComment 'The setup config file and directory exist.'
   elif [ "$SETUP_CONF_DIR_TF" = false ]; then
-    printComment 'The setup config file and directory do not exist.'
+    printComment 'The setup config file and directory do not exist.' true
 
     createSetupConfigDirectory
     createSetupConfigFile
   elif [ "$SETUP_CONF_TF" = false ]; then
-    printComment 'The setup config file does not exist.'
+    printComment 'The setup config file does not exist.' true
 
     createSetupConfigFile
   fi
@@ -160,7 +160,7 @@ removeSetupConfigOption () {
 
     printComment "$CONF_KEY removed."
   else
-    printComment "$CONF_KEY not found, no changes made."
+    printComment "$CONF_KEY not found, no changes made." true
   fi
 
   listSetupConfig
@@ -190,13 +190,13 @@ writeSetupConfigOption () {
   if [ "$CONF_OPTION_TF" = true ]; then
     local EXISTING_CONF_VALUE="$(readSetupConfigValue "$CONF_KEY")"
 
-    printComment "$CONF_KEY already exists with value $EXISTING_CONF_VALUE."
+    printComment "$CONF_KEY already exists with value $EXISTING_CONF_VALUE." true
   fi
 
   if [ "$CONF_OPTION_TF" = true ] && [ "$EXISTING_CONF_VALUE" = "$CONF_VALUE" ]; then
     printComment 'No changes made.'
   elif [ "$CONF_OPTION_TF" = true ] && [ "$EXISTING_CONF_VALUE" != "$CONF_VALUE" ]; then
-    printComment "Overwriting existing value with $CONF_VALUE."
+    printComment "Overwriting existing value with $CONF_VALUE." true
 
     sed -i '/^'"$CONF_KEY"'/c\'"$CONF_KEY $CONF_VALUE" "$SETUP_CONF"
 
@@ -210,10 +210,10 @@ writeSetupConfigOption () {
 
     setOwner "$SUDO_USER" "$SETUP_CONF"
   else
-    printComment 'Something went wrong. Please check your setup config at:'
-    printComment "$SETUP_CONF."
-    printComment 'You may need to manually add the following to the setup config:'
-    printComment "$CONF_KEY $CONF_VALUE"
+    printComment 'Something went wrong. Please check your setup config at:' true
+    printComment "$SETUP_CONF." true
+    printComment 'You may need to manually add the following to the setup config:' true
+    printComment "$CONF_KEY $CONF_VALUE" true
 
     printScriptExiting true
 

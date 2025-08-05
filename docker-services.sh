@@ -94,6 +94,5 @@ stopRunningContainers () {
   docker compose ps -a
   printSeparator
 
-  printComment 'Assuming no containers are listed above, all containers have'
-  printComment 'been stopped.'
+  printComment 'Assuming no containers are listed above, all containers have been stopped.'
 }
