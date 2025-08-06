@@ -14,14 +14,8 @@
 #    or the user chooses to replace it; 
 # 3. "${3:?" - the action being performed, all lowercase, defaulting to 
 #    'replace'; and
-# 3 "$4" - optional warning to be displayed.
-#
-# If the file is to be replaced or recreated, "shift 3" is used to move variable
-# "$4" to variable position "$1", to allow the warning to be passed through to 
-# "$FUNCTION". As per:
-# 
-# - https://stackoverflow.com/a/33202350
-# - https://unix.stackexchange.com/a/174568
+# 4. "$4" - an optional warning to be displayed if the file is to be replaced or 
+#    recreated.
 #-------------------------------------------------------------------------------
 checkAndCreateOrAskToReplaceFileOrDirectory () {
   local FILE_OR_DIR="${1:?}"
@@ -42,14 +36,10 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   elif [ "$FILE_OR_DIR_TF" = false ]; then
     printComment "The file or directory does not exist."
   fi
-  
-  if [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ]; then
-    shift 3
-  fi
 
-  if [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ] && [ "$#" -ge 1 ]; then
-    ("$FUNCTION" "$FILE_OR_DIR" "$1")
-  elif [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ] && [ "$#" -eq 0 ]; then
+  if [ "$REPLACE_YN" = true ] || [ "$FILE_OR_DIR_TF" = false ] && [ -n "$WARNING" ]; then
+    ("$FUNCTION" "$FILE_OR_DIR" "$WARNING")
+  elif [ "$REPLACE_YN" = true ] || [ "$FILE_OR_DIR_TF" = false ] && [ -z "$WARNING" ]; then
     ("$FUNCTION" "$FILE_OR_DIR")
   else
     printComment 'No changes were made.'

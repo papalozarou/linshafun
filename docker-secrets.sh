@@ -73,25 +73,16 @@ generateRandomDockerSecret () {
 # 1. "${1:?}" - the secret file, including directory path; and
 # 2. "$2" - optional warning to be displayed.
 #
-# "shift" is used to move variable "$2" to variable position "$1", to allow the 
-# warnings to be passed through to ""promptForUserInput".
-#
-# - https://unix.stackexchange.com/a/174568
-# 
 # N.B.
 # If the file already exists it is removed and recreated.
 #-------------------------------------------------------------------------------
 getAndSetDockerSecret () {
   local SECRET_FILE="${1:?}"
-  local NB_LINE_1="$2"
-  local NB_LINE_2="$3"
-  local NB_LINE_3="$4"
+  local WARNING="$2"
 
   removeDockerSecretFile "$SECRET_FILE"
 
-  shift
-
-  promptForUserInput "What value do you want to set for $SECRET_FILE?" "$1"
+  promptForUserInput "What value do you want to set for $SECRET_FILE?" "$WARNING"
   local SECRET_VALUE="$(getUserInput)"
 
   createDockerSecretFile "$SECRET_VALUE" "$SECRET_FILE"
