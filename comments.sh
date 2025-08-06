@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #-------------------------------------------------------------------------------
-# Functions to echo comments and help with comment consistency.
+# Functions to print comments and help with comment consistency.
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ COMMENT_SEPARATOR='-------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Prints a comment. Takes two arguments:
 # 
-# 1. "${1:?}" – the full comment to echo; and
+# 1. "${1:?}" – the full comment to print; and
 # 2. "${2:-false}" – a flag indicating if the comment is a warning, defaulting 
 #    to false.
 # 

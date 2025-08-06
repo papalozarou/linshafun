@@ -14,25 +14,20 @@
 #    or the user chooses to replace it; 
 # 3. "${3:?" - the action being performed, all lowercase, defaulting to 
 #    'replace'; and
-# 3 "$4|5|6" - optional lines to be echoed as "N.B." comments.
+# 3 "$4" - optional warning to be displayed.
 #
 # If the file is to be replaced or recreated, "shift 3" is used to move variable
-# "$4" to variable position "$1", to allow the remaining variables to be 
-# passed through to "$FUNCTION" as a group using "$@". As per:
+# "$4" to variable position "$1", to allow the warning to be passed through to 
+# "$FUNCTION". As per:
 # 
 # - https://stackoverflow.com/a/33202350
 # - https://unix.stackexchange.com/a/174568
-# 
-# N.B.
-# The "$ACTION" variable is third so 
 #-------------------------------------------------------------------------------
 checkAndCreateOrAskToReplaceFileOrDirectory () {
   local FILE_OR_DIR="${1:?}"
   local FUNCTION="${2:?}"
   local ACTION="${3:-"recreate"}"
-  local NB_LINE_1="$4"
-  local NB_LINE_2="$5"
-  local NB_LINE_3="$6"
+  local WARNING="$4"
 
   printComment 'Checking for file or directory at:'
   printComment "$FILE_OR_DIR"
@@ -53,7 +48,7 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   fi
 
   if [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ] && [ "$#" -ge 1 ]; then
-    ("$FUNCTION" "$FILE_OR_DIR" "$@")
+    ("$FUNCTION" "$FILE_OR_DIR" "$1")
   elif [ "$REPLACE_YN" = true -o "$FILE_OR_DIR_TF" = false ] && [ "$#" -eq 0 ]; then
     ("$FUNCTION" "$FILE_OR_DIR")
   else

@@ -71,11 +71,10 @@ generateRandomDockerSecret () {
 # argument and up to three optional ones:
 # 
 # 1. "${1:?}" - the secret file, including directory path; and
-# 2. "$2|3|4" - optional lines to be echoed as "N.B." comments.
+# 2. "$2" - optional warning to be displayed.
 #
 # "shift" is used to move variable "$2" to variable position "$1", to allow the 
-# remaining variables to be passed through to ""promptForUserInput" as a group 
-# using "$@". As per:
+# warnings to be passed through to ""promptForUserInput".
 #
 # - https://unix.stackexchange.com/a/174568
 # 
@@ -92,7 +91,7 @@ getAndSetDockerSecret () {
 
   shift
 
-  promptForUserInput "What value do you want to set for $SECRET_FILE?" "$@"
+  promptForUserInput "What value do you want to set for $SECRET_FILE?" "$1"
   local SECRET_VALUE="$(getUserInput)"
 
   createDockerSecretFile "$SECRET_VALUE" "$SECRET_FILE"
