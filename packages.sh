@@ -91,7 +91,7 @@ checkForPackagesAndRemove () {
 # - https://unix.stackexchange.com/a/225951
 #-------------------------------------------------------------------------------
 installRemovePackages () {
-  if [ "${1:?}" = 'install' -o "${1:?}" = 'remove' ]; then
+  if [ "${1:?}" = 'install' ] || [ "${1:?}" = 'remove' ]; then
     local ACTION="${1:?}"
   
     shift

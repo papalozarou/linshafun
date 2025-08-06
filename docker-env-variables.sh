@@ -40,7 +40,7 @@ changeDockerEnvVariable () {
   promptForUserInput "Do you want to set a new value for $ENV_VARIABLE?" 'This may break existing setups if running these scripts again.'
   ENV_VARIABLE_SET_YN="$(getUserInputYN)"
 
-  if [ "$ENV_VARIABLE_SET_YN" = true -a "$ENV_VARIABLE" = "H_RTT_PORT" ]; then
+  if [ "$ENV_VARIABLE_SET_YN" = true ] && [ "$ENV_VARIABLE" = "H_RTT_PORT" ]; then
     ENV_VALUE="$(generateAndCheckPort "ssh")"
   elif [ "$ENV_VARIABLE_SET_YN" = true ]; then
     promptForUserInput "What value do you require for $ENV_VARIABLE?"
@@ -97,7 +97,7 @@ checkIfDockerEnvVariableSet () {
   local ENV_VARIABLE="${2:?}"
   local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE")"
 
-  if [ -z "$ENV_VALUE" -o "$ENV_VALUE" = "\${DKR_ENV: \$$ENV_VARIABLE}" ]; then
+  if [ -z "$ENV_VALUE" ] || [ "$ENV_VALUE" = "\${DKR_ENV: \$$ENV_VARIABLE}" ]; then
     echo false
   else
     echo true
