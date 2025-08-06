@@ -7,7 +7,7 @@
 #-------------------------------------------------------------------------------
 # Checks to see if a file or directory exists. If the file or directory doesn't 
 # exist, or it does exist and the user wants to replace it, (re)create it. Takes 
-# two mandatory arguments and up to three optional ones:
+# four arguments:
 # 
 # 1. "${1:?}" - the file or directory to check for and create or replace;
 # 2. "${2:?}" - the function to execute if the file or directory doesn't exist, 
