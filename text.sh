@@ -149,10 +149,9 @@ uncommentLine () {
     printComment "'$PARTIAL' already uncommented in $FILE."
   elif grep -q "^[[:space:]]*$CHAR[[:space:]]*$PARTIAL" "$FILE"; then
     printComment "Uncommenting line starting with '$CHAR $PARTIAL' in $FILE."
-    sed -i '' "/^[[:space:]]*$CHAR[[:space:]]*$PARTIAL/s/^\([[:space:]]*\)#[[:space:]]*/\1/" "$FILE"
+    sed -i "/^[[:space:]]*$CHAR[[:space:]]*$PARTIAL/s/^\([[:space:]]*\)#[[:space:]]*/\1/" "$FILE"
   else
     printComment "'$PARTIAL' not found in $FILE." true
     return 1
   fi
 }
-
