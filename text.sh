@@ -123,7 +123,8 @@ removePostfix () {
 # ------------------------------------------------------------------------------
 # Uncomments lines in files. Takes three arguments:
 # 
-# 1. "${1:?}" – the file containing the line to uncomment;
+# 1. "${1:?}" – the file containing the line to uncomment, including directory 
+#    path;
 # 2. "${2:?}" – the partial that the line starts with, without the hash symbol, 
 #    but including any delimiter, i.e. "=" or ":"; and
 # 3. "${3:-#}" – an optional character used to comment out lines, defaulting to 
