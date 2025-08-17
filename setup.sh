@@ -46,7 +46,7 @@ initialiseScript () {
   printComment "Check returned $CONF_OPTION_TF."
 
   if [ "$CONF_OPTION_TF" = true ]; then
-    printComment 'You have already performed this step.'
+    printComment 'You have already performed this step.' true
     printScriptExiting
 
     exit 1
