@@ -106,13 +106,12 @@ commentInLine () {
   local CHAR="${3:-#}"
   local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed 's/\//\\\//g')"
 
-  if grep -q "^[[:space:]]*$ESCAPED_PARTIAL" "$FILE"; then
+  if grep -q "^[[:space:]]*$PARTIAL" "$FILE"; then
     printComment 'The line starting with:'
     printComment "$PARTIAL"
     printComment 'is already uncommented in:'
     printComment "$FILE."
-    printComment "'$PARTIAL' already uncommented in $FILE."
-  elif grep -q "^[[:space:]]*$CHAR[[:space:]]*$ESCAPED_PARTIAL" "$FILE"; then
+  elif grep -q "^[[:space:]]*$CHAR[[:space:]]*$PARTIAL" "$FILE"; then
     printComment 'Uncommenting line starting with:'
     printComment "$CHAR $PARTIAL"
     printComment 'in:'
@@ -156,12 +155,12 @@ commentOutLine () {
   local CHAR="${3:-#}"
   local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed 's/\//\\\//g')"
 
-  if grep -q "^[[:space:]]*$CHAR[[:space:]]*$ESCAPED_PARTIAL" "$FILE"; then
+  if grep -q "^[[:space:]]*$CHAR[[:space:]]*$PARTIAL" "$FILE"; then
     printComment 'The line starting with:'
     printComment "$PARTIAL"
     printComment 'is already commented out in:'
     printComment "$FILE."
-  elif grep -q "^[[:space:]]*$ESCAPED_PARTIAL" "$FILE"; then
+  elif grep -q "^[[:space:]]*$PARTIAL" "$FILE"; then
     printComment 'Commenting out line starting with:'
     printComment "$PARTIAL"
     printComment 'in:'
