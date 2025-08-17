@@ -195,7 +195,6 @@ removePrefix () {
   echo "$STRING"
 }
 
-
 #-------------------------------------------------------------------------------
 # Removes a postfix from a string. Takes two mandatory arguments:
 # 
