@@ -78,6 +78,56 @@ generateRandomString () {
 }
 
 # ------------------------------------------------------------------------------
+# Uncomments lines in files. Takes three arguments:
+# 
+# 1. "${1:?}" – the file containing the line to uncomment, including directory 
+#    path;
+# 2. "${2:?}" – the partial that the line starts with, without the comment
+#    character, but including any delimiter, i.e. "=" or ":"; and
+# 3. "${3:-#}" – an optional character used to comment out lines, defaulting to 
+#    hash.
+#
+# The function allows for tabs or spaces before the commented out line and
+# preserves indentations.
+# 
+# Partials are automatically escaped to enable sed to process partials 
+# containing "/" characters.
+# 
+# N.B.
+# The "if" statements do not use brackets because the exit status of the "grep"
+# command is used directly as the condition, i.e. "grep" returns 0 – success – 
+# if a match is found, or or 1 – failuare – if not.
+#
+# If the line is not found at all the script will exit.
+# ------------------------------------------------------------------------------
+commentInLine () {
+  local FILE="${1:?}"
+  local PARTIAL="${2:?}"
+  local CHAR="${3:-#}"
+  local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed 's/\//\\\//g')"
+
+  if grep -q "^[[:space:]]*$ESCAPED_PARTIAL" "$FILE"; then
+    printComment 'The line starting with:'
+    printComment "$PARTIAL"
+    printComment 'is already uncommented in:'
+    printComment "$FILE."
+    printComment "'$PARTIAL' already uncommented in $FILE."
+  elif grep -q "^[[:space:]]*$CHAR[[:space:]]*$ESCAPED_PARTIAL" "$FILE"; then
+    printComment 'Uncommenting line starting with:'
+    printComment "$CHAR $PARTIAL"
+    printComment 'in:'
+    printComment "$FILE"
+    sed -i "/^[[:space:]]*$CHAR[[:space:]]*$ESCAPED_PARTIAL/s/^\([[:space:]]*\)#[[:space:]]*/\1/" "$FILE"
+  else
+    printComment 'A line starting with:' true
+    printComment "$PARTIAL" true
+    printComment 'not found in:' true 
+    printComment "$FILE" true
+    return 1
+  fi
+}
+
+# ------------------------------------------------------------------------------
 # Comments out lines in files. Takes three arguments:
 # 
 # 1. "${1:?}" – the file containing the line to comment out, including directory
@@ -167,54 +217,4 @@ removePostfix () {
   local STRING="${STRING%"$POSTFIX"}"
 
   echo "$STRING"
-}
-
-# ------------------------------------------------------------------------------
-# Uncomments lines in files. Takes three arguments:
-# 
-# 1. "${1:?}" – the file containing the line to uncomment, including directory 
-#    path;
-# 2. "${2:?}" – the partial that the line starts with, without the comment
-#    character, but including any delimiter, i.e. "=" or ":"; and
-# 3. "${3:-#}" – an optional character used to comment out lines, defaulting to 
-#    hash.
-#
-# The function allows for tabs or spaces before the commented out line and
-# preserves indentations.
-# 
-# Partials are automatically escaped to enable sed to process partials 
-# containing "/" characters.
-# 
-# N.B.
-# The "if" statements do not use brackets because the exit status of the "grep"
-# command is used directly as the condition, i.e. "grep" returns 0 – success – 
-# if a match is found, or or 1 – failuare – if not.
-#
-# If the line is not found at all the script will exit.
-# ------------------------------------------------------------------------------
-uncommentLine () {
-  local FILE="${1:?}"
-  local PARTIAL="${2:?}"
-  local CHAR="${3:-#}"
-  local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed 's/\//\\\//g')"
-
-  if grep -q "^[[:space:]]*$ESCAPED_PARTIAL" "$FILE"; then
-    printComment 'The line starting with:'
-    printComment "$PARTIAL"
-    printComment 'is already uncommented in:'
-    printComment "$FILE."
-    printComment "'$PARTIAL' already uncommented in $FILE."
-  elif grep -q "^[[:space:]]*$CHAR[[:space:]]*$ESCAPED_PARTIAL" "$FILE"; then
-    printComment 'Uncommenting line starting with:'
-    printComment "$CHAR $PARTIAL"
-    printComment 'in:'
-    printComment "$FILE"
-    sed -i "/^[[:space:]]*$CHAR[[:space:]]*$ESCAPED_PARTIAL/s/^\([[:space:]]*\)#[[:space:]]*/\1/" "$FILE"
-  else
-    printComment 'A line starting with:' true
-    printComment "$PARTIAL" true
-    printComment 'not found in:' true 
-    printComment "$FILE" true
-    return 1
-  fi
 }
