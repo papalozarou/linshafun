@@ -77,6 +77,42 @@ generateRandomString () {
   echo "$STRING"
 }
 
+# ------------------------------------------------------------------------------
+# Comments out lines in files. Takes three arguments:
+# 
+# 1. "${1:?}" – the file containing the line to comment out, including directory
+#    path;
+# 2. "${2:?}" – the partial that the line starts with, without the comment
+#    character, but including any delimiter, i.e. "=" or ":"; and
+# 3. "${3:-#}" – an optional character used to comment out lines, defaulting to
+#    hash.
+# 
+# The function allows for tabs or spaces before the line and preserves 
+# indentations.
+# 
+# N.B.
+# The "if" statements do not use brackets because the exit status of the "grep"
+# command is used directly as the condition, i.e. "grep" returns 0 – success – 
+# if a match is found, or or 1 – failuare – if not.
+#
+# If the line is not found at all the script will exit.
+# ------------------------------------------------------------------------------
+commentOutLine () {
+  local FILE="${1:?}"
+  local PARTIAL="${2:?}"
+  local CHAR="${3:-#}"
+
+  if grep -q "^[[:space:]]*$CHAR[[:space:]]*$PARTIAL" "$FILE"; then
+    printComment "'$PARTIAL' already commented out in $FILE."
+  elif grep -q "^[[:space:]]*$PARTIAL" "$FILE"; then
+    printComment "Commenting out line starting with '$PARTIAL' in $FILE."
+    sed -i "/^[[:space:]]*$PARTIAL/s/^\([[:space:]]*\)/\1$CHAR /" "$FILE"
+  else
+    printComment "'$PARTIAL' not found in $FILE." true
+    return 1
+  fi
+}
+
 #-------------------------------------------------------------------------------
 # Removes a prefix from a string. Takes two mandatory arguments:
 # 
@@ -125,8 +161,8 @@ removePostfix () {
 # 
 # 1. "${1:?}" – the file containing the line to uncomment, including directory 
 #    path;
-# 2. "${2:?}" – the partial that the line starts with, without the hash symbol, 
-#    but including any delimiter, i.e. "=" or ":"; and
+# 2. "${2:?}" – the partial that the line starts with, without the comment
+#    character, but including any delimiter, i.e. "=" or ":"; and
 # 3. "${3:-#}" – an optional character used to comment out lines, defaulting to 
 #    hash.
 # 
