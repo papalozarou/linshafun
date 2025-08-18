@@ -60,6 +60,18 @@ generatePortNumber () {
 }
 
 #-------------------------------------------------------------------------------
+# Gets the name of a given interface, using nmcli. Takes one mandatory argument:
+# 
+# 1. "${1:?}" – the device id, e.g. eth0, enp3s0, etc.
+#-------------------------------------------------------------------------------
+getInterfaceName () {
+  local DEVICE_ID="${1:?}"
+  local DECICE_NAMe="$(nmcli -g GENERAL.CONNECTION device show "$DEVICE_ID")"
+
+  echo "$DEVICE_NAME"
+}
+
+#-------------------------------------------------------------------------------
 # Reads and returns the IP address of the host machine.
 #-------------------------------------------------------------------------------
 readIpAddress () {
