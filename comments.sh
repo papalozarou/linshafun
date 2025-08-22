@@ -20,7 +20,7 @@ COMMENT_COLOUR_WARN='\033[33m'
 # COMMENT_COLOUR_ERROR='\033[31m'
 COMMENT_COLOUR_RESET='\033[0m'
 COMMENT_PREFIX='SETUP SCRIPT: '
-COMMENT_PREFIX_WARN='NOTA BENE: '
+COMMENT_PREFIX_WARN='   NOTA BENE: '
 COMMENT_SEPARATOR='------------------------------------------------------------------'
 
 #-------------------------------------------------------------------------------
