@@ -4,6 +4,32 @@
 # Functions for checking, setting and reading setup config options.
 #-------------------------------------------------------------------------------
 
+
+#-------------------------------------------------------------------------------
+# Adds a variable for the setup config file stored in '~/.config/', in cases
+# where the filename is generated as part of initialisation. Takes two mandatory
+# arguments:
+# 
+# 1. "${1:?}" – the projects setup variable file name without "-setup.var"; and
+# 2. "${2:?}" – the name of the config file, without "-setup.conf".
+#-------------------------------------------------------------------------------
+addConfigFileVar () {
+  local VAR_FILE_NAME="${1:?}"
+  local CONF_FILE_NAME="${2:?}"
+
+  local VAR_FILE="$SERVICES_DIR/setup/$VAR_FILE_NAME-setup.var"
+  local CONF_FILE="$CONF_FILE_NAME-setup.conf"
+
+
+  cat <<EOF >> "$VAR_FILE"
+
+#-------------------------------------------------------------------------------
+# File variables.
+#-------------------------------------------------------------------------------
+SETUP_CONF="$SETUP_CONF_DIR/$CONF_FILE"
+EOF
+}
+
 #-------------------------------------------------------------------------------
 # Check for a current setup config file and directory. If both exist, do 
 # nothing. If either doesn't exist, create them. There are three possibilities:
