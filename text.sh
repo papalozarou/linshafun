@@ -66,15 +66,31 @@ changeCase () {
 }
 
 #-------------------------------------------------------------------------------
-# Generates a random alphanumeric string of a given length. Takes one argument:
-# 
-# 1. "${1:-"64"}" – the string length, defaults to 64.
+# Checks a string for a given substring. Takes two mandatory arguments:
+#
+# 1. "${1:?}" – the string; and
+# 2. "${2:?}" – the substring to look for.
+#
+# POSIX parameter expansion is used to remove the substring from the string, and 
+# then a check is performed to see if the result matches the originally passed 
+# in string.
+#
+# The function returns true if the result of the parameter expansion doesn't 
+# match the original string, i.e. the substring has been removed during the
+# parameter expansion, and false if the result matches, i.e. the substring has 
+# not been removed. As per:
+#
+# - https://stackoverflow.com/a/8811800
 #-------------------------------------------------------------------------------
-generateRandomString () {
-  local LENGTH="${1:-"64"}"
-  local STRING="$(tr -cd '[:alnum:]' < /dev/urandom | fold -w "${LENGTH}" | head -n 1 | tr -d '\n')"
+checkStringContainsSubstring() {
+  local STRING="${1:?}"
+  local SUBSTRING="${2:?}"
 
-  echo "$STRING"
+  if [ "${STRING#*"$SUBSTRING"}" != "$STRING" ]; then
+    echo true
+  else
+    echo false
+  fi
 }
 
 # ------------------------------------------------------------------------------
@@ -173,6 +189,18 @@ commentOutLine () {
     printComment "$FILE" true
     return 1
   fi
+}
+
+#-------------------------------------------------------------------------------
+# Generates a random alphanumeric string of a given length. Takes one argument:
+# 
+# 1. "${1:-"64"}" – the string length, defaults to 64.
+#-------------------------------------------------------------------------------
+generateRandomString () {
+  local LENGTH="${1:-"64"}"
+  local STRING="$(tr -cd '[:alnum:]' < /dev/urandom | fold -w "${LENGTH}" | head -n 1 | tr -d '\n')"
+
+  echo "$STRING"
 }
 
 #-------------------------------------------------------------------------------
