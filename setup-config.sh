@@ -20,7 +20,6 @@ addConfigFileVar () {
   local VAR_FILE="$SERVICES_DIR/setup/$VAR_FILE_NAME-setup.var"
   local CONF_FILE="$CONF_FILE_NAME-setup.conf"
 
-
   cat <<EOF >> "$VAR_FILE"
 
 #-------------------------------------------------------------------------------

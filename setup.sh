@@ -55,7 +55,7 @@ initialiseScript () {
     printSeparator
   else
     printComment 'Something went wrong. Please check your setup config at:' true
-    printComment "$SETUP_CONF." true
+    printComment "$SETUP_CONF" true
     printScriptExiting
 
     exit 1
