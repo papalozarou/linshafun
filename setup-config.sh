@@ -12,12 +12,16 @@
 # 
 # 1. "${1:?}" – the projects setup variable file name without "-setup.var"; and
 # 2. "${2:?}" – the name of the config file, without "-setup.conf".
+#
+# Appending to a file using "cat" as per:
+# 
+# - https://stackoverflow.com/a/50098414
 #-------------------------------------------------------------------------------
 addConfigFileVar () {
   local VAR_FILE_NAME="${1:?}"
   local CONF_FILE_NAME="${2:?}"
 
-  local VAR_FILE="$SERVICES_DIR/setup/$VAR_FILE_NAME-setup.var"
+  local VAR_FILE="$SETUP_DIR/$VAR_FILE_NAME-setup.var"
   local CONF_FILE="$CONF_FILE_NAME-setup.conf"
 
   cat <<EOF >> "$VAR_FILE"
