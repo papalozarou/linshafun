@@ -215,6 +215,9 @@ removeSetupConfigOption () {
 reloadVarFile () {
 	local VAR_FILE="${1:?}"
 	
+	printComment 'Reloading setup variable file at:'
+	printComment "$VAR_FILE"
+	
 	. "$VAR_FILE"
 }
 
