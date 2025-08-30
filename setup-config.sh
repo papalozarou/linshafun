@@ -6,44 +6,42 @@
 
 
 #-------------------------------------------------------------------------------
-# Adds a variable for the setup config file stored in '~/.config/', in cases
-# where the filename is generated as part of initialisation. Takes two mandatory
+# Adds a variable to "./setup/[project-name]-setup.var". Takes three mandatory
 # arguments:
 # 
-# 1. "${1:?}" – the projects setup variable file name without "-setup.var"; and
-# 2. "${2:?}" – the name of the config file, without "-setup.conf".
+# 1. "${1:?}" – the projects setup variable file name without "-setup.var";
+# 2. "${2:?}" – the name of the variable to be added; and
+# 3. "${3:?}" – the value of the variable to be added.
 #
 # Appending to a file using "cat" as per:
 # 
 # - https://stackoverflow.com/a/50098414
 #-------------------------------------------------------------------------------
-addConfigFileVar () {
-  local VAR_FILE_NAME="${1:?}"
-  local CONF_FILE_NAME="${2:?}"
+addSetupVar () {
+	local VAR_FILE_NAME="${1:?}"
+	local VAR_NAME="${2:?}"
+	local VAR_VALUE="${3:?}"
 
   local VAR_FILE="$SETUP_DIR/$VAR_FILE_NAME-setup.var"
-  local CONF_FILE="$CONF_FILE_NAME-setup.conf"
 
-	printComment 'Adding "$SETUP_CONF" variable to:'
+	printComment 'Adding $'"$VAR_NAME variable to:"
 	printComment "$VAR_FILE"
 	
   cat <<EOF >> "$VAR_FILE"
-
-#-------------------------------------------------------------------------------
-# File variables.
-#-------------------------------------------------------------------------------
-SETUP_CONF="$SETUP_CONF_DIR/$CONF_FILE"
+$VAR_NAME="$VAR_VALUE"
 EOF
 
 	printSeparator
 	
-	if grep 'SETUP_CONF' "$VAR_FILE"; then
+	if grep "$VAR_NAME" "$VAR_FILE"; then
 		printSeparator
-		printComment '"$SETUP_CONF" variable added.'
+		printComment '$'"$VAR_NAME variable added."
 	else
 		printComment 'Variable not added. Script exiting.' true
 		exit 1
 	fi
+	
+	reloadVarFile "$VAR_FILE"
 }
 
 #-------------------------------------------------------------------------------
@@ -206,6 +204,18 @@ removeSetupConfigOption () {
   fi
 
   listSetupConfig
+}
+
+#-------------------------------------------------------------------------------
+# Reloads a variable file that has been added to as part of a script. Takes one
+# mandatory argument:
+#
+# 1. "${1:?}" – the variable file to reload.
+#-------------------------------------------------------------------------------
+reloadVarFile () {
+	local VAR_FILE="${1:?}"
+	
+	. "$VAR_FILE"
 }
 
 #-------------------------------------------------------------------------------
