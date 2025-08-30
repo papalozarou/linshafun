@@ -24,6 +24,9 @@ addConfigFileVar () {
   local VAR_FILE="$SETUP_DIR/$VAR_FILE_NAME-setup.var"
   local CONF_FILE="$CONF_FILE_NAME-setup.conf"
 
+	printComment 'Adding "$SETUP_CONF" variable to:'
+	printComment "$VAR_FILE"
+	
   cat <<EOF >> "$VAR_FILE"
 
 #-------------------------------------------------------------------------------
@@ -31,6 +34,13 @@ addConfigFileVar () {
 #-------------------------------------------------------------------------------
 SETUP_CONF="$SETUP_CONF_DIR/$CONF_FILE"
 EOF
+
+	if grep 'SETUP_CONF' "$VAR_FILE"; then
+		printComment '"$SETUP_CONF" variable added.'
+	else
+		printComment 'Variable not added. Script exiting.' true
+		exit 1
+	fi
 }
 
 #-------------------------------------------------------------------------------
