@@ -35,7 +35,10 @@ addConfigFileVar () {
 SETUP_CONF="$SETUP_CONF_DIR/$CONF_FILE"
 EOF
 
+	printSeparator
+	
 	if grep 'SETUP_CONF' "$VAR_FILE"; then
+		printSeparator
 		printComment '"$SETUP_CONF" variable added.'
 	else
 		printComment 'Variable not added. Script exiting.' true
