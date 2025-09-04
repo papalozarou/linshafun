@@ -8,7 +8,7 @@
 # Adds a script, on a schedule, to a given user's crontab, via a snipper in 
 # "/etc/cron.d". Takes four mandatory arguments:
 #
-# 1. "${1:?}" – a username, defaulting to "root".
+# 1. "${1:?}" – a username, defaulting to "root";
 # 2. "${2:?}" – the filename of the script, including directory path, defaulting 
 #    to the global variable "$CRON_SCRIPT";
 # 3. "${3:?}" – the cron schedule, in "* * * * *" format, defaulting to the 
