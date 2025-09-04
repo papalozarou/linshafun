@@ -8,13 +8,13 @@
 # Adds a script, on a schedule, to a given user's crontab, via a snipper in 
 # "/etc/cron.d". Takes four mandatory arguments:
 #
-# 1. "${1:?}" – the filename of the script, including directory path, defaulting 
+# 1. "${1:?}" – a username, defaulting to "root".
+# 2. "${2:?}" – the filename of the script, including directory path, defaulting 
 #    to the global variable "$CRON_SCRIPT";
-# 2. "${2:?}" – the cron schedule, in "* * * * *" format, defaulting to the 
-#    global variable "$CRON_SCHEDULE";
-# 3. "${3:?}" – the snippet name to be placed in "/etc/cron.d", defaulting to 
-#    the global variable "$CRON_SNIPPET"; and
-# 4. "${4:?}" – a username, defaulting to "root".
+# 3. "${3:?}" – the cron schedule, in "* * * * *" format, defaulting to the 
+#    global variable "$CRON_SCHEDULE"; and
+# 4. "${4:?}" – the snippet name to be placed in "/etc/cron.d", defaulting to 
+#    the global variable "$CRON_SNIPPET".
 # 
 # N.B.
 # If using the global variables they must be assigned first using their 
@@ -24,10 +24,10 @@
 # - "getCronSchedule".
 #-------------------------------------------------------------------------------
 addScriptToCron () {
-  local SCRIPT="${1:-"$CRON_SCRIPT"}"
-  local SCHEDULE="${2:-"$CRON_SCHEDULE"}"
-  local SNIPPET="/etc/cron.d/${3:-"$CRON_SNIPPET"}"
-  local USER="${4:-"root"}"
+  local USER="${1:-"root"}"
+  local SCRIPT="${2:-"$CRON_SCRIPT"}"
+  local SCHEDULE="${3:-"$CRON_SCHEDULE"}"
+  local SNIPPET="/etc/cron.d/${4:-"$CRON_SNIPPET"}"
 
   printComment 'Adding the following to the system crontab, as a snippet in "/etc/cron.d":'
   printComment "$SCHEDULE $USER $SCRIPT"
