@@ -43,9 +43,9 @@ addScriptToCron () {
 }
 
 #-------------------------------------------------------------------------------
-# Gets the filename, then generates the snippet name, the cronjob. These are 
-# placed in global variables, "$CRON_SCRIPT" and "$CRON_SNIPPET", for use in 
-# other functions.
+# Gets the script filename, then generates the snippet name, for the cronjob. 
+# These are placed in global variables, "$CRON_SCRIPT" and "$CRON_SNIPPET", for 
+# use in other functions.
 #-------------------------------------------------------------------------------
 getCronFilenames () {
   promptForUserInput 'What do you want to call the script? You do not need to add ".sh" to the end.' 'This script will be placed in your home directory. If you wish to place it elsewhere do so, however you will need to update the generated snippet to point to this new location.'
