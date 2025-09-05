@@ -199,7 +199,9 @@ printPublicKeyUsage () {
 }
 
 #-------------------------------------------------------------------------------
-# Removes a generated private key.
+# Removes a generated private key. Takes one mandatory argument:
+# 
+# 1. "${1:?}" - the ssh key file, including directory path.
 #-------------------------------------------------------------------------------
 removePrivateSshKey () {
   local KEY="${1:?}"
