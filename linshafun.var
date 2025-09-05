@@ -3,6 +3,8 @@
 #-------------------------------------------------------------------------------
 USER_DIR="/home/$SUDO_USER"
 SSH_DIR="$USER_DIR/.ssh"
+SSH_CONF="$SSH_DIR/config"
+SSH_AUTH_KEYS="$SSH_DIR/authorized_keys"
 SETUP_CONF_DIR="$USER_DIR/.config"
 SUDOERS_CONF_DIR="/etc/sudoers.d"
 

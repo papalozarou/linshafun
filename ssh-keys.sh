@@ -14,6 +14,83 @@ addKeyToAuthorizedKeys () {
 }
 
 #-------------------------------------------------------------------------------
+# Adds a host to "~/.ssh/config". Takes four mandatory arguments:
+# 
+# 1. "${1:?}" - the name of the host;
+# 2. "${2:?}" - the ip address of the host;
+# 3. "${3:?}" - the ssh port for the host; and
+# 4. "${4:?}" - the user used to login to the host.
+#-------------------------------------------------------------------------------
+addHostToSshConfig () {
+  local HOST="${1:?}"
+  local HOSTNAME="${3:?}"
+  local PORT="${4:?}"
+  local USER="${5:?}"
+  local IDENTITY_FILE="$HOST"
+
+cat <<EOF >> "$SSH_CONF"
+Host $HOST
+	Hostname $HOSTNAME
+	Port $PORT
+	User $USER
+	IdentityFile ~/.ssh/$HOST
+EOF
+}
+
+#-------------------------------------------------------------------------------
+# Checks to see if the "~/.ssh/authorized_keys" file exist and creates it if not.
+#-------------------------------------------------------------------------------
+checkForAndCreateAuthorizedKeys () {
+  local SSH_AUTH_KEYS_TF="$(checkForFileOrDirectory "$SSH_AUTH_KEYS_TF")"
+
+  if [ "$SSH_AUTH_KEYS_TF" = false ]; then
+    printComment 'Creating an "authorizzed_keys" file at:'
+    printComment "$SSH_AUTH_KEYS"
+    createFiles "$SSH_AUTH_KEYS"
+
+    setPermissions 600 "$SSH_AUTH_KEYS"
+  fi
+}
+
+#-------------------------------------------------------------------------------
+# Checks to see if the "~/.ssh" directory exist and creates it if not.
+#-------------------------------------------------------------------------------
+checkForAndCreateSshDir () {
+  local SSH_DIR_TF="$(checkForFileOrDirectory "$SSH_DIR")"
+
+  if [ "$SSH_DIR_TF" = false ]; then 
+    printComment 'Creating an "~/.ssh" directory at:'
+    printComment "$SSH_DIR"
+    createDirectory "$SSH_DIR"
+
+    setPermissions 700 "$SSH_DIR"
+  fi
+}
+
+#-------------------------------------------------------------------------------
+# Checks to see if the "~/.ssh/config" file exist and creates it if not, adding
+# a basic config to the created file.
+#-------------------------------------------------------------------------------
+checkForAndCreateSshConfig () {
+  local SSH_CONF_TF="$(checkForFileOrDirectory "$SSH_CONF")"
+
+  if [ "$SSH_CONF_TF" = false ]; then
+    printComment 'Creating an ssh config file at:'
+    printComment "$SSH_CONF"
+    createFiles "$SSH_CONF"
+
+cat <<EOF >> "$SSH_CONF"
+Host *
+	AddKeysToAgent yes
+	IdentitiesOnly yes
+	UseKeychain yes
+EOF
+
+    setPermissions 600 "$SSH_CONF"
+  fi
+}
+
+#-------------------------------------------------------------------------------
 # Generates an ssh key. Takes two arguments:
 #
 # 1. "${1:?}" – specify a file path; and
