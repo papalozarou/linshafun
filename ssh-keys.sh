@@ -20,6 +20,11 @@ addKeyToAuthorizedKeys () {
 # 2. "${2:?}" - the ip address of the host;
 # 3. "${3:?}" - the ssh port for the host; and
 # 4. "${4:?}" - the user used to login to the host.
+# 
+# N.B.
+# Although these variables may exist at in the global scope if 
+# "getSshHostDetails" has been used, this allows fixed details to be passed in 
+# if required.
 #-------------------------------------------------------------------------------
 addHostToSshConfig () {
   local HOST="${1:?}"
@@ -37,6 +42,7 @@ Host $HOST
 EOF
 
   setPermissions 600 "$SSH_CONF"
+  setOwner "$SUDO_USER" "$SSH_CONF"
 }
 
 #-------------------------------------------------------------------------------
@@ -56,6 +62,7 @@ checkForAndCreateAuthorizedKeys () {
     createFiles "$SSH_AUTH_KEYS"
 
     setPermissions 600 "$SSH_AUTH_KEYS"
+    setOwner "$SUDO_USER" "$SSH_AUTH_KEYS"
   fi
 }
 
@@ -76,6 +83,7 @@ checkForAndCreateSshDir () {
     createDirectory "$SSH_DIR"
 
     setPermissions 700 "$SSH_DIR"
+    setOwner "$SUDO_USER" "$SSH_DIR"
   fi
 }
 
@@ -104,7 +112,26 @@ Host *
 EOF
 
     setPermissions 600 "$SSH_CONF"
+    setOwner "$SUDO_USER" "$SSH_CONF"
   fi
+}
+
+#-------------------------------------------------------------------------------
+# Gets details of an SSH host for adding to the ssh config file. Details are 
+# stored in global variables to allow other functions to use them.
+#-------------------------------------------------------------------------------
+getSshHostDetails () {
+  promptForUserInput 'What is the name of the host you want to add?'
+  SSH_HOST="$(getUserInput)"
+
+  promptForUserInput 'What is the ip address of the host you want to add?'
+  SSH_HOSTNAME="$(getUserInput)"  
+
+  promptForUserInput 'What is the ssh port for the host you want to add?'
+  SSH_PORT="$(getUserInput)"
+
+  promptForUserInput 'What is the name of the ssh user for the host you want to add?'
+  SSH_USER="$(getUserInput)"  
 }
 
 #-------------------------------------------------------------------------------
@@ -131,4 +158,37 @@ generateSshKey () {
   printComment 'Key generated.'
 
   listDirectories "$KEY_PATH"
+}
+
+#-------------------------------------------------------------------------------
+# Removes a generated private key.
+#-------------------------------------------------------------------------------
+removePrivateSshKey () {
+  local KEY="${1:?}"
+
+  printComment 'Removing the private key at:'
+  printComment "$KEY"
+  rm "$KEY"
+  printComment "Private key removed."
+}
+
+#-------------------------------------------------------------------------------
+# Get the name of the ssh key and the ssh email if desired. Both variables are 
+# stored in global variables to allow other functions to use them
+#-------------------------------------------------------------------------------
+getSshKeyDetails () {
+  promptForUserInput 'What do you want to call your ssh key?'
+  REMOTE_KEY_NAME="$(getUserInput)"
+
+  promptForUserInput 'What email do you want to add to your ssh key?'
+  SSH_EMAIL="$(getUserInput)"
+
+  SSH_KEY="$SSH_DIR/$REMOTE_KEY_NAME"
+}
+
+#-------------------------------------------------------------------------------
+# Tell the user to copy the private key to their local machine.
+#-------------------------------------------------------------------------------
+printKeyUsage () {
+  printComment "Please copy the private key, $REMOTE_KEY_NAME, to your local ~/.ssh directory."
 }
