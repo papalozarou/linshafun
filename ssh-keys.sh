@@ -171,7 +171,7 @@ getSshKeyDetails () {
   promptForUserInput 'What email do you want to add to your ssh key?'
   SSH_EMAIL="$(getUserInput)"
 
-  SSH_KEY="$SSH_DIR/$REMOTE_KEY_NAME"
+  SSH_KEY="$SSH_DIR/$SSH_KEY_NAME"
 }
 
 #-------------------------------------------------------------------------------
