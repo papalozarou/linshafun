@@ -41,10 +41,15 @@ EOF
 # Checks to see if the "~/.ssh/authorized_keys" file exist and creates it if not.
 #-------------------------------------------------------------------------------
 checkForAndCreateAuthorizedKeys () {
-  local SSH_AUTH_KEYS_TF="$(checkForFileOrDirectory "$SSH_AUTH_KEYS_TF")"
+  local SSH_AUTH_KEYS_TF="$(checkForFileOrDirectory "$SSH_AUTH_KEYS")"
 
-  if [ "$SSH_AUTH_KEYS_TF" = false ]; then
-    printComment 'Creating an "authorizzed_keys" file at:'
+  printComment 'Checking for an authorized keys file at:'
+  printComment "$SSH_AUTH_KEYS"
+
+  if [ "$SSH_AUTH_KEYS_TF" = true ]; then
+    printComment 'The authorized keys file already exists.' true
+  elif [ "$SSH_AUTH_KEYS_TF" = false ]; then
+    printComment 'Creating an "authorized_keys" file at:'
     printComment "$SSH_AUTH_KEYS"
     createFiles "$SSH_AUTH_KEYS"
 
@@ -58,7 +63,12 @@ checkForAndCreateAuthorizedKeys () {
 checkForAndCreateSshDir () {
   local SSH_DIR_TF="$(checkForFileOrDirectory "$SSH_DIR")"
 
-  if [ "$SSH_DIR_TF" = false ]; then 
+  printComment 'Checking for an "~/.ssh" directory at:'
+  printComment "$SSH_DIR"
+
+  if [ "$SSH_DIR_TF" = true ]; then
+    printComment 'The "~/.ssh" directory already exists.' true
+  elif [ "$SSH_DIR_TF" = false ]; then 
     printComment 'Creating an "~/.ssh" directory at:'
     printComment "$SSH_DIR"
     createDirectory "$SSH_DIR"
@@ -74,7 +84,12 @@ checkForAndCreateSshDir () {
 checkForAndCreateSshConfig () {
   local SSH_CONF_TF="$(checkForFileOrDirectory "$SSH_CONF")"
 
-  if [ "$SSH_CONF_TF" = false ]; then
+  printComment 'Checking for an ssh config file at:'
+  printComment "$SSH_CONF"
+
+  if [ "$SSH_AUTH_KEYS_TF" = true ]; then
+    printComment 'The ssh config file already exists.' true
+  elif [ "$SSH_CONF_TF" = false ]; then
     printComment 'Creating an ssh config file at:'
     printComment "$SSH_CONF"
     createFiles "$SSH_CONF"
