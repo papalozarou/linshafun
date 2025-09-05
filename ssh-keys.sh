@@ -35,6 +35,8 @@ Host $HOST
 	User $USER
 	IdentityFile ~/.ssh/$HOST
 EOF
+
+  setPermissions 600 "$SSH_CONF"
 }
 
 #-------------------------------------------------------------------------------
