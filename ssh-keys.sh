@@ -117,24 +117,6 @@ EOF
 }
 
 #-------------------------------------------------------------------------------
-# Gets details of an SSH host for adding to the ssh config file. Details are 
-# stored in global variables to allow other functions to use them.
-#-------------------------------------------------------------------------------
-getSshHostDetails () {
-  promptForUserInput 'What is the name of the host you want to add?'
-  SSH_HOST="$(getUserInput)"
-
-  promptForUserInput 'What is the ip address of the host you want to add?'
-  SSH_HOSTNAME="$(getUserInput)"  
-
-  promptForUserInput 'What is the ssh port for the host you want to add?'
-  SSH_PORT="$(getUserInput)"
-
-  promptForUserInput 'What is the name of the ssh user for the host you want to add?'
-  SSH_USER="$(getUserInput)"  
-}
-
-#-------------------------------------------------------------------------------
 # Generates an ssh key. Takes two arguments:
 #
 # 1. "${1:?}" – specify a file path; and
@@ -161,6 +143,62 @@ generateSshKey () {
 }
 
 #-------------------------------------------------------------------------------
+# Gets details of an SSH host for adding to the ssh config file. Details are 
+# stored in global variables to allow other functions to use them.
+#-------------------------------------------------------------------------------
+getSshHostDetails () {
+  promptForUserInput 'What is the name of the host you want to add?'
+  SSH_HOST="$(getUserInput)"
+
+  promptForUserInput 'What is the ip address of the host you want to add?'
+  SSH_HOSTNAME="$(getUserInput)"  
+
+  promptForUserInput 'What is the ssh port for the host you want to add?'
+  SSH_PORT="$(getUserInput)"
+
+  promptForUserInput 'What is the name of the ssh user for the host you want to add?'
+  SSH_USER="$(getUserInput)"  
+}
+
+#-------------------------------------------------------------------------------
+# Get the name of the ssh key and the ssh email if desired. Both variables are 
+# stored in global variables to allow other functions to use them
+#-------------------------------------------------------------------------------
+getSshKeyDetails () {
+  promptForUserInput 'What do you want to call your ssh key?'
+  SSH_KEY_NAME="$(getUserInput)"
+
+  promptForUserInput 'What email do you want to add to your ssh key?'
+  SSH_EMAIL="$(getUserInput)"
+
+  SSH_KEY="$SSH_DIR/$REMOTE_KEY_NAME"
+}
+
+#-------------------------------------------------------------------------------
+# Tell the user to copy the private key to their local machine. Takes one 
+# mandatory argument:
+# 
+# 1. "${1:?}" - the name of the ssh key file.
+#-------------------------------------------------------------------------------
+printPrivateKeyUsage () {
+  local KEY="${1:?}"
+
+  printComment "Please copy the private key, $KEY, to your local "'"~/.ssh" directory.'
+}
+
+#-------------------------------------------------------------------------------
+# Tell the user to copy the private key to their local machine. Takes one 
+# mandatory argument:
+# 
+# 1. "${1:?}" - the name of the ssh key file.
+#-------------------------------------------------------------------------------
+printPublicKeyUsage () {
+  local KEY="${1:?}"
+
+  printComment "Please copy the public key, $KEY, to your ssh hosts "'"~/.ssh/authorized_keys" file.'
+}
+
+#-------------------------------------------------------------------------------
 # Removes a generated private key.
 #-------------------------------------------------------------------------------
 removePrivateSshKey () {
@@ -170,25 +208,4 @@ removePrivateSshKey () {
   printComment "$KEY"
   rm "$KEY"
   printComment "Private key removed."
-}
-
-#-------------------------------------------------------------------------------
-# Get the name of the ssh key and the ssh email if desired. Both variables are 
-# stored in global variables to allow other functions to use them
-#-------------------------------------------------------------------------------
-getSshKeyDetails () {
-  promptForUserInput 'What do you want to call your ssh key?'
-  REMOTE_KEY_NAME="$(getUserInput)"
-
-  promptForUserInput 'What email do you want to add to your ssh key?'
-  SSH_EMAIL="$(getUserInput)"
-
-  SSH_KEY="$SSH_DIR/$REMOTE_KEY_NAME"
-}
-
-#-------------------------------------------------------------------------------
-# Tell the user to copy the private key to their local machine.
-#-------------------------------------------------------------------------------
-printKeyUsage () {
-  printComment "Please copy the private key, $REMOTE_KEY_NAME, to your local ~/.ssh directory."
 }
