@@ -132,7 +132,9 @@ generateSshKey () {
 
   printSeparator
   printComment 'Key generated.'
-
+  setPermissions 600 "$KEY_PATH"
+  setOwner "$SUDO_USER" "$KEY_PATH"
+  
   listDirectories "$KEY_PATH"
 }
 
