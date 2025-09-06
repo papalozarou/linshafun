@@ -195,7 +195,7 @@ printPrivateKeyUsage () {
 printPublicKeyUsage () {
   local KEY="${1:?}"
 
-  printComment "Please copy the public key, $KEY, to your ssh hosts "'"~/.ssh/authorized_keys" file.'
+  printComment "Please copy the public key, $KEY, to your remote ssh host's "'"~/.ssh/authorized_keys" file.'
 }
 
 #-------------------------------------------------------------------------------
