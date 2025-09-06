@@ -134,7 +134,9 @@ generateSshKey () {
   printComment 'Key generated.'
   setPermissions 600 "$KEY_PATH"
   setOwner "$SUDO_USER" "$KEY_PATH"
-  
+  setPermissions 600 "$KEY_PATH.pub"
+  setOwner "$SUDO_USER" "$KEY_PATH.pub"
+
   listDirectories "$KEY_PATH"
 }
 
