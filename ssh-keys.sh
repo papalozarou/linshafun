@@ -35,10 +35,10 @@ addHostToSshConfig () {
 
 cat <<EOF >> "$SSH_CONF"
 Host $HOST
-	Hostname $HOSTNAME
-	Port $PORT
-	User $USER
-	IdentityFile ~/.ssh/$HOST
+  Hostname $HOSTNAME
+  Port $PORT
+  User $USER
+  IdentityFile ~/.ssh/$HOST
 EOF
 
   setPermissions 600 "$SSH_CONF"
