@@ -28,9 +28,9 @@ addKeyToAuthorizedKeys () {
 #-------------------------------------------------------------------------------
 addHostToSshConfig () {
   local HOST="${1:?}"
-  local HOSTNAME="${3:?}"
-  local PORT="${4:?}"
-  local USER="${5:?}"
+  local HOSTNAME="${2:?}"
+  local PORT="${3:?}"
+  local USER="${4:?}"
   local IDENTITY_FILE="$HOST"
 
 cat <<EOF >> "$SSH_CONF"
