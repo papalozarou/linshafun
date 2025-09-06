@@ -97,7 +97,7 @@ checkForAndCreateSshConfig () {
   printComment 'Checking for an ssh config file at:'
   printComment "$SSH_CONF"
 
-  if [ "$SSH_AUTH_KEYS_TF" = true ]; then
+  if [ "$SSH_CONF_TF" = true ]; then
     printComment 'The ssh config file already exists.' true
   elif [ "$SSH_CONF_TF" = false ]; then
     printComment 'Creating an ssh config file at:'
