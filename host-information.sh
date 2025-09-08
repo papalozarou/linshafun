@@ -34,9 +34,9 @@ compareOsVersion () {
 # Gets the OS distribution the host machine is running, e.g. ubuntu, debian, etc.
 #-------------------------------------------------------------------------------
 getOsDistribution () {
-  local OS_TYPE="$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
+  local OS_DISTRIBUTION="$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
 
-  echo "$OS_TYPE"
+  echo "$OS_DISTRIBUTION"
 }
 
 
