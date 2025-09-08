@@ -117,6 +117,13 @@ checkForAndCreateSshConfig () {
     printComment "$SSH_CONF"
     createFiles "$SSH_CONF"
 
+    cat <<EOF > "$SSH_CONF"
+Host *
+  AddKeysToAgent yes
+  IdentitiesOnly yes
+  
+EOF
+
     setPermissions 600 "$SSH_CONF"
     setOwner "$SUDO_USER" "$SSH_CONF"
   fi
