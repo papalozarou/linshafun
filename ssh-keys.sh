@@ -5,6 +5,18 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+# Start the "ssh-agent" and add the newly generated key to it.
+#-------------------------------------------------------------------------------
+addSshKeytoAgent () {
+  printComment 'Adding the generated key to the ssh-agent.'
+  printSeparator
+  eval "$(ssh-agent -s)"
+  ssh-add "$SSH_KEY"
+  printSeparator
+  printComment 'Key added to agent.'
+}
+
+#-------------------------------------------------------------------------------
 # Adds the newly generated public key to the "authorized_keys" file.
 #-------------------------------------------------------------------------------
 addKeyToAuthorizedKeys () {
