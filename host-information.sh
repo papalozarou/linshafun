@@ -31,14 +31,20 @@ compareOsVersion () {
 }
 
 #-------------------------------------------------------------------------------
+# Gets the OS type the host machine is running, e.g. ubuntu, debian, etc.
+#-------------------------------------------------------------------------------
+getOsType () {
+  local OS_TYPE="$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
+
+  echo "$OS_TYPE"
+}
+
+
+#-------------------------------------------------------------------------------
 # Gets the OS version number the host machine is running.
-#
-# N.B.
-# This assumes Ubuntu as the OS as this is what these scripts were primarily 
-# built for.
 #-------------------------------------------------------------------------------
 getOsVersion () {
-  local OS_VERSION="$(grep "VERSION_ID*" /etc/os-release | cut -d'"' -f2)"
+  local OS_VERSION="$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
 
   echo "$OS_VERSION"
 }
