@@ -5,8 +5,8 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Compares the current OS version against a given version. Takes one mandatory 
-# argument:
+# Compares the current Linux distribution version against a given version. Takes 
+# one mandatory argument:
 #
 # 1. "${1:?}" – the OS version number to compare to.
 #
@@ -31,7 +31,8 @@ compareOsVersion () {
 }
 
 #-------------------------------------------------------------------------------
-# Gets the OS distribution the host machine is running, e.g. ubuntu, debian, etc.
+# Gets the Linux distribution the host machine is running, e.g. ubuntu, debian,
+# etc.
 #-------------------------------------------------------------------------------
 getOsDistribution () {
   local OS_DISTRIBUTION="$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
@@ -41,7 +42,7 @@ getOsDistribution () {
 
 
 #-------------------------------------------------------------------------------
-# Gets the OS version number the host machine is running.
+# Gets the Linux distribution version number the host machine is running.
 #-------------------------------------------------------------------------------
 getOsVersion () {
   local OS_VERSION="$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
@@ -50,7 +51,7 @@ getOsVersion () {
 }
 
 #-------------------------------------------------------------------------------
-# Gets the kernal version number the host machine is running.
+# Gets the Linux kernal version number the host machine is running.
 #-------------------------------------------------------------------------------
 getKernalVersion () {
   local KERNAL_VERSION="$(uname -r)"
