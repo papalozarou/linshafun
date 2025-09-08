@@ -30,7 +30,7 @@ addScriptToCron () {
   local SNIPPET="/etc/cron.d/${4:-"$CRON_SNIPPET"}"
 
   printComment 'Adding to the system crontab, as a snippet in "/etc/cron.d".'
-  echo "$SCHEDULE $USER $SCRIPT" > "$SNIPPET"
+  echo "$SCHEDULE $USER $SCRIPT >> /var/log/$SNIPPET.log 2>&1" > "$SNIPPET"
 
   printSeparator
   ls -lha "$SNIPPET"
