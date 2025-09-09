@@ -117,27 +117,27 @@ checkStringContainsSubstring() {
 # If the line is not found at all the script will exit.
 # ------------------------------------------------------------------------------
 commentInLine () {
-  local FILE="${1:?}"
+  local FILE_PATH="${1:?}"
   local PARTIAL="${2:?}"
   local CHAR="${3:-#}"
   local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed 's/\//\\\//g')"
 
-  if grep -q "^[[:space:]]*$PARTIAL" "$FILE"; then
+  if grep -q "^[[:space:]]*$PARTIAL" "$FILE_PATH"; then
     printComment 'The line starting with:'
     printComment "$PARTIAL"
     printComment 'is already uncommented in:'
-    printComment "$FILE."
-  elif grep -q "^[[:space:]]*$CHAR[[:space:]]*$PARTIAL" "$FILE"; then
+    printComment "$FILE_PATH."
+  elif grep -q "^[[:space:]]*$CHAR[[:space:]]*$PARTIAL" "$FILE_PATH"; then
     printComment 'Uncommenting line starting with:'
     printComment "$CHAR $PARTIAL"
     printComment 'in:'
-    printComment "$FILE"
-    sed -i "/^[[:space:]]*$CHAR[[:space:]]*$ESCAPED_PARTIAL/s/^\([[:space:]]*\)#[[:space:]]*/\1/" "$FILE"
+    printComment "$FILE_PATH"
+    sed -i "/^[[:space:]]*$CHAR[[:space:]]*$ESCAPED_PARTIAL/s/^\([[:space:]]*\)#[[:space:]]*/\1/" "$FILE_PATH"
   else
     printComment 'A line starting with:' true
     printComment "$PARTIAL" true
-    printComment 'not found in:' true 
-    printComment "$FILE" true
+    printComment 'not found in:' true
+    printComment "$FILE_PATH" true
     return 1
   fi
 }
@@ -166,27 +166,27 @@ commentInLine () {
 # If the line is not found at all the script will exit.
 # ------------------------------------------------------------------------------
 commentOutLine () {
-  local FILE="${1:?}"
+  local FILE_PATH="${1:?}"
   local PARTIAL="${2:?}"
   local CHAR="${3:-#}"
   local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed 's/\//\\\//g')"
 
-  if grep -q "^[[:space:]]*$CHAR[[:space:]]*$PARTIAL" "$FILE"; then
+  if grep -q "^[[:space:]]*$CHAR[[:space:]]*$PARTIAL" "$FILE_PATH"; then
     printComment 'The line starting with:'
     printComment "$PARTIAL"
     printComment 'is already commented out in:'
-    printComment "$FILE."
-  elif grep -q "^[[:space:]]*$PARTIAL" "$FILE"; then
+    printComment "$FILE_PATH."
+  elif grep -q "^[[:space:]]*$PARTIAL" "$FILE_PATH"; then
     printComment 'Commenting out line starting with:'
     printComment "$PARTIAL"
     printComment 'in:'
-    printComment "$FILE"
-    sed -i "/^[[:space:]]*$ESCAPED_PARTIAL/s/^\([[:space:]]*\)/\1$CHAR /" "$FILE"
+    printComment "$FILE_PATH"
+    sed -i "/^[[:space:]]*$ESCAPED_PARTIAL/s/^\([[:space:]]*\)/\1$CHAR /" "$FILE_PATH"
   else
     printComment 'A line starting with:' true
     printComment "$PARTIAL" true
-    printComment 'not found in:' true 
-    printComment "$FILE" true
+    printComment 'not found in:' true
+    printComment "$FILE_PATH" true
     return 1
   fi
 }
