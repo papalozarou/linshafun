@@ -47,9 +47,52 @@ checkForAndCreateAuthorizedKeys () {
 }
 
 #-------------------------------------------------------------------------------
+# Checks that a user has copied a private key. Takes one mandatory argument:
+# 
+# 1. "${1:?}" – the key file, including directory path.
+# 
+# If yes, removes the key, if no or other input the function directs the user to
+# copy the key and runs this function again.
+#-------------------------------------------------------------------------------
+checkPrivateSshKeyCopied () {
+  local KEY="{$1:?}"
+
+  promptForUserInput "Have you copied the private key, $KEY, to your local "~/.ssh" directory (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
+  KEY_COPIED_YN="$(getUserInputYN)"
+
+  if [ "$KEY_COPIED_YN" = true ]; then
+    removePrivateSshKey "$KEY"
+  else
+    printComment "You must copy the private key, $KEY, to your local ~/.ssh directory." true
+    checkPrivateSshKeyCopied
+  fi
+}
+
+#-------------------------------------------------------------------------------
+# Checks that a user has copied a public key to a remote servers 
+# "~/.ssh/authorized_keys" file. Takes one mandatory argument:
+# 
+# 1. "${1:?}" – the key file, including directory path.
+# 
+# If no or other input the function directs the user to copy the key and runs 
+# this function again.
+#-------------------------------------------------------------------------------
+checkPublicSshKeyCopied () {
+  local KEY="{$1:?}"
+
+  promptForUserInput "Have you copied the pripublicvate key, $KEY, to your remote server's "~/.ssh/authorized_keys" file (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
+  KEY_COPIED_YN="$(getUserInputYN)"
+
+  if [ "$KEY_COPIED_YN" != true ]; then
+    printComment "You must copy the public key, $KEY, to your remote server's "~/.ssh/authorized_keys" file." true
+    checkPublicSshKeyCopied
+  fi
+}
+
+#-------------------------------------------------------------------------------
 # Generates an ssh key. Takes two arguments:
 #
-# 1. "${1:?}" – specify a file path; and
+# 1. "${1:?}" – the key file, including directory path; and
 # 2. "$2" – an optional email address for the key.
 #-------------------------------------------------------------------------------
 generateSshKey () {
