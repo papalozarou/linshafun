@@ -17,18 +17,19 @@
 #-------------------------------------------------------------------------------
 COMMENT_COLOUR_PREFIX='\033[32m'
 COMMENT_COLOUR_WARN='\033[33m'
-# COMMENT_COLOUR_ERROR='\033[31m'
+COMMENT_COLOUR_ERROR='\033[31m'
 COMMENT_COLOUR_RESET='\033[0m'
 COMMENT_PREFIX='SETUP SCRIPT: '
 COMMENT_PREFIX_WARN='   NOTA BENE: '
+COMMENT_PREFIX_ERROR=' ***ERROR***: '
 COMMENT_SEPARATOR='------------------------------------------------------------------'
 
 #-------------------------------------------------------------------------------
-# Prints a comment. Takes two arguments:
+# Prints a comment of any length, via "printLine". Takes two arguments:
 # 
 # 1. "${1:?}" – the full comment to print; and
-# 2. "${2:-false}" – a flag indicating if the comment is a warning, defaulting 
-#    to false.
+# 2. "${2:-regular}" – a flag indicating if the comment is "regular", a 
+#    "warning", or an "error", defaulting to "regular".
 # 
 # The comment is split into words and printed in lines that do not exceed the
 # standard terminal length of 80 characters, including prefix.
@@ -42,13 +43,8 @@ COMMENT_SEPARATOR='-------------------------------------------------------------
 #-------------------------------------------------------------------------------
 printComment () {
   local COMMENT="${1:?}"
-  local WARN_TF="${2:-false}"
-
-  if [ "$WARN_TF" = true ]; then
-    local LINE_LENGTH=69
-  else
-    local LINE_LENGTH=66
-  fi
+  local COMMENT_TYPE="${2:-regular}"
+  local LINE_LENGTH=66
 
   CURRENT_LINE=
 
@@ -66,11 +62,7 @@ printComment () {
     fi
   done
 
-  if [ -n "$CURRENT_LINE" ] && [ "$WARN_TF" = true ]; then
-    printLine "$CURRENT_LINE" true
-  elif [ -n "$CURRENT_LINE" ]; then
-    printLine "$CURRENT_LINE"
-  fi
+  printLine "$CURRENT_LINE" "$FLAG"
 }
 
 #-------------------------------------------------------------------------------
@@ -78,17 +70,13 @@ printComment () {
 # arguments:
 # 
 # 1. "${1:?}" – the comment line to print; and
-# 2. "${2:-false}" – a flag indicating if the line is a warning line, defaulting
-#    to "false".
+# 2. "${2:-regular}" – a flag indicating if the comment is "regular", a 
+#    "warning", or an "error", defaulting to "regular".
 #
 # The comment line is printed in the specified colour, with the appropriate 
-# prefix. If the second argument is "true", it uses the warning prefix and 
-# colour.
+# prefix.
 # 
 # N.B.
-# The "COMMENT_COLOUR_PREFIX" and "COMMENT_COLOUR_WARN" variables are used to
-# differentiate between regular comments and warning comments.
-# 
 # In the "printf" commands:
 # 
 # - "%b" interprets escape sequences in the corresponding argument, allowing the
@@ -99,10 +87,12 @@ printComment () {
 #-------------------------------------------------------------------------------
 printLine () {
   local LINE="${1:?}"
-  local WARN_TF="${2:-false}"
+  local TYPE="${2:-regular}"
 
-  if [ "$WARN_TF" = true ]; then
+  if [ "$TYPE" = true ]; then
     printf "%b%s%s\n%b" "$COMMENT_COLOUR_WARN" "$COMMENT_PREFIX_WARN" "$LINE" "$COMMENT_COLOUR_RESET"
+  elif [ "$TYPE" = 'error' ]; then
+    printf "%b%s%s\n%b" "$COMMENT_COLOUR_ERROR" "$COMMENT_PREFIX_ERROR" "$LINE" "$COMMENT_COLOUR_RESET"
   else
     printf "%b%s%b%s\n" "$COMMENT_COLOUR_PREFIX" "$COMMENT_PREFIX" "$COMMENT_COLOUR_RESET" "$LINE"
   fi
@@ -139,7 +129,7 @@ printScriptExiting () {
   printSeparator
 
   if [ "$1" = true ]; then
-    printComment 'Exiting script, however some changes were made – please review the script output.' true
+    printComment 'Exiting script, however some changes were made – please review the script output.' 'warning'
   else
     printComment 'Exiting script with no changes.'
   fi
