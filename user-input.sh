@@ -25,7 +25,7 @@ getUserInputYN () {
   elif [ "$INPUT_YN" = "n" ] || [ "$INPUT_YN" = "N" ]; then
     echo false
   else
-    printComment 'You must respond y/Y or n/N to proceed.' 'warning'
+    printComment 'You must respond y/Y or n/N to proceed.' 'error'
     getUserInputYN
   fi
 }
