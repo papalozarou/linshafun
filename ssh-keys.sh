@@ -35,7 +35,7 @@ checkForAndCreateAuthorizedKeys () {
   printComment "$SSH_AUTH_KEYS"
 
   if [ "$SSH_AUTH_KEYS_TF" = true ]; then
-    printComment 'The authorized keys file already exists.' true
+    printComment 'The authorized keys file already exists.' 'warning'
   elif [ "$SSH_AUTH_KEYS_TF" = false ]; then
     printComment 'Creating an "authorized_keys" file at:'
     printComment "$SSH_AUTH_KEYS"
@@ -63,7 +63,7 @@ checkPrivateSshKeyCopied () {
   if [ "$KEY_COPIED_YN" = true ]; then
     removePrivateSshKey "$KEY"
   else
-    printComment "You must copy the private key, $KEY, to your local ~/.ssh directory." true
+    printComment "You must copy the private key, $KEY, to your local ~/.ssh directory." 'warning'
     checkPrivateSshKeyCopied
   fi
 }
@@ -84,7 +84,7 @@ checkPublicSshKeyCopied () {
   KEY_COPIED_YN="$(getUserInputYN)"
 
   if [ "$KEY_COPIED_YN" != true ]; then
-    printComment "You must copy the public key, $KEY, to your remote server's "~/.ssh/authorized_keys" file." true
+    printComment "You must copy the public key, $KEY, to your remote server's "~/.ssh/authorized_keys" file." 'warning'
     checkPublicSshKeyCopied
   fi
 }

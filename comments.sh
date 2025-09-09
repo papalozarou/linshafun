@@ -112,7 +112,7 @@ printServiceWait () {
   local WAIT="${3:-"60"}"
 
   printComment "To give $SERVICE time to $ACTION we will wait at least $WAIT seconds."
-  printComment 'Please do not stop the script.' true
+  printComment 'Please do not stop the script.' 'warning'
   
   sleep "$WAIT"
 }

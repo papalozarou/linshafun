@@ -148,10 +148,10 @@ compareAndUpdateDockerEnvVariables () {
       printSeparator
       printComment "No changes to $ENV_VARIABLE made."
     else
-      printComment "The current value of $ENV_VARIABLE is different to the comparison value:" true
+      printComment "The current value of $ENV_VARIABLE is different to the comparison value:" 'warning'
       printSeparator
-      printComment "Environment file value: $ENV_VALUE" true
-      printComment "Comparison value:       $ENV_COMPARISON" true
+      printComment "Environment file value: $ENV_VALUE" 'warning'
+      printComment "Comparison value:       $ENV_COMPARISON" 'warning'
       printSeparator
 
       changeDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE"

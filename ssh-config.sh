@@ -51,7 +51,7 @@ checkForAndCreateSshDir () {
   printComment "$SSH_DIR"
 
   if [ "$SSH_DIR_TF" = true ]; then
-    printComment 'The "~/.ssh" directory already exists.' true
+    printComment 'The "~/.ssh" directory already exists.' 'warning'
   elif [ "$SSH_DIR_TF" = false ]; then 
     printComment 'Creating an "~/.ssh" directory at:'
     printComment "$SSH_DIR"
@@ -73,7 +73,7 @@ checkForAndCreateSshConfig () {
   printComment "$SSH_CONF"
 
   if [ "$SSH_CONF_TF" = true ]; then
-    printComment 'The ssh config file already exists.' true
+    printComment 'The ssh config file already exists.' 'warning'
   elif [ "$SSH_CONF_TF" = false ]; then
     printComment 'Creating an ssh config file at:'
     printComment "$SSH_CONF"

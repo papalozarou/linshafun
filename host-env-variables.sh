@@ -74,6 +74,6 @@ setHostEnvVariable () {
     printComment "$ENV_VARIABLE added."
 
     printSeparator
-    printComment 'This variable will not be recognised until you log out and back in.' true
+    printComment 'This variable will not be recognised until you log out and back in.' 'warning'
   fi
 }

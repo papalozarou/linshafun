@@ -46,7 +46,7 @@ initialiseScript () {
   printComment "Check returned $CONF_OPTION_TF."
 
   if [ "$CONF_OPTION_TF" = true ]; then
-    printComment 'You have already performed this step.' true
+    printComment 'You have already performed this step.' 'warning'
     printScriptExiting
 
     exit 1
@@ -54,8 +54,8 @@ initialiseScript () {
     printComment 'You have not performed this step. Running script.'
     printSeparator
   else
-    printComment 'Something went wrong. Please check your setup config at:' true
-    printComment "$SETUP_CONF" true
+    printComment 'Something went wrong. Please check your setup config at:' 'warning'
+    printComment "$SETUP_CONF" 'warning'
     printScriptExiting
 
     exit 1

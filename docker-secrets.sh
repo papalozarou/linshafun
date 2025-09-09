@@ -34,7 +34,7 @@ createDockerSecretsDir () {
   printComment "$DOCKER_SECRETS_DIR"
 
   if [ "$DOCKER_SECRETS_DIR_TF" = true ]; then
-    printComment 'The docker secrets directory already exists.' true
+    printComment 'The docker secrets directory already exists.' 'warning'
   elif [ "$DOCKER_SECRETS_DIR_TF" = false ]; then
     createDirectory "$DOCKER_SECRETS_DIR"
     setPermissions '600' "$DOCKER_SECRETS_DIR"

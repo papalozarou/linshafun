@@ -25,7 +25,7 @@ getUserInputYN () {
   elif [ "$INPUT_YN" = "n" ] || [ "$INPUT_YN" = "N" ]; then
     echo false
   else
-    printComment 'You must respond y/Y or n/N to proceed.' true
+    printComment 'You must respond y/Y or n/N to proceed.' 'warning'
     getUserInputYN
   fi
 }
@@ -51,6 +51,6 @@ promptForUserInput () {
   shift
 
   if  [ "$#" -ge 1 ]; then
-    printComment "$1" true
+    printComment "$1" 'warning'
   fi
 }
