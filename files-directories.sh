@@ -215,7 +215,7 @@ createFiles () {
 #-------------------------------------------------------------------------------
 getListOfFilesByPrefix () {
   local PREFIX="${1:?}"
-  local DIR_PATH="${2:-"$USER_DIR"}"
+  local DIR_PATH="${2:-"$USER_DIR_PATH"}"
 
   local FILE_PATHS="$(find "$DIR_PATH" -name "$PREFIX*")"
 
@@ -239,7 +239,7 @@ getListOfFilesByPrefix () {
 #-------------------------------------------------------------------------------
 getListOfFilesByPostfix () {
   local POSTFIX="${1:-".example"}"
-  local DIR_PATH="${2:-"$USER_DIR"}"
+  local DIR_PATH="${2:-"$USER_DIR_PATH"}"
 
   local FILE_PATHS="$(find "$DIR_PATH" -name "*$POSTFIX")"
 
