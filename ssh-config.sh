@@ -45,20 +45,20 @@ addHostToSshConfig () {
 # Checks to see if the "~/.ssh" directory exist and creates it if not.
 #-------------------------------------------------------------------------------
 checkForAndCreateSshDir () {
-  local SSH_DIR_TF="$(checkForFileOrDirectory "$SSH_DIR")"
+  local SSH_DIR_TF="$(checkForFileOrDirectory "$SSH_DIR_PATH")"
 
   printComment 'Checking for an "~/.ssh" directory at:'
-  printComment "$SSH_DIR"
+  printComment "$SSH_DIR_PATH"
 
   if [ "$SSH_DIR_TF" = true ]; then
     printComment 'The "~/.ssh" directory already exists.' 'warning'
-  elif [ "$SSH_DIR_TF" = false ]; then 
+  elif [ "$SSH_DIR_TF" = false ]; then
     printComment 'Creating an "~/.ssh" directory at:'
-    printComment "$SSH_DIR"
-    createDirectory "$SSH_DIR"
+    printComment "$SSH_DIR_PATH"
+    createDirectory "$SSH_DIR_PATH"
 
-    setPermissions 700 "$SSH_DIR"
-    setOwner "$SUDO_USER" "$SSH_DIR"
+    setPermissions 700 "$SSH_DIR_PATH"
+    setOwner "$SUDO_USER" "$SSH_DIR_PATH"
   fi
 }
 
@@ -67,27 +67,27 @@ checkForAndCreateSshDir () {
 # a basic config to the created file.
 #-------------------------------------------------------------------------------
 checkForAndCreateSshConfig () {
-  local SSH_CONF_TF="$(checkForFileOrDirectory "$SSH_CONF")"
+  local SSH_CONF_TF="$(checkForFileOrDirectory "$SSH_CONF_PATH")"
 
   printComment 'Checking for an ssh config file at:'
-  printComment "$SSH_CONF"
+  printComment "$SSH_CONF_PATH"
 
   if [ "$SSH_CONF_TF" = true ]; then
     printComment 'The ssh config file already exists.' 'warning'
   elif [ "$SSH_CONF_TF" = false ]; then
     printComment 'Creating an ssh config file at:'
-    printComment "$SSH_CONF"
-    createFiles "$SSH_CONF"
+    printComment "$SSH_CONF_PATH"
+    createFiles "$SSH_CONF_PATH"
 
-    cat <<EOF > "$SSH_CONF"
+    cat <<EOF > "$SSH_CONF_PATH"
 Host *
   AddKeysToAgent yes
   IdentitiesOnly yes
   
 EOF
 
-    setPermissions 600 "$SSH_CONF"
-    setOwner "$SUDO_USER" "$SSH_CONF"
+    setPermissions 600 "$SSH_CONF_PATH"
+    setOwner "$SUDO_USER" "$SSH_CONF_PATH"
   fi
 }
 

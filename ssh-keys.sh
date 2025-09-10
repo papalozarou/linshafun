@@ -11,7 +11,7 @@ addSshKeytoAgent () {
   printComment 'Adding the generated key to the ssh-agent.'
   printSeparator
   eval "$(ssh-agent -s)"
-  ssh-add "$SSH_KEY"
+  ssh-add "$SSH_KEY_PATH"
   printSeparator
   printComment 'Key added to agent.'
 }
@@ -20,8 +20,8 @@ addSshKeytoAgent () {
 # Adds the newly generated public key to the "authorized_keys" file.
 #-------------------------------------------------------------------------------
 addKeyToAuthorizedKeys () {
-  printComment "Adding public key to $SSH_DIR/authorized_keys."
-  cat "$SSH_KEY.pub" >> "$SSH_DIR/authorized_keys"
+  printComment "Adding public key to $SSH_AUTH_KEYS_PATH."
+  cat "$SSH_KEY.pub" >> "$SSH_AUTH_KEYS_PATH"
   printComment 'Key added.'
 }
 
@@ -29,20 +29,20 @@ addKeyToAuthorizedKeys () {
 # Checks to see if the "~/.ssh/authorized_keys" file exist and creates it if not.
 #-------------------------------------------------------------------------------
 checkForAndCreateAuthorizedKeys () {
-  local SSH_AUTH_KEYS_TF="$(checkForFileOrDirectory "$SSH_AUTH_KEYS")"
+  local SSH_AUTH_KEYS_TF="$(checkForFileOrDirectory "$SSH_AUTH_KEYS_PATH")"
 
   printComment 'Checking for an authorized keys file at:'
-  printComment "$SSH_AUTH_KEYS"
+  printComment "$SSH_AUTH_KEYS_PATH"
 
   if [ "$SSH_AUTH_KEYS_TF" = true ]; then
     printComment 'The authorized keys file already exists.' 'warning'
   elif [ "$SSH_AUTH_KEYS_TF" = false ]; then
     printComment 'Creating an "authorized_keys" file at:'
-    printComment "$SSH_AUTH_KEYS"
-    createFiles "$SSH_AUTH_KEYS"
+    printComment "$SSH_AUTH_KEYS_PATH"
+    createFiles "$SSH_AUTH_KEYS_PATH"
 
-    setPermissions 600 "$SSH_AUTH_KEYS"
-    setOwner "$SUDO_USER" "$SSH_AUTH_KEYS"
+    setPermissions 600 "$SSH_AUTH_KEYS_PATH"
+    setOwner "$SUDO_USER" "$SSH_AUTH_KEYS_PATH"
   fi
 }
 
@@ -81,7 +81,7 @@ checkPublicSshKeyCopied () {
   local KEY="{$1:?}"
 
   promptForUserInput "Have you copied the pripublicvate key, $KEY, to your remote server's "~/.ssh/authorized_keys" file (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
-  KEY_COPIED_YN="$(getUserInputYN)"
+  local KEY_COPIED_YN="$(getUserInputYN)"
 
   if [ "$KEY_COPIED_YN" != true ]; then
     printComment "You must copy the public key, $KEY, to your remote server's "~/.ssh/authorized_keys" file." 'warning'
@@ -130,7 +130,7 @@ getSshKeyDetails () {
   promptForUserInput 'What email do you want to add to your ssh key?'
   SSH_EMAIL="$(getUserInput)"
 
-  SSH_KEY="$SSH_DIR/$SSH_KEY_NAME"
+  SSH_KEY_PATH="$SSH_DIR_PATH/$SSH_KEY_NAME"
 }
 
 #-------------------------------------------------------------------------------
@@ -163,11 +163,11 @@ printPublicKeyUsage () {
 # 1. "${1:?}" - the ssh key file, including directory path.
 #-------------------------------------------------------------------------------
 removePrivateSshKey () {
-  local KEY="${1:?}"
+  local KEY_PATH="${1:?}"
 
   printComment 'Removing the private key at:'
-  printComment "$KEY"
-  rm "$KEY"
+  printComment "$KEY_PATH"
+  rm "$KEY_PATH"
   printComment "Private key removed."
 }
 
@@ -177,10 +177,10 @@ removePrivateSshKey () {
 # 1. "${1:?}" - the ssh key file, including directory path.
 #-------------------------------------------------------------------------------
 removePublicSshKey () {
-  local KEY="${1:?}"
+  local KEY_PATH="${1:?}"
 
   printComment 'Removing the public key at:'
-  printComment "$KEY"
-  rm "$KEY"
+  printComment "$KEY_PATH"
+  rm "$KEY_PATH.pub"
   printComment "Public key removed."
 }
