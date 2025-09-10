@@ -4,7 +4,6 @@
 # Functions for checking, setting and reading setup config options.
 #-------------------------------------------------------------------------------
 
-
 #-------------------------------------------------------------------------------
 # Adds a variable to "./setup/[project-name]-setup.var". Takes three mandatory
 # arguments:
