@@ -1,16 +1,16 @@
 #-------------------------------------------------------------------------------
 # Directory variables.
 #-------------------------------------------------------------------------------
-USER_DIR="/home/$SUDO_USER"
-SSH_DIR="$USER_DIR/.ssh"
-SSH_CONF="$SSH_DIR/config"
-SSH_AUTH_KEYS="$SSH_DIR/authorized_keys"
-SETUP_CONF_DIR="$USER_DIR/.config"
-SUDOERS_CONF_DIR="/etc/sudoers.d"
+USER_DIR_PATH="/home/$SUDO_USER"
+SSH_DIR_PATH="$USER_DIR/.ssh"
+SSH_CONF_PATH="$SSH_DIR/config"
+SSH_AUTH_KEYS_PATH="$SSH_DIR/authorized_keys"
+SETUP_CONF_DIR_PATH="$USER_DIR/.config"
+SUDOERS_CONF_DIR_PATH="/etc/sudoers.d"
 
 #-------------------------------------------------------------------------------
 # File variables.
 #-------------------------------------------------------------------------------
-PROFILE="$(find "$USER_DIR" -type f \( -name ".bashrc" -o -name ".bash_profile" \))"
-SUDOERS='/etc/sudoers'
-SUDOERS_DEFAULT_CONF="$SUDOERS_CONF_DIR/99-default-env-keep"
+PROFILE_PATH="$(find "$USER_DIR_PATH" -type f \( -name ".bashrc" -o -name ".bash_profile" \))"
+SUDOERS_PATH='/etc/sudoers'
+SUDOERS_DEFAULT_CONF_PATH="$SUDOERS_CONF_DIR_PATH/99-default-env-keep"
