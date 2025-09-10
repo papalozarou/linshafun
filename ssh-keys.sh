@@ -31,8 +31,8 @@ addKeyToAuthorizedKeys () {
 checkForAndCreateAuthorizedKeys () {
   local SSH_AUTH_KEYS_TF="$(checkForFileOrDirectory "$SSH_AUTH_KEYS_PATH")"
 
-  printComment 'Checking for an authorized keys file at:'
-  printComment "$SSH_AUTH_KEYS_PATH"
+  printComment 'Checking for an authorized keys file.'
+  printComment "Check returned $SSH_AUTH_KEYS_TF."
 
   if [ "$SSH_AUTH_KEYS_TF" = true ]; then
     printComment 'The authorized keys file already exists.' 'warning'
@@ -57,14 +57,14 @@ checkForAndCreateAuthorizedKeys () {
 checkPrivateSshKeyCopied () {
   local KEY="{$1:?}"
 
-  promptForUserInput "Have you copied the private key, $KEY, to your local "~/.ssh" directory (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
+  promptForUserInput "Have you copied the private key, $KEY, to your local ssh directory (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
   KEY_COPIED_YN="$(getUserInputYN)"
 
   if [ "$KEY_COPIED_YN" = true ]; then
     removePrivateSshKey "$KEY"
   else
-    printComment "You must copy the private key, $KEY, to your local ~/.ssh directory." 'warning'
-    checkPrivateSshKeyCopied
+    printComment "You must copy the private key, $KEY, to your local ssh directory." 'error'
+    checkPrivateSshKeyCopied "$KEY"
   fi
 }
 
@@ -80,12 +80,12 @@ checkPrivateSshKeyCopied () {
 checkPublicSshKeyCopied () {
   local KEY="{$1:?}"
 
-  promptForUserInput "Have you copied the pripublicvate key, $KEY, to your remote server's "~/.ssh/authorized_keys" file (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
+  promptForUserInput "Have you copied the pripublicvate key, $KEY, to your remote server's authorized_keys file (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
   local KEY_COPIED_YN="$(getUserInputYN)"
 
   if [ "$KEY_COPIED_YN" != true ]; then
-    printComment "You must copy the public key, $KEY, to your remote server's "~/.ssh/authorized_keys" file." 'warning'
-    checkPublicSshKeyCopied
+    printComment "You must copy the public key, $KEY, to your remote server's authorized_keys file." 'error'
+    checkPublicSshKeyCopied "$KEY"
   fi
 }
 
