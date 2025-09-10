@@ -45,6 +45,24 @@ addScriptToCron () {
   printComment 'Script added to cron, using snippet.'
 }
 
+checkForAndCreateUserLogDir () {
+  local LOG_DIR_TF="$(checkForFileOrDirectory "$USER_LOG_DIR_PATH")"
+
+  printComment 'Checking for an "~/log" directory.'
+  printComment "Check returned $LOG_DIR_TF."
+
+  if [ "$USER_LOG_DIR_TF" = true ]; then
+    printComment 'The "~/log" directory already exists.' 'warning'
+  elif [ "$USER_LOG_DIR_TF" = false ]; then
+    printComment 'Creating an "~/log" directory at:'
+    printComment "$USER_LOG_DIR_PATH"
+    createDirectory "$USER_LOG_DIR_PATH"
+
+    setPermissions 700 "$USER_LOG_DIR_PATH"
+    setOwner "$SUDO_USER" "$USER_LOG_DIR_PATH"
+  fi
+}
+
 #-------------------------------------------------------------------------------
 # Gets the script filename, then generates the snippet name, for the cronjob. 
 # These are placed in global variables, "$CRON_SCRIPT_NAME",
