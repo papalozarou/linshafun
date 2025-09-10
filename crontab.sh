@@ -42,7 +42,7 @@ addScriptToCron () {
   printSeparator
   cat "$SNIPPET_PATH"
   printSeparator
-  printComment 'Script added to cron, via snippet.'
+  printComment 'Script added to cron, using snippet.'
 }
 
 #-------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ addScriptToCron () {
 # "$CRON_SNIPPET_NAME" and "$CRON_SCRIPT_PATH", for use in other functions.
 #-------------------------------------------------------------------------------
 getCronFilenames () {
-  promptForUserInput 'What is the name of your script? You do not need to include the file extension ".sh"' 'It is assumed the script is placed in your home directory. If you wish to place it elsewhere do so, however you will need to update the generated snippet to point to this new location.'
+  promptForUserInput 'What is the name of your script? This will also be the name of the snippet placed in "/etc/cron.d". You do not need to include the file extension ".sh"' 'It is assumed the script is placed in your home directory. If you wish to place it elsewhere do so, however you will need to update the generated snippet to point to this new location.'
   CRON_SCRIPT_NAME="$(getUserInput)"
 
   CRON_SNIPPET_NAME="$CRON_SCRIPT_NAME"
