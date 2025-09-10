@@ -14,8 +14,8 @@
 # This function assumes that the sudoers config file exists.
 #-------------------------------------------------------------------------------
 addHostEnvVariableToSudoersConf () {
-  local ENV_VARIABLE="${1:?}"
-  local ENV_KEEP="Defaults env_keep += \"$ENV_VARIABLE\""
+  local ENV_VAR="${1:?}"
+  local ENV_KEEP="Defaults env_keep += \"$ENV_VAR\""
 
   echo "$ENV_KEEP" >> "$SUDOERS_DEFAULT_CONF"
 }
@@ -27,8 +27,8 @@ addHostEnvVariableToSudoersConf () {
 # 1. "{1:?}" - the name of the environment variable.
 #-------------------------------------------------------------------------------
 checkForHostEnvVariable () {
-  local ENV_VARIABLE="${1:?}"
-  local ENV_TF="$(grep "$ENV_VARIABLE" "$PROFILE")"
+  local ENV_VAR="${1:?}"
+  local ENV_TF="$(grep "$ENV_VAR" "$PROFILE")"
 
   if [ -z "$ENV_TF" ]; then
     echo false
@@ -55,23 +55,23 @@ checkForHostEnvVariable () {
 # For the shell to pick this up it requires the user to log out and back in.
 #-------------------------------------------------------------------------------
 setHostEnvVariable () {
-  local ENV_VARIABLE="${1:?}"
+  local ENV_VAR="${1:?}"
   local ENV_VALUE="${2:?}"
-  local ENV_TF="$(checkForHostEnvVariable "$ENV_VARIABLE")"
-  local EXPORT="export $ENV_VARIABLE=$ENV_VALUE"
+  local ENV_TF="$(checkForHostEnvVariable "$ENV_VAR")"
+  local EXPORT="export $ENV_VAR=$ENV_VALUE"
 
   if [ "$ENV_TF" = true ]; then
-    printComment "Already added $ENV_VARIABLE. No changes made."
+    printComment "Already added $ENV_VAR. No changes made."
   elif [ "$ENV_TF" = false ]; then
-    printComment "Adding $ENV_VARIABLE=$ENV_VALUE to:"
+    printComment "Adding $ENV_VAR=$ENV_VALUE to:"
     printComment "$PROFILE"
     echo "$EXPORT" >> "$PROFILE"
 
     printComment 'Checking value added.'
     printSeparator
-    grep "$ENV_VARIABLE" "$PROFILE"
+    grep "$ENV_VAR" "$PROFILE"
     printSeparator
-    printComment "$ENV_VARIABLE added."
+    printComment "$ENV_VAR added."
 
     printSeparator
     printComment 'This variable will not be recognised until you log out and back in.' 'warning'

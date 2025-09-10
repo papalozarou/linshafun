@@ -23,8 +23,8 @@
 #-------------------------------------------------------------------------------
 changeDockerEnvVariable () {
   local ENV_FILE="${1:?}"
-  local ENV_VARIABLE="${2:?}"
-  local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE")"
+  local ENV_VAR="${2:?}"
+  local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VAR")"
 
   case "$ENV_VALUE" in
       '$HOST'*)
@@ -32,25 +32,25 @@ changeDockerEnvVariable () {
         ;;
   esac
 
-  printComment "The current value of $ENV_VARIABLE is:"
+  printComment "The current value of $ENV_VAR is:"
   printSeparator
   printComment "$ENV_VALUE"
   printSeparator
 
-  promptForUserInput "Do you want to set a new value for $ENV_VARIABLE?" 'This may break existing setups if running these scripts again.'
-  ENV_VARIABLE_SET_YN="$(getUserInputYN)"
+  promptForUserInput "Do you want to set a new value for $ENV_VAR?" 'This may break existing setups if running these scripts again.'
+  ENV_VAR_SET_YN="$(getUserInputYN)"
 
-  if [ "$ENV_VARIABLE_SET_YN" = true ] && [ "$ENV_VARIABLE" = "H_RTT_PORT" ]; then
+  if [ "$ENV_VAR_SET_YN" = true ] && [ "$ENV_VAR" = "H_RTT_PORT" ]; then
     ENV_VALUE="$(generateAndCheckPort "ssh")"
-  elif [ "$ENV_VARIABLE_SET_YN" = true ]; then
-    promptForUserInput "What value do you require for $ENV_VARIABLE?"
+  elif [ "$ENV_VAR_SET_YN" = true ]; then
+    promptForUserInput "What value do you require for $ENV_VAR?"
     ENV_VALUE="$(getUserInput)"
   fi
 
-  if [ "$ENV_VARIABLE_SET_YN" = true ]; then
-    setDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE" "$ENV_VALUE"
+  if [ "$ENV_VAR_SET_YN" = true ]; then
+    setDockerEnvVariable "$ENV_FILE" "$ENV_VAR" "$ENV_VALUE"
   else
-    printComment "No changes to $ENV_VARIABLE made."
+    printComment "No changes to $ENV_VAR made."
   fi
 }
 
@@ -73,10 +73,10 @@ checkAndSetDockerEnvVariables () {
   shift
 
   for i; do
-    local ENV_VARIABLE_TF="$(checkIfDockerEnvVariableSet "$ENV_FILE" "$i")"
+    local ENV_VAR_TF="$(checkIfDockerEnvVariableSet "$ENV_FILE" "$i")"
 
     printComment "Checking to see if $i is set…"
-    printComment "Check returned $ENV_VARIABLE_TF."
+    printComment "Check returned $ENV_VAR_TF."
 
     changeDockerEnvVariable "$ENV_FILE" "$i"
   done
@@ -94,10 +94,10 @@ checkAndSetDockerEnvVariables () {
 #-------------------------------------------------------------------------------
 checkIfDockerEnvVariableSet () {
   local ENV_FILE="${1:?}"
-  local ENV_VARIABLE="${2:?}"
-  local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE")"
+  local ENV_VAR="${2:?}"
+  local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VAR")"
 
-  if [ -z "$ENV_VALUE" ] || [ "$ENV_VALUE" = "\${DKR_ENV: \$$ENV_VARIABLE}" ]; then
+  if [ -z "$ENV_VALUE" ] || [ "$ENV_VALUE" = "\${DKR_ENV: \$$ENV_VAR}" ]; then
     echo false
   else
     echo true
@@ -118,7 +118,7 @@ checkIfDockerEnvVariableSet () {
 # - https://unix.stackexchange.com/a/225951
 # 
 # "eval" is used to indirectly reference a variable, the name of which is stored 
-# within "$ENV_VARIABLE", as per:
+# within "$ENV_VAR", as per:
 # 
 # - https://unix.stackexchange.com/a/41418
 # 
@@ -131,30 +131,30 @@ compareAndUpdateDockerEnvVariables () {
 
   shift
 
-  for ENV_VARIABLE in "$@"; do
-    local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE")"
+  for ENV_VAR in "$@"; do
+    local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VAR")"
 
-    eval "local ENV_COMPARISON=\${$ENV_VARIABLE}"
+    eval "local ENV_COMPARISON=\${$ENV_VAR}"
 
-    local ENV_NEWER_TF="$(compareDockerEnvVariableWithValue "$ENV_FILE" "$ENV_VARIABLE" "$ENV_COMPARISON")"
+    local ENV_NEWER_TF="$(compareDockerEnvVariableWithValue "$ENV_FILE" "$ENV_VAR" "$ENV_COMPARISON")"
 
-    printComment "Comparing the env variable for $ENV_VARIABLE with the comparison value…"
+    printComment "Comparing the env variable for $ENV_VAR with the comparison value…"
 
     if [ "$ENV_NEWER_TF" = true ]; then
-      printComment "The current value of $ENV_VARIABLE is the same as the comparison value:"
+      printComment "The current value of $ENV_VAR is the same as the comparison value:"
       printSeparator
       printComment "Environment file value: $ENV_VALUE"
       printComment "Comparison value:       $ENV_COMPARISON"
       printSeparator
-      printComment "No changes to $ENV_VARIABLE made."
+      printComment "No changes to $ENV_VAR made."
     else
-      printComment "The current value of $ENV_VARIABLE is different to the comparison value:" 'warning'
+      printComment "The current value of $ENV_VAR is different to the comparison value:" 'warning'
       printSeparator
       printComment "Environment file value: $ENV_VALUE" 'warning'
       printComment "Comparison value:       $ENV_COMPARISON" 'warning'
       printSeparator
 
-      changeDockerEnvVariable "$ENV_FILE" "$ENV_VARIABLE"
+      changeDockerEnvVariable "$ENV_FILE" "$ENV_VAR"
     fi
   done
 }
@@ -172,9 +172,9 @@ compareAndUpdateDockerEnvVariables () {
 #-------------------------------------------------------------------------------
 compareDockerEnvVariableWithValue () {
   local ENV_FILE="${1:?}"
-  local ENV_VARIABLE="${2:?}"
+  local ENV_VAR="${2:?}"
   local ENV_COMPARISON="${3:?}"
-  local ENV_VALUE="$(grep -m 1 "$ENV_VARIABLE=" "$ENV_FILE" | cut -d'=' -f2)"
+  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE" | cut -d'=' -f2)"
 
   if [ "$ENV_VALUE" = "$ENV_COMPARISON" ]; then
     echo true
@@ -203,14 +203,14 @@ compareDockerEnvVariableWithValue () {
 #-------------------------------------------------------------------------------
 readDockerEnvVariable () {
   local ENV_FILE="${1:?}"
-  local ENV_VARIABLE="${2:?}"
-  local ENV_VALUE="$(grep -m 1 "$ENV_VARIABLE=" "$ENV_FILE" | cut -d'=' -f2)"
+  local ENV_VAR="${2:?}"
+  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE" | cut -d'=' -f2)"
 
   echo "$ENV_VALUE"
 }
 
 #-------------------------------------------------------------------------------
-# Substitutes instances of "${DKR_ENV: $ENV_VARIABLE}" with correct values. 
+# Substitutes instances of "${DKR_ENV: $ENV_VAR}" with correct values. 
 # Takes three mandatory arguments:
 # 
 # 1. "${1:?}" - the file containing the environment value;
@@ -226,16 +226,16 @@ readDockerEnvVariable () {
 #-------------------------------------------------------------------------------
 replaceDockerEnvPlaceholderVariable () {
   local ENV_FILE="${1:?}"
-  local ENV_VARIABLE='${DKR_ENV: '"${2:?}"'}'
+  local ENV_VAR='${DKR_ENV: '"${2:?}"'}'
   local ENV_VALUE="${3:?}"
 
-  printComment "Replacing placholder $ENV_VARIABLE with value $ENV_VALUE, in:"
+  printComment "Replacing placholder $ENV_VAR with value $ENV_VALUE, in:"
   printComment "$ENV_FILE"
   printSeparator
-  grep "$ENV_VARIABLE" "$ENV_FILE"
+  grep "$ENV_VAR" "$ENV_FILE"
   printSeparator
 
-  sed -i 's|'"$ENV_VARIABLE"'|'"$ENV_VALUE"'|g' "$ENV_FILE"
+  sed -i 's|'"$ENV_VAR"'|'"$ENV_VALUE"'|g' "$ENV_FILE"
 
   printComment 'Checking variables have been replaced.'
   printSeparator
@@ -245,7 +245,7 @@ replaceDockerEnvPlaceholderVariable () {
 }
 
 #-------------------------------------------------------------------------------
-# Substitutes the respective "${DKR_ENV: $VARIABLE}" with "$VALUE" in a given 
+# Substitutes the respective "${DKR_ENV: $VAR}" with "$VALUE" in a given 
 # "$FILE". Takes three mandatory arguments:
 # 
 # 1. "{1:?}" - the filepath of the file to change;
@@ -263,12 +263,12 @@ replaceDockerEnvPlaceholderVariable () {
 #-------------------------------------------------------------------------------
 setDockerEnvVariable () {
   local ENV_FILE="${1:?}"
-  local ENV_VARIABLE="${2:?}"
+  local ENV_VAR="${2:?}"
   local ENV_VALUE="${3:?}"
 
-  printComment "Setting $ENV_VARIABLE to $ENV_VALUE in:"
+  printComment "Setting $ENV_VAR to $ENV_VALUE in:"
   printComment "$ENV_FILE"
-  sed -i '/'"$ENV_VARIABLE"='/c\\'"$ENV_VARIABLE=$ENV_VALUE" "$ENV_FILE"
+  sed -i '/'"$ENV_VAR"='/c\\'"$ENV_VAR=$ENV_VALUE" "$ENV_FILE"
   printSeparator
   grep "$ENV_VALUE" "$ENV_FILE"
   printSeparator
