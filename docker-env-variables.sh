@@ -8,7 +8,8 @@
 # Asks the user if they want to re-set an existing docker environment variable. 
 # Takes two mandatory arguments:
 # 
-# 1. "${1:?}" – the environment file; and
+# 1. "${1:?}" – the environment file, including the directory path and
+#    defaulting to "$DKR_ENV_FILE_PATH"; and
 # 2. "${2:?}" – the existing variable.
 # 
 # If a user choses "y/Y" the variable is set via "setEnvVariable".
@@ -22,9 +23,9 @@
 # - https://www.shellscript.sh/case.html?cmdf=how+to+use+case+statement+sh
 #-------------------------------------------------------------------------------
 changeDockerEnvVariable () {
-  local ENV_FILE="${1:?}"
+  local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
-  local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VAR")"
+  local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR")"
 
   case "$ENV_VALUE" in
       '$HOST'*)
@@ -48,7 +49,7 @@ changeDockerEnvVariable () {
   fi
 
   if [ "$ENV_VAR_SET_YN" = true ]; then
-    setDockerEnvVariable "$ENV_FILE" "$ENV_VAR" "$ENV_VALUE"
+    setDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR" "$ENV_VALUE"
   else
     printComment "No changes to $ENV_VAR made."
   fi
@@ -58,7 +59,8 @@ changeDockerEnvVariable () {
 # Checks for and sets multiple docker environment variables. Takes at least two 
 # arguments:
 # 
-# 1. "${1:?}" – the environment file; and
+# 1. "${1:?}" – the environment file, including the directory path and
+#    defaulting to "$DKR_ENV_FILE_PATH"; and
 # 2. "$i" – one or more environment variables to set.
 # 
 # The function takes the first argument and stores it as the environment 
@@ -68,17 +70,17 @@ changeDockerEnvVariable () {
 # - https://unix.stackexchange.com/a/225951
 #-------------------------------------------------------------------------------
 checkAndSetDockerEnvVariables () {
-  local ENV_FILE="${1:?}"
+  local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
 
   shift
 
   for i; do
-    local ENV_VAR_TF="$(checkIfDockerEnvVariableSet "$ENV_FILE" "$i")"
+    local ENV_VAR_TF="$(checkIfDockerEnvVariableSet "$ENV_FILE_PATH" "$i")"
 
     printComment "Checking to see if $i is set…"
     printComment "Check returned $ENV_VAR_TF."
 
-    changeDockerEnvVariable "$ENV_FILE" "$i"
+    changeDockerEnvVariable "$ENV_FILE_PATH" "$i"
   done
 }
 
@@ -86,16 +88,17 @@ checkAndSetDockerEnvVariables () {
 # Checks whether a docker environment variable has been set. Takes two mandatory 
 # arguments:
 # 
-# 1. "${1:?}" – the environment file; and
+# 1. "${1:?}" – the environment file, including the directory path and
+#    defaulting to "$DKR_ENV_FILE_PATH"; and
 # 2. "${2:?}" – the required variable.
 # 
 # Returns true if the variable is set, returns false if it is unset or is set to
 # "${DKR_ENV: $VAR}".
 #-------------------------------------------------------------------------------
 checkIfDockerEnvVariableSet () {
-  local ENV_FILE="${1:?}"
+  local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
-  local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VAR")"
+  local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR")"
 
   if [ -z "$ENV_VALUE" ] || [ "$ENV_VALUE" = "\${DKR_ENV: \$$ENV_VAR}" ]; then
     echo false
@@ -108,7 +111,8 @@ checkIfDockerEnvVariableSet () {
 # Compares an environment file value with a given value and updates the 
 # environment value if requested. Takes two or more mandatory arguements:
 # 
-# 1. "${1:?}" – the environment file; and
+# 1. "${1:?}" – the environment file, including the directory path and
+#    defaulting to "$DKR_ENV_FILE_PATH"; and
 # 2. "$@" – the name(s) of the environment variable(s).
 #
 # The function takes the first argument and stores it as the environment 
@@ -127,16 +131,16 @@ checkIfDockerEnvVariableSet () {
 # have been set in the global scope of the script that calls this function.
 #-------------------------------------------------------------------------------
 compareAndUpdateDockerEnvVariables () {
-  local ENV_FILE="${1:?}"
+  local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
 
   shift
 
   for ENV_VAR in "$@"; do
-    local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE" "$ENV_VAR")"
+    local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR")"
 
     eval "local ENV_COMPARISON=\${$ENV_VAR}"
 
-    local ENV_NEWER_TF="$(compareDockerEnvVariableWithValue "$ENV_FILE" "$ENV_VAR" "$ENV_COMPARISON")"
+    local ENV_NEWER_TF="$(compareDockerEnvVariableWithValue "$ENV_FILE_PATH" "$ENV_VAR" "$ENV_COMPARISON")"
 
     printComment "Comparing the env variable for $ENV_VAR with the comparison value…"
 
@@ -154,7 +158,7 @@ compareAndUpdateDockerEnvVariables () {
       printComment "Comparison value:       $ENV_COMPARISON" 'warning'
       printSeparator
 
-      changeDockerEnvVariable "$ENV_FILE" "$ENV_VAR"
+      changeDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR"
     fi
   done
 }
@@ -163,7 +167,8 @@ compareAndUpdateDockerEnvVariables () {
 # Compares a docker env variable with a given value. Takes three mandatory 
 # arguments:
 # 
-# 1. "${1:?}" - the file containing the environment variable;
+# 1. "${1:?}" – the environment file, including the directory path and
+#    defaulting to "$DKR_ENV_FILE_PATH"; and
 # 2. "${2:?}" - an environment variable to check; and
 # 3. "${3:?}" - a value to compare against.
 # 
@@ -171,10 +176,10 @@ compareAndUpdateDockerEnvVariables () {
 # otherwise.
 #-------------------------------------------------------------------------------
 compareDockerEnvVariableWithValue () {
-  local ENV_FILE="${1:?}"
+  local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
   local ENV_COMPARISON="${3:?}"
-  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE" | cut -d'=' -f2)"
+  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2)"
 
   if [ "$ENV_VALUE" = "$ENV_COMPARISON" ]; then
     echo true
@@ -186,7 +191,8 @@ compareDockerEnvVariableWithValue () {
 #-------------------------------------------------------------------------------
 # Reads an environment variable from a file. Takes two mandatory arguments:
 # 
-# 1. "${1:?}" - the file containing the environment variable; and
+# 1. "${1:?}" – the environment file, including the directory path and
+#    defaulting to "$DKR_ENV_FILE_PATH"; and
 # 2. "${2:?}" - an environment variable to check.
 # 
 # The variable and value are read from the file with "grep" as a single string, 
@@ -202,9 +208,9 @@ compareDockerEnvVariableWithValue () {
 # - https://stackoverflow.com/a/14093511
 #-------------------------------------------------------------------------------
 readDockerEnvVariable () {
-  local ENV_FILE="${1:?}"
+  local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
-  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE" | cut -d'=' -f2)"
+  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2)"
 
   echo "$ENV_VALUE"
 }
@@ -213,7 +219,8 @@ readDockerEnvVariable () {
 # Substitutes instances of "${DKR_ENV: $ENV_VAR}" with correct values. 
 # Takes three mandatory arguments:
 # 
-# 1. "${1:?}" - the file containing the environment value;
+# 1. "${1:?}" - the file containing the environment variable, including the 
+#    directory path;
 # 2. "${2:?}" - an environment variable to replace; and
 # 3. "${3:?}" - the value of the variable.
 # 
@@ -225,30 +232,31 @@ readDockerEnvVariable () {
 # ".env" files.
 #-------------------------------------------------------------------------------
 replaceDockerEnvPlaceholderVariable () {
-  local ENV_FILE="${1:?}"
+  local ENV_FILE_PATH="${1:?}"
   local ENV_VAR='${DKR_ENV: '"${2:?}"'}'
   local ENV_VALUE="${3:?}"
 
   printComment "Replacing placholder $ENV_VAR with value $ENV_VALUE, in:"
-  printComment "$ENV_FILE"
+  printComment "$ENV_FILE_PATH"
   printSeparator
-  grep "$ENV_VAR" "$ENV_FILE"
+  grep "$ENV_VAR" "$ENV_FILE_PATH"
   printSeparator
 
-  sed -i 's|'"$ENV_VAR"'|'"$ENV_VALUE"'|g' "$ENV_FILE"
+  sed -i 's|'"$ENV_VAR"'|'"$ENV_VALUE"'|g' "$ENV_FILE_PATH"
 
   printComment 'Checking variables have been replaced.'
   printSeparator
-  grep "$ENV_VALUE" "$ENV_FILE"
+  grep "$ENV_VALUE" "$ENV_FILE_PATH"
   printSeparator
   printComment "Placeholder variable replaced."
 }
 
 #-------------------------------------------------------------------------------
-# Substitutes the respective "${DKR_ENV: $VAR}" with "$VALUE" in a given 
-# "$FILE". Takes three mandatory arguments:
-# 
-# 1. "{1:?}" - the filepath of the file to change;
+# Sets an environment variable in a given environment file. Takes three 
+# mandatory arguments:
+#
+# 1. "${1:?}" – the environment file, including the directory path and
+#    defaulting to "$DKR_ENV_FILE_PATH";
 # 2. "{2:?}" - the variable name; and
 # 3. "{3:?}" - the variable value.
 # 
@@ -262,15 +270,15 @@ replaceDockerEnvPlaceholderVariable () {
 # to enable "sed" to parse the variables where required.
 #-------------------------------------------------------------------------------
 setDockerEnvVariable () {
-  local ENV_FILE="${1:?}"
+  local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
   local ENV_VALUE="${3:?}"
 
   printComment "Setting $ENV_VAR to $ENV_VALUE in:"
-  printComment "$ENV_FILE"
-  sed -i '/'"$ENV_VAR"='/c\\'"$ENV_VAR=$ENV_VALUE" "$ENV_FILE"
+  printComment "$ENV_FILE_PATH"
+  sed -i '/'"$ENV_VAR"='/c\\'"$ENV_VAR=$ENV_VALUE" "$ENV_FILE_PATH"
   printSeparator
-  grep "$ENV_VALUE" "$ENV_FILE"
+  grep "$ENV_VALUE" "$ENV_FILE_PATH"
   printSeparator
   printComment 'Variable updated.'
 }
