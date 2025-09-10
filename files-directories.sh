@@ -9,7 +9,8 @@
 # exist, or it does exist and the user wants to replace it, (re)create it. Takes 
 # four arguments:
 # 
-# 1. "${1:?}" - the file or directory to check for and create or replace;
+# 1. "${1:?}" - the file or directory to check for and create or replace, 
+#    including directory path;
 # 2. "${2:?}" - the function to execute if the file or directory doesn't exist, 
 #    or the user chooses to replace it; 
 # 3. "${3:?" - the action being performed, all lowercase, defaulting to 
@@ -18,15 +19,15 @@
 #    recreated.
 #-------------------------------------------------------------------------------
 checkAndCreateOrAskToReplaceFileOrDirectory () {
-  local FILE_OR_DIR="${1:?}"
+  local FILE_OR_DIR_PATH="${1:?}"
   local FUNCTION="${2:?}"
   local ACTION="${3:-"recreate"}"
   local WARNING="$4"
 
   printComment 'Checking for file or directory at:'
-  printComment "$FILE_OR_DIR"
-  
-  local FILE_OR_DIR_TF="$(checkForFileOrDirectory "$FILE_OR_DIR")"
+  printComment "$FILE_OR_DIR_PATH"
+
+  local FILE_OR_DIR_TF="$(checkForFileOrDirectory "$FILE_OR_DIR_PATH")"
 
   printComment "The check returned $FILE_OR_DIR_TF."
 
@@ -38,26 +39,26 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   fi
 
   if [ "$REPLACE_YN" = true ] || [ "$FILE_OR_DIR_TF" = false ] && [ -n "$WARNING" ]; then
-    ("$FUNCTION" "$FILE_OR_DIR" "$WARNING")
+    ("$FUNCTION" "$FILE_OR_DIR_PATH" "$WARNING")
   elif [ "$REPLACE_YN" = true ] || [ "$FILE_OR_DIR_TF" = false ] && [ -z "$WARNING" ]; then
-    ("$FUNCTION" "$FILE_OR_DIR")
+    ("$FUNCTION" "$FILE_OR_DIR_PATH")
   else
     printComment 'No changes were made.'
   fi
 
-  listDirectories "$FILE_OR_DIR"
+  listDirectories "$FILE_OR_DIR_PATH"
 }
 
 #-------------------------------------------------------------------------------
 # Checks for a file or directory. Returns true of it is present, false if it 
 # not. Takes one mandatory argument.
 # 
-# 1. "{1:?}" - the file or directory to check for.
+# 1. "{1:?}" - the file or directory to check for, including directory path.
 #-------------------------------------------------------------------------------
 checkForFileOrDirectory () {
-  local FILE_OR_DIR="${1:?}"
+  local FILE_OR_DIR_PATH="${1:?}"
 
-  if [ -f "$FILE_OR_DIR" ] || [ -d "$FILE_OR_DIR" ]; then
+  if [ -f "$FILE_OR_DIR_PATH" ] || [ -d "$FILE_OR_DIR_PATH" ]; then
     echo true
   else
     echo false
@@ -67,7 +68,7 @@ checkForFileOrDirectory () {
 #-------------------------------------------------------------------------------
 # Copies file(s) and adds a given postfix. Takes two mandatory arguments:
 #
-# 1. "${1:?}" – the file or files; and
+# 1. "${1:?}" – the file or files, including directory path; and
 # 2. "${2:?}" – the postfix to add, defaulting to ".backup".
 # 
 # N.B.
@@ -78,18 +79,18 @@ checkForFileOrDirectory () {
 # second argument.
 #-------------------------------------------------------------------------------
 copyAndAddPostfixToFiles () {
-  local FILES="${1:?}"
+  local FILE_PATHS="${1:?}"
   local POSTFIX="${2:-".backup"}"
 
-  for FILE in $FILES; do
+  for FILE_PATH in $FILE_PATHS; do
     printComment "Copying and adding $POSTFIX to the file:"
     printSeparator
-    printComment "$FILE"
+    printComment "$FILE_PATH"
     printSeparator
 
-    local FILE_COPY="$(addPostfix "$FILE" "$POSTFIX")"
+    local FILE_COPY="$(addPostfix "$FILE_PATH" "$POSTFIX")"
 
-    cp -p "$FILE" "$FILE_COPY"
+    cp -p "$FILE_PATH" "$FILE_COPY"
 
     printComment 'File copied and postfix added.'
   done
@@ -98,7 +99,7 @@ copyAndAddPostfixToFiles () {
 #-------------------------------------------------------------------------------
 # Copies file(s) and removes a given postfix. Takes two mandatory arguments:
 #
-# 1. "${1:?}" – the file or files; and
+# 1. "${1:?}" – the file or files, including directory path; and
 # 2. "${2:?}" – the postfix to remove, defaulting to ".example".
 # 
 # N.B.
@@ -109,18 +110,18 @@ copyAndAddPostfixToFiles () {
 # second argument.
 #-------------------------------------------------------------------------------
 copyAndRemovePostfixFromFiles () {
-  local FILES="${1:?}"
+  local FILE_PATHS="${1:?}"
   local POSTFIX="${2:-".example"}"
 
-  for FILE in $FILES; do
+  for FILE_PATH in $FILE_PATHS; do
     printComment "Copying and removing $POSTFIX from the file:"
     printSeparator
-    printComment "$FILE"
+    printComment "$FILE_PATH"
     printSeparator
 
-    local FILE_COPY="$(removePostfix "$FILE" "$POSTFIX")"
+    local FILE_COPY="$(removePostfix "$FILE_PATH" "$POSTFIX")"
 
-    cp -p "$FILE" "$FILE_COPY"
+    cp -p "$FILE_PATH" "$FILE_COPY"
 
     printComment 'File copied and postfix removed.'
   done
@@ -138,28 +139,28 @@ copyAndRemovePostfixFromFiles () {
 # All directories, and parent directories if required, are created.
 # 
 # N.B.
-# "$MAIN_DIR" and "$SUB_DIRS" are not quoted as we explicitly want word 
-# splitting here.
+# "$DIR_PATH(S)" and "$SUB_DIR_NAME(S)" are not quoted as we explicitly want 
+# word splitting here.
 # 
 # And yes it's a nested loop. What of it?
 #-------------------------------------------------------------------------------
 createDirectories () {
-  local MAIN_DIRS="${1:?}"
-  local SUB_DIRS="$2"
+  local DIR_PATHS="${1:?}"
+  local SUB_DIR_NAMES="$2"
 
-  if [ -z "$SUB_DIRS" ]; then
-    for DIR in $MAIN_DIRS; do
-      createDirectory "$DIR"
-      listDirectories "$DIR"
+  if [ -z "$SUB_DIR_NAMES" ]; then
+    for DIR_PATH in $DIR_PATHS; do
+      createDirectory "$DIR_PATH"
+      listDirectories "$DIR_PATH"
     done
   else
-    for DIR in $MAIN_DIRS; do
-      PARENT_DIR="$DIR"
-      for SUB_DIR in $SUB_DIRS; do
-        DIR_SUB_DIR="$PARENT_DIR/$SUB_DIR"
-        
-        createDirectory "$DIR_SUB_DIR"
-        listDirectories "$DIR_SUB_DIR"
+    for DIR_PATH in $DIR_PATHS; do
+      PARENT_DIR="$DIR_PATH"
+      for SUB_DIR_NAME in $SUB_DIR_NAMES; do
+        SUB_DIR_PATH="$PARENT_DIR/$SUB_DIR_NAME"
+
+        createDirectory "$SUB_DIR_PATH"
+        listDirectories "$SUB_DIR_PATH"
       done
     done
   fi
@@ -168,32 +169,32 @@ createDirectories () {
 #-------------------------------------------------------------------------------
 # Creates a directory. Takes one mandatory argument:
 # 
-# 1. "${1:?}" - the directory to create.
+# 1. "${1:?}" - the directory to create, including directory path.
 # 
 # Parent directories are created if required.
 #-------------------------------------------------------------------------------
 createDirectory () {
-  local DIR="${1:?}"
+  local DIR_PATH="${1:?}"
   printComment 'Creating directory at:'
-  printComment "$DIR"
-  mkdir -p "$DIR"
+  printComment "$DIR_PATH"
+  mkdir -p "$DIR_PATH"
 }
 
 #-------------------------------------------------------------------------------
 # Creates one or more files. Takes one or more arguments:
 # 
-# 1. "$@" - one or more files to be created.
+# 1. "$@" - one or more files to be created, including directory paths.
 # 
 # The function loops through each passed argument and creates the file.
 #-------------------------------------------------------------------------------
 createFiles () {
-  for FILE in "$@"; do
+  for FILE_PATH in "$@"; do
     printComment 'Creating file at:'
-    printComment "$FILE"
-    touch "$FILE"
+    printComment "$FILE_PATH"
+    touch "$FILE_PATH"
 
     printSeparator
-    listDirectories "$FILE"
+    listDirectories "$FILE_PATH"
     printComment 'File created.'
   done
 }
@@ -202,23 +203,23 @@ createFiles () {
 # Gets a list of files with a given prefix. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the prefix to search for, excluding wildcard; and
-# 2. "${2:?}" – the directory that contains the files, defaulting to the users 
-#    home directory.
+# 2. "${2:?}" – the directory that contains the files, including the directory 
+#    path and defaulting to the users home directory.
 # 
 # N.B.
-# The returned "$FILES" variable will:
+# The returned "$FILE_PATHS" variable will:
 # 
-# - be returned with directory paths which may require removing; and
+# - contain directory paths which may require removing; and
 # - need iterating over with explicit word splitting, i.e. without quotes in any
 #   "for" loop.
 #-------------------------------------------------------------------------------
 getListOfFilesByPrefix () {
   local PREFIX="${1:?}"
-  local DIR="${2:-"$USER_DIR"}"
+  local DIR_PATH="${2:-"$USER_DIR"}"
 
-  local FILES="$(find "$DIR" -name "$PREFIX*")"
+  local FILE_PATHS="$(find "$DIR_PATH" -name "$PREFIX*")"
 
-  echo "$FILES"
+  echo "$FILE_PATHS"
 }
 
 #-------------------------------------------------------------------------------
@@ -226,23 +227,23 @@ getListOfFilesByPrefix () {
 # 
 # 1. "${1:?}" – the postfix to search for, excluding wildcard, defaulting to 
 #    ".example"; and
-# 2. "${2:?}" – the directory that contains the files, defaulting to the users 
-#    home directory.
+# 2. "${2:?}" – the directory that contains the files, including the directory 
+#    path and defaulting to the users home directory.
 # 
 # N.B.
-# The returned "$FILES" variable will:
+# The returned "$FILE_PATHS" variable will:
 # 
-# - be returned with directory paths which may require removing; and
+# - contain directory paths which may require removing; and
 # - need iterating over with explicit word splitting, i.e. without quotes in any
 #   "for" loop.
 #-------------------------------------------------------------------------------
 getListOfFilesByPostfix () {
   local POSTFIX="${1:-".example"}"
-  local DIR="${2:-"$USER_DIR"}"
+  local DIR_PATH="${2:-"$USER_DIR"}"
 
-  local FILES="$(find "$DIR" -name "*$POSTFIX")"
+  local FILE_PATHS="$(find "$DIR_PATH" -name "*$POSTFIX")"
 
-  echo "$FILES"
+  echo "$FILE_PATHS"
 }
 
 #-------------------------------------------------------------------------------
@@ -255,12 +256,12 @@ getListOfFilesByPostfix () {
 # "$DIR" is not quoted as we explicitly want word splitting here.
 #-------------------------------------------------------------------------------
 listDirectories () {
-  local DIRS=${1:?}
+  local DIR_PATHS=${1:?}
 
-  for DIR in $DIRS; do
+  for DIR_PATH in $DIR_PATHS; do
     printComment 'Listing directory:'
     printSeparator
-    ls -lna "$DIR"
+    ls -lna "$DIR_PATH"
     printSeparator
   done
 }
@@ -268,16 +269,17 @@ listDirectories () {
 #-------------------------------------------------------------------------------
 # Removes files or directories. Takes one or more arguments:
 # 
-# 1. "$@" - one or more files or directories to be removed.
+# 1. "$@" - one or more files or directories to be removed, including directory 
+#    paths.
 # 
 # The function loops through each passed argument and removes the file or 
 # directory.
 #-------------------------------------------------------------------------------
 removeFileOrDirectory () {
-  for FILE_DIR in "$@"; do
+  for FILE_OR_DIR_PATH in "$@"; do
     printComment 'Removing file or directory at:'
-    printComment "$FILE_DIR"
-    rm -R $FILE_DIR
+    printComment "$FILE_OR_DIR_PATH"
+    rm -R "$FILE_OR_DIR_PATH"
 
     printComment 'File or directory removed.'
   done    
@@ -292,9 +294,9 @@ removeFileOrDirectory () {
 # 3. "${3:?}" - the new file or directory name.
 #-------------------------------------------------------------------------------
 renameFileOrDirectory () {
-	local DIR="${1:-"."}"
+	local DIR_PATH="${1:-"."}"
 	local CURRENT_NAME="${2:?}"
 	local NEW_NAME="${3:?}"
-	
-	mv "$DIR/$CURRENT_NAME" "$DIR/$NEW_NAME"
+
+	mv "$DIR_PATH/$CURRENT_NAME" "$DIR_PATH/$NEW_NAME"
 }
