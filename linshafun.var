@@ -2,10 +2,10 @@
 # Directory variables.
 #-------------------------------------------------------------------------------
 USER_DIR_PATH="/home/$SUDO_USER"
-SSH_DIR_PATH="$USER_DIR/.ssh"
-SSH_CONF_PATH="$SSH_DIR/config"
-SSH_AUTH_KEYS_PATH="$SSH_DIR/authorized_keys"
-SETUP_CONF_DIR_PATH="$USER_DIR/.config"
+SSH_DIR_PATH="$USER_DIR_PATH/.ssh"
+SSH_CONF_PATH="$SSH_DIR_PATH/config"
+SSH_AUTH_KEYS_PATH="$SSH_DIR_PATH/authorized_keys"
+SETUP_CONF_DIR_PATH="$USER_DIR_PATH/.config"
 SUDOERS_CONF_DIR_PATH="/etc/sudoers.d"
 
 #-------------------------------------------------------------------------------
