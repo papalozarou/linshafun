@@ -5,5 +5,11 @@ DKR_SECRETS_DIR_PATH="/var/lib/docker/secrets"
 
 #-------------------------------------------------------------------------------
 # File variables.
+#
+# N.B.
+# These variables can be overwritten in project "docker.var" files, which must
+# be imported after this file to take effect.
 #-------------------------------------------------------------------------------
 DKR_COMPOSE_FILE_NAME='compose.yml'
+DKR_COMPOSE_FILE_PATH="$SERVICES_DIR_PATH/$DKR_COMPOSE_FILE_NAME"
+DKR_ENV_FILE_PATH="$SERVICES_DIR_PATH/.env"
