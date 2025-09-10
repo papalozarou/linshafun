@@ -45,6 +45,9 @@ addScriptToCron () {
   printComment 'Script added to cron, using snippet.'
 }
 
+#-------------------------------------------------------------------------------
+# # Checks to see if the "~/log" directory exist and creates it if not.
+#-------------------------------------------------------------------------------
 checkForAndCreateUserLogDir () {
   local LOG_DIR_TF="$(checkForFileOrDirectory "$USER_LOG_DIR_PATH")"
 
