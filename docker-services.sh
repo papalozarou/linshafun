@@ -60,10 +60,9 @@ controlRelatedDockerServices () {
 }
 
 #-------------------------------------------------------------------------------
-# Stops all running service containers and runs "docker compose ps -a" as 
-# a check.
+# Stops all running services and runs "docker compose ps -a" as a check.
 #-------------------------------------------------------------------------------
-stopRunningContainers () {
+stopRunningDockerServices () {
   printComment 'Stopping all running service containers…'
   printSeparator
   docker compose down
