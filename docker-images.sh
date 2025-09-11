@@ -27,7 +27,7 @@ buildDockerImages () {
     printSeparator
     controlDockerService "$COMPOSE_FILE_PATH" "build" "$IMAGE" "--no-cache"
     printSeparator
-    printComment 'Assuming there are no errors above, the image was built.'
+    printComment 'Assuming there are no errors above, the image was built.' 'warning'
   done
 }
 
