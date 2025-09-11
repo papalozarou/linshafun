@@ -5,56 +5,35 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Controls a docker service, via docker compose. Takes at least two mandataory 
-# arguments, with two different scenarios:
+# Controls a docker service, via docker compose. Takes four arguments:
 #
-# 1. When Passing a compose file:
-#    a. "${1:?}" – the compose file;
-#    b. "${2:?}" – the action to perform;
-#    c. "${3:?}" – the service to perform the action on; and
-#    d. $4 - any optional flags.
-# 2. Without passing a compose file:
-#    a. "${1:?}" – the action to perform;
-#    b. "${2:?}" – the service to perform the action on; and
-#    c. $3 - any optional flags.
-# 
-# Because we are trying to be POSIX compliant "case" is used instead of "if" to 
-# see if the first argument is a compose file. As per:
-#
-# - https://stackoverflow.com/a/19897118
-# - https://www.shellscript.sh/case.html?cmdf=how+to+use+case+statement+sh
+# 1. "${1:?}" – the compose file, including directory path and defaulting to
+#    "$DKR_COMPOSE_FILE_PATH";
+# 2. "${2:?}" – the action to perform;
+# 3. "${3:?}" – the service to perform the action on; and
+# 4. "$4" - any optional flags.
 # 
 # N.B.
-# In both the above cases the optional flags are not quoted as we explicitly
-# want word splitting.
+# The optional flags, "$4" are not quoted as we explicitly want word splitting.
 #-------------------------------------------------------------------------------
 controlDockerService () {
-  case "${1:?}" in
-      *".yml")
-        local COMPOSE_FILE="${1:?}"
-        local ACTION="${2:?}"
-        local SERVICE="${3:?}"
-        local FLAGS="$4"
-      ;;
-      *)
-        local COMPOSE_FILE="$DOCKER_COMPOSE_FILE"
-        local ACTION="${1:?}"
-        local SERVICE="${2:?}"
-        local FLAGS="$3"
-      ;; 
-  esac
+  local COMPOSE_FILE_PATH="${1:-$DKR_COMPOSE_FILE_PATH}"
+  local ACTION="${2:?}"
+  local SERVICE="${3:?}"
+  local FLAGS="$4"
 
   printComment "Performing $ACTION for $SERVICE, using compose file:"
-  printComment "$COMPOSE_FILE"
+  printComment "$COMPOSE_FILE_PATH"
   printSeparator
 
   if [ "$ACTION" = "up" ]; then
-    docker compose -f "$COMPOSE_FILE" "$ACTION" -d "$SERVICE" $FLAGS
+    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" -d "$SERVICE" $FLAGS
   else
-    docker compose -f "$COMPOSE_FILE" "$ACTION" "$SERVICE" $FLAGS
+    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" "$SERVICE" $FLAGS
   fi
-  ACTION="$(changeCase "$ACTION" 'sentence')"
+
   printSeparator
+  ACTION="$(changeCase "$ACTION" 'sentence')"
   printComment "$ACTION performed for $SERVICE."
 }
 
@@ -62,20 +41,20 @@ controlDockerService () {
 # Starts and stops multiple related services. Takes at least two arguments:
 # 
 # 1. "${1:?}" - the action to be taken, either "up" or "stop"; or
-# 2. "$i" – one or more services to perform the action on.
+# 2. "$@" – one or more services to perform the action on.
 #-------------------------------------------------------------------------------
 controlRelatedDockerServices () {
   local ACTION="${1:?}"
 
   shift
 
-  for i; do
+  for SERVICE in "$@"; do
     if [ "$ACTION" = 'up' ]; then
-      controlDockerService "$ACTION" "$i" '--no-deps'
+      controlDockerService "" "$ACTION" "$SERVICE" '--no-deps'
     elif [ "$ACTION" = 'rm' ]; then
-      controlDockerService "$ACTION" "$i" '-f'
+      controlDockerService "" "$ACTION" "$SERVICE" '-f'
     else 
-      controlDockerService "$ACTION" "$i"
+      controlDockerService "" "$ACTION" "$SERVICE"
     fi
   done
 }
