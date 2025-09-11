@@ -21,14 +21,14 @@ addHostEnvVariableToSudoersConf () {
 }
 
 #-------------------------------------------------------------------------------
-# Checks for a given environment variable in "$PROFILE". Returns true if the 
-# variable is present, returns false if not. Takes one mandatory argument:
+# Checks for a given environment variable in "$PROFILE_PATH". Returns true if 
+# the variable is present, returns false if not. Takes one mandatory argument:
 # 
 # 1. "{1:?}" - the name of the environment variable.
 #-------------------------------------------------------------------------------
 checkForHostEnvVariable () {
   local ENV_VAR="${1:?}"
-  local ENV_TF="$(grep "$ENV_VAR" "$PROFILE")"
+  local ENV_TF="$(grep "$ENV_VAR" "$PROFILE_PATH")"
 
   if [ -z "$ENV_TF" ]; then
     echo false
@@ -38,14 +38,14 @@ checkForHostEnvVariable () {
 }
 
 #-------------------------------------------------------------------------------
-# Checks for, then adds, an environment variable to "$PROFILE". Takes two
+# Checks for, then adds, an environment variable to "$PROFILE_PATH". Takes two
 # mandatory arguments:
 # 
 # 1. "{1:?}" - the name of the environment variable; and
 # 2. "{2:?}" - the value of the environment variable.
 # 
-# If the variable is already in "$PROFILE" no changes are made. If the variable
-# is not present in "$PROFILE" it is added.
+# If the variable is already in "$PROFILE_PATH" no changes are made. If the 
+# variable is not present in "$PROFILE_PATH" it is added.
 # 
 # Variables are added as per:
 # 
@@ -64,12 +64,12 @@ setHostEnvVariable () {
     printComment "Already added $ENV_VAR. No changes made."
   elif [ "$ENV_TF" = false ]; then
     printComment "Adding $ENV_VAR=$ENV_VALUE to:"
-    printComment "$PROFILE"
-    echo "$EXPORT" >> "$PROFILE"
+    printComment "$PROFILE_PATH"
+    echo "$EXPORT" >> "$PROFILE_PATH"
 
     printComment 'Checking value added.'
     printSeparator
-    grep "$ENV_VAR" "$PROFILE"
+    grep "$ENV_VAR" "$PROFILE_PATH"
     printSeparator
     printComment "$ENV_VAR added."
 
