@@ -7,108 +7,79 @@
 #-------------------------------------------------------------------------------
 # Creates a docker secret. Takes two mandatory arguments:
 # 
-# 1. "${1:?}" - the secret value; and
-# 2. "${2:?}" - the secret file, including directory path.
+# 1. "${1:?}" - the secret file name, excluding directory path; and
+# 2. "${2:?}" - the secret value.
 #-------------------------------------------------------------------------------
 createDockerSecretFile () {
-  local SECRET_VALUE="${1:?}"
-  local SECRET_FILE="${2:?}"
+  local SECRET_FILE_NAME="${1:?}"
+  local SECRET_VALUE="${2:?}"
+  local SECRET_FILE_PATH="$DKR_SECRETS_DIR_PATH/$SECRET_FILE_NAME"
 
   printComment 'Generating a secret file at:'
-  printComment "$SECRET_FILE"
-  echo "$SECRET_VALUE" >> "$SECRET_FILE"
+  printComment "$SECRET_FILE_NAME"
+  echo "$SECRET_VALUE" >> "$SECRET_FILE_PATH"
 
-  setPermissions '644' "$SECRET_FILE"
+  setPermissions '644' "$SECRET_FILE_PATH"
 
-  listDirectories "$DOCKER_SECRETS_DIR"
+  listDirectories "$DKR_SECRETS_DIR_PATH"
 }
 
 #-------------------------------------------------------------------------------
-# Creates "$DOCKER_SECRETS_DIR", first checking to see if it already exists. If
-# it exists, do nothing. If it doesn't create it.
+# Creates a docker secrets directory at "$DKR_SECRETS_DIR_PATH", first checking 
+# to see if it already exists. If it exists, do nothing. If it doesn't create it.
 #-------------------------------------------------------------------------------
-createDockerSecretsDir () {
-  local DOCKER_SECRETS_DIR_TF="$(checkForFileOrDirectory "$DOCKER_SECRETS_DIR")"
+checkForAndCreateDockerSecretsDir () {
+  local DKR_SECRETS_DIR_TF="$(checkForFileOrDirectory "$DKR_SECRETS_DIR_PATH")"
 
-  printComment 'Checking for a docker secrets directory at:'
-  printComment "$DOCKER_SECRETS_DIR"
+  printComment 'Checking for a docker secrets directory.'
+  printComment "Check returned $DKR_SECRETS_DIR_TF."
 
-  if [ "$DOCKER_SECRETS_DIR_TF" = true ]; then
+  if [ "$DKR_SECRETS_DIR_TF" = true ]; then
     printComment 'The docker secrets directory already exists.' 'warning'
-  elif [ "$DOCKER_SECRETS_DIR_TF" = false ]; then
-    createDirectory "$DOCKER_SECRETS_DIR"
-    setPermissions '600' "$DOCKER_SECRETS_DIR"
+  elif [ "$DKR_SECRETS_DIR_TF" = false ]; then
+    createDirectory "$DKR_SECRETS_DIR_PATH"
+    setPermissions '600' "$DKR_SECRETS_DIR_PATH"
   fi
 }
 
 #-------------------------------------------------------------------------------
-# Generates a given named secret, using a random string. Takes one mandatory 
-# argument:
+# Creates a docker secret by asking for user input. Takes two arguments: 
 # 
-# 1. "${1:?}" - the secret file, including directory path.
-#
-# N.B.
-# If the file already exists it is removed and recreated.
-#-------------------------------------------------------------------------------
-generateRandomDockerSecret () {
-  local SECRET_FILE="${1:?}"
-  local SECRET_VALUE="$(generateRandomString)"
-
-  removeDockerSecretFile "$SECRET_FILE"
-
-  printComment 'Generating a secret file at:'
-  printComment "$SECRET_FILE"
-
-  echo "$SECRET_VALUE" >> "$SECRET_FILE"
-
-  setPermissions '644' "$SECRET_FILE"
-
-  listDirectories "$DOCKER_SECRETS_DIR"
-}
-
-#-------------------------------------------------------------------------------
-# Creates given named secrets by asking for user input. Takes one mandatory 
-# argument and up to three optional ones:
-# 
-# 1. "${1:?}" - the secret file, including directory path; and
-# 2. "$2" - optional warning to be displayed.
-#
-# N.B.
-# If the file already exists it is removed and recreated.
+# 1. "${1:?}" - the secret file name, excluding directory path; and
+# 2. "$2" - an optional warning to be displayed.
 #-------------------------------------------------------------------------------
 getAndSetDockerSecret () {
-  local SECRET_FILE="${1:?}"
+  local SECRET_FILE_NAME="${1:?}"
   local WARNING="$2"
 
-  removeDockerSecretFile "$SECRET_FILE"
-
-  promptForUserInput "What value do you want to set for $SECRET_FILE?" "$WARNING"
+  promptForUserInput "What value do you want to set for $SECRET_FILE_NAME?" "$WARNING"
   local SECRET_VALUE="$(getUserInput)"
 
-  createDockerSecretFile "$SECRET_VALUE" "$SECRET_FILE"
+  createDockerSecretFile "$SECRET_FILE_NAME" "$SECRET_VALUE"
 }
 
 #-------------------------------------------------------------------------------
-# Reads the value of a given secret file. Takes one mandatory argument:
+# Reads the value of a secret file. Takes one mandatory argument:
 # 
-# 1. "${1:?}" - the secrets file, including directory path.
+# 1. "${1:?}" - the secret file name, excluding directory path.
 #-------------------------------------------------------------------------------
 readDockerSecretFile () {
-  local SECRET_FILE="${1:?}"
-  local SECRET_VALUE="$(cat "$SECRET_FILE")"
+  local SECRET_FILE_NAME="${1:?}"
+  local SECRET_VALUE="$(cat "$DKR_SECRETS_DIR_PATH/$SECRET_FILE_NAME")"
 
   echo "$SECRET_VALUE"
 }
 
 #-------------------------------------------------------------------------------
-# Removes a given secret file. Takes one mandatory argument:
+# Removes a secret file. Takes one mandatory argument:
 # 
-# 1. "${1:?}" - the secrets file, including directory path.
+# 1. "${1:?}" - the secret file name, excluding directory path.
 #-------------------------------------------------------------------------------
 removeDockerSecretFile () {
-  local SECRET_FILE="${1:?}"
+  local SECRET_FILE_NAME="${1:?}"
+  local SECRET_FILE_PATH="$DKR_SECRETS_DIR_PATH/$SECRET_FILE_NAME"
 
-  if [ -f "$SECRET_FILE" ]; then
-    removeFileOrDirectory "$SECRET_FILE"
-  fi
+  printComment 'Removing the secret file at:'
+  printComment "$SECRET_FILE_PATH"
+  removeFileOrDirectory "$SECRET_FILE_PATH"
 }
