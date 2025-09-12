@@ -14,7 +14,7 @@
 # 4. "$4" - any optional flags.
 # 
 # N.B.
-# The optional flags, "$4" are not quoted as we explicitly want word splitting.
+# The optional flags, "$4", are not quoted as we explicitly want word splitting.
 #-------------------------------------------------------------------------------
 controlDockerService () {
   local COMPOSE_FILE_PATH="${1:-$DKR_COMPOSE_FILE_PATH}"
