@@ -12,6 +12,7 @@ SETUP_CONF_DIR_PATH="$USER_DIR_PATH/.config"
 USER_LOG_DIR_PATH="$USER_DIR_PATH/log"
 
 SERVICES_DIR_PATH="$USER_DIR_PATH/services"
+SETUP_DIR_PATH="$SERVICES_DIR_PATH/setup"
 
 #-------------------------------------------------------------------------------
 # File variables.
