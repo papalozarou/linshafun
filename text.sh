@@ -134,10 +134,10 @@ commentInLine () {
     printComment "$FILE_PATH"
     sed -i "/^[[:space:]]*$CHAR[[:space:]]*$ESCAPED_PARTIAL/s/^\([[:space:]]*\)#[[:space:]]*/\1/" "$FILE_PATH"
   else
-    printComment 'A line starting with:' 'warning'
-    printComment "$PARTIAL" 'warning'
-    printComment 'not found in:' 'warning'
-    printComment "$FILE_PATH" 'warning'
+    printComment 'A line starting with:' 'error'
+    printComment "$PARTIAL" 'error'
+    printComment 'not found in:' 'error'
+    printComment "$FILE_PATH" 'error'
     return 1
   fi
 }
@@ -183,10 +183,10 @@ commentOutLine () {
     printComment "$FILE_PATH"
     sed -i "/^[[:space:]]*$ESCAPED_PARTIAL/s/^\([[:space:]]*\)/\1$CHAR /" "$FILE_PATH"
   else
-    printComment 'A line starting with:' 'warning'
-    printComment "$PARTIAL" 'warning'
-    printComment 'not found in:' 'warning'
-    printComment "$FILE_PATH" 'warning'
+    printComment 'A line starting with:' 'error'
+    printComment "$PARTIAL" 'error'
+    printComment 'not found in:' 'error'
+    printComment "$FILE_PATH" 'error'
     return 1
   fi
 }
