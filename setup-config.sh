@@ -8,7 +8,8 @@
 # Adds a variable to "./setup/[project-name]-setup.var". Takes three mandatory
 # arguments:
 # 
-# 1. "${1:?}" – the projects setup variable file name without "-setup.var";
+# 1. "${1:?}" – the project's setup variable file name, without "-setup.var" and 
+#    excluding the directory path;
 # 2. "${2:?}" – the name of the variable to be added; and
 # 3. "${3:?}" – the value of the variable to be added.
 #
@@ -20,19 +21,18 @@ addSetupVar () {
 	local VAR_FILE_NAME="${1:?}"
 	local VAR_NAME="${2:?}"
 	local VAR_VALUE="${3:?}"
-
-  local VAR_FILE="$SETUP_DIR/$VAR_FILE_NAME-setup.var"
+  local VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
 
 	printComment 'Adding $'"$VAR_NAME variable to:"
-	printComment "$VAR_FILE"
+	printComment "$VAR_FILE_PATH"
 	
-  cat <<EOF >> "$VAR_FILE"
+  cat <<EOF >> "$VAR_FILE_PATH"
 $VAR_NAME="$VAR_VALUE"
 EOF
 
 	printSeparator
 	
-	if grep "$VAR_NAME" "$VAR_FILE"; then
+	if grep "$VAR_NAME" "$VAR_FILE_PATH"; then
 		printSeparator
 		printComment '$'"$VAR_NAME variable added."
 	else
@@ -40,7 +40,7 @@ EOF
 		exit 1
 	fi
 	
-	reloadVarFile "$VAR_FILE"
+	reloadVarFile "$VAR_FILE_PATH"
 }
 
 #-------------------------------------------------------------------------------
@@ -51,12 +51,12 @@ EOF
 # 2. the setup config directory doesn't exist so the file can't; or
 # 3. the setup config directory exists and the file doesn't.
 #-------------------------------------------------------------------------------
-checkForSetupConfigFileAndDir () {
-  local SETUP_CONF_TF="$(checkForFileOrDirectory "$SETUP_CONF")"
-  local SETUP_CONF_DIR_TF="$(checkForFileOrDirectory "$SETUP_CONF_DIR")"
+checkForAndCreateSetupConfigFileAndDir () {
+  local SETUP_CONF_TF="$(checkForFileOrDirectory "$SETUP_CONF_PATH")"
+  local SETUP_CONF_DIR_TF="$(checkForFileOrDirectory "$SETUP_CONF_DIR_PATH")"
 
-  printComment 'Checking for the setup config file or directory at:'
-  printComment "$SETUP_CONF_DIR"
+  printComment 'Checking for the setup config file and directory at:'
+  printComment "$SETUP_CONF_PATH"
 
   printComment "Check for config file returned $SETUP_CONF_TF."
   printComment "Check for config directory returned $SETUP_CONF_DIR_TF."
@@ -74,7 +74,7 @@ checkForSetupConfigFileAndDir () {
     createSetupConfigFile
   fi
 
-  listDirectories "$SETUP_CONF_DIR"
+  listDirectories "$SETUP_CONF_DIR_PATH"
 }
 
 #-------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ checkForSetupConfigFileAndDir () {
 #-------------------------------------------------------------------------------
 checkForSetupConfigOption () {
   local CONF_KEY="${1:?}"
-  local CONF_OPTION="$(grep "$CONF_KEY" "$SETUP_CONF")"
+  local CONF_OPTION="$(grep "$CONF_KEY" "$SETUP_CONF_PATH")"
 
   if [ -z "$CONF_OPTION" ]; then
     echo false
@@ -105,17 +105,17 @@ checkForSetupConfigOption () {
 # Creates the setup config directory and sets the correct ownership.
 #-------------------------------------------------------------------------------
 createSetupConfigDirectory () {
-  createDirectory "$SETUP_CONF_DIR"
-  setOwner "$SUDO_USER" "$SETUP_CONF_DIR"
+  createDirectory "$SETUP_CONF_DIR_PATH"
+  setOwner "$SUDO_USER" "$SETUP_CONF_DIR_PATH"
 }
 
 #-------------------------------------------------------------------------------
 # Creates the setup config file and sets the correct permissions and ownership.
 #-------------------------------------------------------------------------------
 createSetupConfigFile () {
-  createFiles "$SETUP_CONF"
-  setPermissions 600 "$SETUP_CONF"
-  setOwner "$SUDO_USER" "$SETUP_CONF"
+  createFiles "$SETUP_CONF_PATH"
+  setPermissions 600 "$SETUP_CONF_PATH"
+  setOwner "$SUDO_USER" "$SETUP_CONF_PATH"
 }
 
 #-------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ createSetupConfigFile () {
 # 
 # N.B.
 # The config key must be formatted exactly as in the config option file, i.e. 
-# using camelCase. A list of the config keys can be found in 
+# using camelCase. A list of the config keys can be found in the project's
 # "setup.conf.example" in the relevant setup directory.
 #-------------------------------------------------------------------------------
 getServiceFromConfigKey () {
@@ -147,7 +147,7 @@ getServiceFromConfigKey () {
 listSetupConfig () {
   printComment 'Listing contents of setup config file:'
   printSeparator
-  cat "$SETUP_CONF"
+  cat "$SETUP_CONF_PATH"
 }
 
 #-------------------------------------------------------------------------------
@@ -170,7 +170,7 @@ listSetupConfig () {
 #-------------------------------------------------------------------------------
 readSetupConfigValue () {
   local CONF_KEY="${1:?}"
-  local CONF_OPTION="$(grep "$CONF_KEY" "$SETUP_CONF")"
+  local CONF_OPTION="$(grep "$CONF_KEY" "$SETUP_CONF_PATH")"
 
   set -f $CONF_OPTION
   
@@ -192,10 +192,10 @@ removeSetupConfigOption () {
   local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
 
   printComment "Removing $CONF_KEY from:"
-  printComment "$SETUP_CONF"
+  printComment "$SETUP_CONF_PATH"
 
   if [ "$CONF_OPTION_TF" = true ]; then  
-    sed -i '/^'"$CONF_KEY"'/d' "$SETUP_CONF"
+    sed -i '/^'"$CONF_KEY"'/d' "$SETUP_CONF_PATH"
 
     printComment "$CONF_KEY removed."
   else
@@ -209,15 +209,16 @@ removeSetupConfigOption () {
 # Reloads a variable file that has been added to as part of a script. Takes one
 # mandatory argument:
 #
-# 1. "${1:?}" – the variable file to reload.
+# 1. "${1:?}" – the variable file to reload, including directory path and
+#    defaulting to "$SETUP_VAR_PATH"
 #-------------------------------------------------------------------------------
 reloadVarFile () {
-	local VAR_FILE="${1:?}"
-	
+	local VAR_FILE_PATH="${1:-"$SETUP_VAR_PATH"}"
+
 	printComment 'Reloading setup variable file at:'
-	printComment "$VAR_FILE"
+	printComment "$VAR_FILE_PATH"
 	
-	. "$VAR_FILE"
+	. "$VAR_FILE_PATH"
 }
 
 #-------------------------------------------------------------------------------
@@ -252,22 +253,22 @@ writeSetupConfigOption () {
   elif [ "$CONF_OPTION_TF" = true ] && [ "$EXISTING_CONF_VALUE" != "$CONF_VALUE" ]; then
     printComment "Overwriting existing value with $CONF_VALUE." 'warning'
 
-    sed -i '/^'"$CONF_KEY"'/c\'"$CONF_KEY $CONF_VALUE" "$SETUP_CONF"
+    sed -i '/^'"$CONF_KEY"'/c\'"$CONF_KEY $CONF_VALUE" "$SETUP_CONF_PATH"
 
     printComment 'Config written.'
 
-    setOwner "$SUDO_USER" "$SETUP_CONF"
+    setOwner "$SUDO_USER" "$SETUP_CONF_PATH"
   elif [ "$CONF_OPTION_TF" = false ]; then
-    echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF"
+    echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF_PATH"
 
     printComment 'Config written.'
 
     setOwner "$SUDO_USER" "$SETUP_CONF"
   else
-    printComment 'Something went wrong. Please check your setup config at:' 'warning'
-    printComment "$SETUP_CONF." 'warning'
-    printComment 'You may need to manually add the following to the setup config:' 'warning'
-    printComment "$CONF_KEY $CONF_VALUE" 'warning'
+    printComment 'Something went wrong. Please check your setup config at:' 'error'
+    printComment "$SETUP_CONF_PATH." 'error'
+    printComment 'You may need to manually add the following to the setup config:' 'error'
+    printComment "$CONF_KEY $CONF_VALUE" 'error'
 
     printScriptExiting true
 
