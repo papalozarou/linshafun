@@ -20,7 +20,8 @@ addSshKeytoAgent () {
 # Adds the newly generated public key to the "authorized_keys" file.
 #-------------------------------------------------------------------------------
 addKeyToAuthorizedKeys () {
-  printComment "Adding public key to $SSH_AUTH_KEYS_PATH."
+  printComment 'Adding public key to:'
+  printComment "$SSH_AUTH_KEYS_PATH"
   cat "$SSH_KEY.pub" >> "$SSH_AUTH_KEYS_PATH"
   printComment 'Key added.'
 }
@@ -37,7 +38,7 @@ checkForAndCreateAuthorizedKeys () {
   if [ "$SSH_AUTH_KEYS_TF" = true ]; then
     printComment 'The authorized keys file already exists.' 'warning'
   elif [ "$SSH_AUTH_KEYS_TF" = false ]; then
-    printComment 'Creating an "authorized_keys" file at:'
+    printComment 'Creating an authorized_keys file at:'
     printComment "$SSH_AUTH_KEYS_PATH"
     createFiles "$SSH_AUTH_KEYS_PATH"
 
