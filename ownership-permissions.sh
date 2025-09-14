@@ -13,26 +13,26 @@
 setOwner () {
   local USER="${1:?}"
   local GROUP="$USER"
-  local FILE_FOLDER="${2:?}"
+  local FILE_DIR_PATH="${2:?}"
 
   printComment "Setting ownership of:"
-  printComment "$FILE_FOLDER"
+  printComment "$FILE_DIR_PATH"
   printComment "to $USER:$GROUP."
-  chown -R "$USER:$GROUP" "$FILE_FOLDER"
+  chown -R "$USER:$GROUP" "$FILE_DIR_PATH"
 }
 
 #-------------------------------------------------------------------------------
 # Sets permissions of a file or directory. Takes two mandatory arguments:
 # 
-# 1. "${1:?}" – a user; and
+# 1. "${1:?}" – the permissions in numeric format, i.e. "600"; and
 # 2. "${2:?}" – the path of the file or directory.
 #-------------------------------------------------------------------------------
 setPermissions () {
   local PERMISSIONS="${1:?}"
-  local FILE_FOLDER="${2:?}"
+  local FILE_DIR_PATH="${2:?}"
 
   printComment "Setting permissions of:"
-  printComment "$FILE_FOLDER"
+  printComment "$FILE_DIR_PATH"
   printComment "to $PERMISSIONS."
-  chmod -R "$PERMISSIONS" "$FILE_FOLDER"
+  chmod -R "$PERMISSIONS" "$FILE_DIR_PATH"
 }
