@@ -54,8 +54,8 @@ initialiseScript () {
     printComment 'You have not performed this step. Running script.'
     printSeparator
   else
-    printComment 'Something went wrong. Please check your setup config at:' 'warning'
-    printComment "$SETUP_CONF" 'warning'
+    printComment 'Something went wrong. Please check your setup config at:' 'error'
+    printComment "$SETUP_CONF" 'error'
     printScriptExiting
 
     exit 1
