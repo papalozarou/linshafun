@@ -24,7 +24,7 @@ addHostToSshConfig () {
   local HOSTNAME="$2"
   local PORT="$3"
   local USER="$4"
-  local IDENTITY_FILE="$HOST"
+  local IDENTITY_FILE_NAME="$HOST"
 
   printComment "Adding host, $HOST, to ssh config file at:"
   printComment "$SSH_CONF"
@@ -34,7 +34,7 @@ addHostToSshConfig () {
     [ -n "$HOSTNAME" ] && echo "  Hostname $HOSTNAME"
     [ -n "$PORT" ] && echo "  Port $PORT"
     [ -n "$USER" ] && echo "  User $USER"
-    [ -n "$IDENTITY_FILE" ] && echo "  IdentityFile ~/.ssh/$IDENTITY_FILE"
+    [ -n "$IDENTITY_FILE_NAME" ] && echo "  IdentityFile ~/.ssh/$IDENTITY_FILE_NAME"
     echo
   } >> "$SSH_CONF"
 
