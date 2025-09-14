@@ -30,7 +30,7 @@ checkForPackage () {
 }
 
 #-------------------------------------------------------------------------------
-# Checks if one or more packages are installed and if not the packages is 
+# Checks if one or more packages are installed and if not the packages are 
 # installed. Takes one or more mandatory arguments:
 # 
 # 1. "$@" – the package or packages to be installed.
