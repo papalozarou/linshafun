@@ -14,15 +14,13 @@
 # ".example" postfix, for reuse in the "createServiceFile" function.
 #-------------------------------------------------------------------------------
 checkAndCreateServiceFiles () {
-  local FILES="$(getListOfFilesByPostfix '.example' "$SERVICES_DIR")"
+  local FILE_PATHS="$(getListOfFilesByPostfix '.example' "$SERVICES_DIR")"
 
-  for FILE in $FILES; do
-    if [ "$FILE" != "$SETUP_CONF_EXAMPLE" ]; then
-      FILE_W_POSTFIX="$FILE"
-      FILE_NO_POSTFIX="$(removePostfix "$FILE" ".example")"
+  for FILE_PATH in $FILE_PATHS; do
+    FILE_W_POSTFIX="$FILE_PATH"
+    FILE_NO_POSTFIX="$(removePostfix "$FILE_PATH" ".example")"
 
-      checkAndCreateOrAskToReplaceFileOrDirectory "$FILE_NO_POSTFIX" 'createServiceFile' 'recreate'
-    fi
+    checkAndCreateOrAskToReplaceFileOrDirectory "$FILE_NO_POSTFIX" 'createServiceFile' 'recreate'
   done
 }
 
