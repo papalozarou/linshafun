@@ -56,16 +56,18 @@ checkForAndCreateAuthorizedKeys () {
 # copy the key and runs this function again.
 #-------------------------------------------------------------------------------
 checkPrivateSshKeyCopied () {
-  local KEY="{$1:?}"
+  local KEY_PATH="${1:?}"
 
-  promptForUserInput "Have you copied the private key, $KEY, to your local ssh directory (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
+  promptForUserInput "Have you copied the private key to your local ssh directory (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
   KEY_COPIED_YN="$(getUserInputYN)"
 
   if [ "$KEY_COPIED_YN" = true ]; then
-    removePrivateSshKey "$KEY"
+    removePrivateSshKey "$KEY_PATH"
   else
-    printComment "You must copy the private key, $KEY, to your local ssh directory." 'error'
-    checkPrivateSshKeyCopied "$KEY"
+    printComment 'You must copy the private key below to your local ssh directory.' 'error'
+    printComment "$KEY_PATH" 'error'
+
+    checkPrivateSshKeyCopied "$KEY_PATH"
   fi
 }
 
@@ -79,14 +81,16 @@ checkPrivateSshKeyCopied () {
 # this function again.
 #-------------------------------------------------------------------------------
 checkPublicSshKeyCopied () {
-  local KEY="{$1:?}"
+  local KEY_PATH="${1:?}"
 
-  promptForUserInput "Have you copied the pripublicvate key, $KEY, to your remote server's authorized_keys file (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
+  promptForUserInput "Have you copied the public key to your remote server's authorized_keys file (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
   local KEY_COPIED_YN="$(getUserInputYN)"
 
   if [ "$KEY_COPIED_YN" != true ]; then
-    printComment "You must copy the public key, $KEY, to your remote server's authorized_keys file." 'error'
-    checkPublicSshKeyCopied "$KEY"
+    printComment "You must copy the public key below to your remote server's authorized_keys file." 'error'
+    printComment "$KEY_PATH" 'error'
+
+    checkPublicSshKeyCopied "$KEY_PATH"
   fi
 }
 
@@ -137,25 +141,25 @@ getSshKeyDetails () {
 #-------------------------------------------------------------------------------
 # Tell the user to copy the private key to their local machine. Takes one 
 # mandatory argument:
-# 
-# 1. "${1:?}" - the name of the ssh key file.
+#
+# 1. "${1:?}" - the name of the ssh key file, excluding directory path.
 #-------------------------------------------------------------------------------
 printPrivateKeyUsage () {
-  local KEY="${1:?}"
+  local KEY_NAME="${1:?}"
 
-  printComment "Please copy the private key, $KEY, to your local "'"~/.ssh" directory.'
+  printComment "Please copy the private key, $KEY_NAME, to your local "'"~/.ssh" directory.'
 }
 
 #-------------------------------------------------------------------------------
 # Tell the user to copy the private key to their local machine. Takes one 
 # mandatory argument:
 # 
-# 1. "${1:?}" - the name of the ssh key file.
+# 1. "${1:?}" - the name of the ssh key file, excluding directory path.
 #-------------------------------------------------------------------------------
 printPublicKeyUsage () {
-  local KEY="${1:?}"
+  local KEY_NAME="${1:?}"
 
-  printComment "Please copy the public key, $KEY, to your remote ssh host's "'"~/.ssh/authorized_keys" file.'
+  printComment "Please copy the public key, $KEY_NAME, to your remote ssh host's "'"~/.ssh/authorized_keys" file.'
 }
 
 #-------------------------------------------------------------------------------
