@@ -62,7 +62,7 @@ printComment () {
     fi
   done
 
-  # printLine "$CURRENT_LINE" "$COMMENT_TYPE"
+  printLine "$CURRENT_LINE" "$COMMENT_TYPE"
 }
 
 #-------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ printLine () {
   local LINE="${1:?}"
   local TYPE="${2:-regular}"
 
-  if [ "$TYPE" = true ]; then
+  if [ "$TYPE" = 'warning' ]; then
     printf "%b%s%s\n%b" "$COMMENT_COLOUR_WARN" "$COMMENT_PREFIX_WARN" "$LINE" "$COMMENT_COLOUR_RESET"
   elif [ "$TYPE" = 'error' ]; then
     printf "%b%s%s\n%b" "$COMMENT_COLOUR_ERROR" "$COMMENT_PREFIX_ERROR" "$LINE" "$COMMENT_COLOUR_RESET"
