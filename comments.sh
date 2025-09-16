@@ -53,11 +53,8 @@ printComment () {
       CURRENT_LINE="$WORD"
     elif [ $((${#CURRENT_LINE} + ${#WORD} + 1)) -le "$LINE_LENGTH" ]; then
       CURRENT_LINE="$CURRENT_LINE $WORD"
-    elif [ -z "$COMMENT_TYPE" ]; then
-      printLine "$CURRENT_LINE" "$COMMENT_TYPE"
-      CURRENT_LINE="$WORD"
     else
-      printLine "$CURRENT_LINE"
+      printLine "$CURRENT_LINE" "$COMMENT_TYPE"
       CURRENT_LINE="$WORD"
     fi
   done
