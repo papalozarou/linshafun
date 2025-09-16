@@ -5,24 +5,34 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Start the "ssh-agent" and add the newly generated key to it.
+# Start the "ssh-agent" and add a generated key to it. Takes one mandatory 
+# argument:
+# 
+# 1. "${1:?}" – the key file, including directory path.
 #-------------------------------------------------------------------------------
 addSshKeytoAgent () {
+  local KEY_PATH="${1:?}.pub"
+
   printComment 'Adding the generated key to the ssh-agent.'
   printSeparator
   eval "$(ssh-agent -s)"
-  ssh-add "$SSH_KEY_PATH"
+  ssh-add "$KEY_PATH"
   printSeparator
   printComment 'Key added to agent.'
 }
 
 #-------------------------------------------------------------------------------
-# Adds the newly generated public key to the "authorized_keys" file.
+# Adds a public key to the "authorized_keys" file. Takes one mandatory argument:
+# 
+# 1. "${1:?}" – the key file, including directory path.
+# 
 #-------------------------------------------------------------------------------
 addKeyToAuthorizedKeys () {
+  local KEY_PATH="${1:?}.pub"
+
   printComment 'Adding public key to:'
   printComment "$SSH_AUTH_KEYS_PATH"
-  cat "$SSH_KEY_PATH.pub" >> "$SSH_AUTH_KEYS_PATH"
+  cat "$KEY_PATH" >> "$SSH_AUTH_KEYS_PATH"
   printComment 'Key added.'
 }
 
@@ -52,8 +62,8 @@ checkForAndCreateAuthorizedKeys () {
 # 
 # 1. "${1:?}" – the key file, including directory path.
 # 
-# If yes, removes the key, if no or other input the function directs the user to
-# copy the key and runs this function again.
+# If "yes", removes the key, if "no' or other input the function directs the 
+# user to copy the key and runs this function again.
 #-------------------------------------------------------------------------------
 checkPrivateSshKeyCopied () {
   local KEY_PATH="${1:?}"
