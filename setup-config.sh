@@ -263,7 +263,7 @@ writeSetupConfigOption () {
 
     printComment 'Config written.'
 
-    setOwner "$SUDO_USER" "$SETUP_CONF"
+    setOwner "$SUDO_USER" "$SETUP_CONF_PATH"
   else
     printComment 'Something went wrong. Please check your setup config at:' 'error'
     printComment "$SETUP_CONF_PATH." 'error'
