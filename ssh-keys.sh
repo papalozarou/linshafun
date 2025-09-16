@@ -22,7 +22,7 @@ addSshKeytoAgent () {
 addKeyToAuthorizedKeys () {
   printComment 'Adding public key to:'
   printComment "$SSH_AUTH_KEYS_PATH"
-  cat "$SSH_KEY.pub" >> "$SSH_AUTH_KEYS_PATH"
+  cat "$SSH_KEY_PATH.pub" >> "$SSH_AUTH_KEYS_PATH"
   printComment 'Key added.'
 }
 
