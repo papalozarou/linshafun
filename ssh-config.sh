@@ -109,3 +109,22 @@ getSshHostDetails () {
   promptForUserInput 'What is the name of the ssh user for the host you want to add?'
   SSH_USER="$(getUserInput)"  
 }
+
+#-------------------------------------------------------------------------------
+# Displays the values a user needs to add to their local ssh config file.
+#-------------------------------------------------------------------------------
+printLocalSshConfig () {
+  local IP_ADDRESS="$(readIpAddress)"
+  local SSH_KEY_FILE_NAME="$(readSetupConfigValue "sshKeyFile")"
+
+  printComment 'To enable easy connection from your local machine, add the following to your local ssh config file at either:'
+  printComment '~/.ssh/ssh_config'
+  printComment '~/.ssh/config'
+  printSeparator
+  printComment "Host $SSH_KEY_FILE_NAME"
+  printComment "  Hostname $IP_ADDRESS"
+  printComment "  Port $SSH_PORT"
+  printComment "  User $SUDO_USER"
+  printComment "  IdentityFile ~/.ssh/$SSH_KEY_FILE_NAME"
+  printSeparator
+}
