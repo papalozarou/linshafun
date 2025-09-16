@@ -115,6 +115,9 @@ getSshHostDetails () {
 # one mandatory argument:
 # 
 # 1. "${1:?}" - the ssh port number.
+# 
+# N.B.
+# "%4s" is used to add four spaces to the start of lines.
 #-------------------------------------------------------------------------------
 printLocalSshConfig () {
   local SSH_PORT=${1:?}
@@ -126,9 +129,9 @@ printLocalSshConfig () {
   printComment '~/.ssh/config'
   printSeparator
   printComment "Host $SSH_KEY_FILE_NAME"
-  printComment "  Hostname $IP_ADDRESS"
-  printComment "  Port $SSH_PORT"
-  printComment "  User $SUDO_USER"
-  printComment "  IdentityFile ~/.ssh/$SSH_KEY_FILE_NAME"
+  printComment "%4sHostname $IP_ADDRESS"
+  printComment "%4sPort $SSH_PORT"
+  printComment "%4sUser $SUDO_USER"
+  printComment "%4sIdentityFile ~/.ssh/$SSH_KEY_FILE_NAME"
   printSeparator
 }
