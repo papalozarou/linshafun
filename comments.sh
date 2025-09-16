@@ -62,7 +62,7 @@ printComment () {
     fi
   done
 
-  printLine "$CURRENT_LINE" "$FLAG"
+  printLine "$CURRENT_LINE" "$COMMENT_TYPE"
 }
 
 #-------------------------------------------------------------------------------
