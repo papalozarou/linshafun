@@ -111,9 +111,13 @@ getSshHostDetails () {
 }
 
 #-------------------------------------------------------------------------------
-# Displays the values a user needs to add to their local ssh config file.
+# Displays the values a user needs to add to their local ssh config file. Takes
+# one mandatory argument:
+# 
+# 1. "${1:?}" - the ssh port number.
 #-------------------------------------------------------------------------------
 printLocalSshConfig () {
+  local SSH_PORT=${1:?}
   local IP_ADDRESS="$(readIpAddress)"
   local SSH_KEY_FILE_NAME="$(readSetupConfigValue "sshKeyFile")"
 
