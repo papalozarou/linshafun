@@ -240,7 +240,7 @@ writeSetupConfigOption () {
   local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
 
   printComment "Writing $CONF_KEY with value $CONF_VALUE to:"
-  printComment "$SETUP_CONF"
+  printComment "$SETUP_CONF_PATH"
 
   if [ "$CONF_OPTION_TF" = true ]; then
     local EXISTING_CONF_VALUE="$(readSetupConfigValue "$CONF_KEY")"
