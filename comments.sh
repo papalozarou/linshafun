@@ -28,8 +28,8 @@ COMMENT_SEPARATOR='-------------------------------------------------------------
 # Prints a comment of any length, via "printLine". Takes two arguments:
 # 
 # 1. "${1:?}" – the full comment to print; and
-# 2. "${2:-regular}" – a flag indicating if the comment is "regular", a 
-#    "warning", or an "error", defaulting to "regular".
+# 2. "$2" – an optional flag indicating if the comment is a 
+#    "warning" or an "error".
 # 
 # The comment is split into words and printed in lines that do not exceed the
 # standard terminal length of 80 characters, including prefix.
@@ -43,7 +43,7 @@ COMMENT_SEPARATOR='-------------------------------------------------------------
 #-------------------------------------------------------------------------------
 printComment () {
   local COMMENT="${1:?}"
-  local COMMENT_TYPE="${2:-regular}"
+  local COMMENT_TYPE="$2"
   local LINE_LENGTH=66
 
   CURRENT_LINE=
@@ -53,8 +53,8 @@ printComment () {
       CURRENT_LINE="$WORD"
     elif [ $((${#CURRENT_LINE} + ${#WORD} + 1)) -le "$LINE_LENGTH" ]; then
       CURRENT_LINE="$CURRENT_LINE $WORD"
-    elif [ "$WARN_TF" = true ]; then
-      printLine "$CURRENT_LINE" true
+    elif [ -z "$COMMENT_TYPE" ]; then
+      printLine "$CURRENT_LINE" "$COMMENT_TYPE"
       CURRENT_LINE="$WORD"
     else
       printLine "$CURRENT_LINE"
@@ -62,7 +62,7 @@ printComment () {
     fi
   done
 
-  printLine "$CURRENT_LINE" "$COMMENT_TYPE"
+  # printLine "$CURRENT_LINE" "$COMMENT_TYPE"
 }
 
 #-------------------------------------------------------------------------------
