@@ -32,11 +32,12 @@ addScriptToCron () {
   local SNIPPET_NAME="${4:-"$CRON_SNIPPET_NAME"}"
   local LOG_TF="${5:-true}"
   local SNIPPET_PATH="/etc/cron.d/$SNIPPET_NAME"
-  local SCRIPT_LOG_PATH="$USER_DIR_PATH/log/$SNIPPET_NAME.log"
 
   printComment 'Adding to the system crontab, as a snippet in "/etc/cron.d".'
 
-  if [ "$LOG_ENABLED" = true ]; then
+  if [ "$LOG_TF" = true ]; then
+    local SCRIPT_LOG_PATH="$USER_DIR_PATH/log/$SNIPPET_NAME.log"
+
     echo "$SCHEDULE $USER $CMD_OR_SCRIPT_PATH >> $SCRIPT_LOG_PATH 2>&1" > "$SNIPPET_PATH"
   else
     echo "$SCHEDULE $USER $CMD_OR_SCRIPT_PATH" > "$SNIPPET_PATH"
