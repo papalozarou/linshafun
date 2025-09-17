@@ -44,7 +44,6 @@ getHostArchitecture () {
 # bookworm, focal, jammy, etc.
 #-------------------------------------------------------------------------------
 getOsCodename () {
-  # local OS_CODENAME="$(grep '^VERSION_CODENAME=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
   local OS_CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
 
   echo "$OS_CODENAME"
@@ -55,7 +54,6 @@ getOsCodename () {
 # etc.
 #-------------------------------------------------------------------------------
 getOsDistribution () {
-  # local OS_DISTRIBUTION="$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
   local OS_DISTRIBUTION="$(. /etc/os-release && echo "$ID")"
 
   echo "$OS_DISTRIBUTION"
