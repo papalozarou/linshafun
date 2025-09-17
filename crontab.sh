@@ -9,8 +9,8 @@
 # "/etc/cron.d". Takes four mandatory arguments:
 #
 # 1. "${1:?}" – a username, defaulting to "root";
-# 2. "${2:?}" – the filename of the script, including directory path, defaulting 
-#    to the global variable "$CRON_SCRIPT_NAME";
+# 2. "${2:?}" – the command to run or the file path, including directory path, 
+#    defaulting to the global variable "$CRON_SCRIPT_NAME";
 # 3. "${3:?}" – the cron schedule, in "* * * * *" format, defaulting to the 
 #    global variable "$CRON_SCHEDULE"; and
 # 4. "${4:?}" – the snippet name to be placed in "/etc/cron.d", defaulting to 
@@ -25,14 +25,14 @@
 #-------------------------------------------------------------------------------
 addScriptToCron () {
   local USER="${1:-"root"}"
-  local SCRIPT_PATH="${2:-"$CRON_SCRIPT_PATH"}"
+  local CMD_OR_SCRIPT_PATH="${2:-"$CRON_SCRIPT_PATH"}"
   local SCHEDULE="${3:-"$CRON_SCHEDULE"}"
   local SNIPPET_NAME="${4:-"$CRON_SNIPPET_NAME"}"
   local SNIPPET_PATH="/etc/cron.d/$SNIPPET_NAME"
   local SCRIPT_LOG_PATH="$USER_DIR_PATH/log/$SNIPPET_NAME.log"
 
   printComment 'Adding to the system crontab, as a snippet in "/etc/cron.d".'
-  echo "$SCHEDULE $USER $SCRIPT_PATH >> $SCRIPT_LOG_PATH 2>&1" > "$SNIPPET_PATH"
+  echo "$SCHEDULE $USER $CMD_OR_SCRIPT_PATH >> $SCRIPT_LOG_PATH 2>&1" > "$SNIPPET_PATH"
 
   printComment 'Checking snippet added to "/etc/cron.d"…'
   printSeparator
