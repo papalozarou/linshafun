@@ -27,7 +27,7 @@ addHostToSshConfig () {
   local IDENTITY_FILE_NAME="$HOST"
 
   printComment "Adding host, $HOST, to ssh config file at:"
-  printComment "$SSH_CONF"
+  printComment "$SSH_CONF_PATH"
 
   {
     echo "Host $HOST"
