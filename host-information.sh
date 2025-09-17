@@ -31,11 +31,22 @@ compareOsVersion () {
 }
 
 #-------------------------------------------------------------------------------
+# Gets the Linux distribution codename the host machine is running.
+#-------------------------------------------------------------------------------
+getOsCodename () {
+  # local OS_CODENAME="$(grep '^VERSION_CODENAME=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
+  local OS_CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
+
+  echo "$OS_CODENAME"
+}
+
+#-------------------------------------------------------------------------------
 # Gets the Linux distribution the host machine is running, e.g. ubuntu, debian,
 # etc.
 #-------------------------------------------------------------------------------
 getOsDistribution () {
-  local OS_DISTRIBUTION="$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
+  # local OS_DISTRIBUTION="$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
+  local OS_DISTRIBUTION="$(. /etc/os-release && echo "$ID")"
 
   echo "$OS_DISTRIBUTION"
 }
@@ -45,7 +56,8 @@ getOsDistribution () {
 # Gets the Linux distribution version number the host machine is running.
 #-------------------------------------------------------------------------------
 getOsVersion () {
-  local OS_VERSION="$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
+  # local OS_VERSION="$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
+  local OS_VERSION="$(. /etc/os-release && echo "$VERSION_ID")"
 
   echo "$OS_VERSION"
 }
