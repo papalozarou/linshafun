@@ -36,10 +36,10 @@ addHostToSshConfig () {
     [ -n "$USER" ] && echo "  User $USER"
     [ -n "$IDENTITY_FILE_NAME" ] && echo "  IdentityFile ~/.ssh/$IDENTITY_FILE_NAME"
     echo
-  } >> "$SSH_CONF"
+  } >> "$SSH_CONF_PATH"
 
-  setPermissions 600 "$SSH_CONF"
-  setOwner "$SUDO_USER" "$SSH_CONF"
+  setPermissions 600 "$SSH_CONF_PATH"
+  setOwner "$SUDO_USER" "$SSH_CONF_PATH"
 }
 
 #-------------------------------------------------------------------------------
