@@ -117,7 +117,9 @@ getSshHostDetails () {
 # 1. "${1:?}" - the ssh port number.
 # 
 # N.B.
-# "%4s" is used to add four spaces to the start of lines.
+# "printf" is used direcrtly to allow the user to copy directly from the 
+# terminal, without "SETUP SCRIPT:" in each line."%4s" is used to add four 
+# spaces to the start off lines and "\n" ensures new lines are printed.
 #-------------------------------------------------------------------------------
 printLocalSshConfig () {
   local SSH_PORT=${1:?}
@@ -128,10 +130,10 @@ printLocalSshConfig () {
   printComment '~/.ssh/ssh_config'
   printComment '~/.ssh/config'
   printSeparator
-  printComment "Host $SSH_KEY_FILE_NAME"
-  printComment "%4sHostname $IP_ADDRESS"
-  printComment "%4sPort $SSH_PORT"
-  printComment "%4sUser $SUDO_USER"
-  printComment "%4sIdentityFile ~/.ssh/$SSH_KEY_FILE_NAME"
+  printf "Host $SSH_KEY_FILE_NAME\n"
+  printf "%4sHostname $IP_ADDRESS\n"
+  printf "%4sPort $SSH_PORT\n"
+  printf "%4sUser $SUDO_USER\n"
+  printf "%4sIdentityFile ~/.ssh/$SSH_KEY_FILE_NAME\n"
   printSeparator
 }
