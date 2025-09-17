@@ -14,7 +14,7 @@
 # ".example" postfix, for reuse in the "createServiceFile" function.
 #-------------------------------------------------------------------------------
 checkAndCreateServiceFiles () {
-  local FILE_PATHS="$(getListOfFilesByPostfix '.example' "$SERVICES_DIR")"
+  local FILE_PATHS="$(getListOfFilesByPostfix '.example' "$SERVICES_DIR_PATH")"
 
   for FILE_PATH in $FILE_PATHS; do
     FILE_W_POSTFIX="$FILE_PATH"
