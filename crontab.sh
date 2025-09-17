@@ -12,9 +12,11 @@
 # 2. "${2:?}" – the command to run or the file path, including directory path, 
 #    defaulting to the global variable "$CRON_SCRIPT_NAME";
 # 3. "${3:?}" – the cron schedule, in "* * * * *" format, defaulting to the 
-#    global variable "$CRON_SCHEDULE"; and
+#    global variable "$CRON_SCHEDULE";
 # 4. "${4:?}" – the snippet name to be placed in "/etc/cron.d", defaulting to 
-#    the global variable "$CRON_SNIPPET_NAME".
+#    the global variable "$CRON_SNIPPET_NAME"; and
+# 5. "${5:?}" – an optional flag to enable log output to a file in the user's 
+#    home directory, defaulting to "true".
 # 
 # N.B.
 # If using the global variables they must be assigned first using their 
@@ -28,11 +30,17 @@ addScriptToCron () {
   local CMD_OR_SCRIPT_PATH="${2:-"$CRON_SCRIPT_PATH"}"
   local SCHEDULE="${3:-"$CRON_SCHEDULE"}"
   local SNIPPET_NAME="${4:-"$CRON_SNIPPET_NAME"}"
+  local LOG_TF="${5:-true}"
   local SNIPPET_PATH="/etc/cron.d/$SNIPPET_NAME"
   local SCRIPT_LOG_PATH="$USER_DIR_PATH/log/$SNIPPET_NAME.log"
 
   printComment 'Adding to the system crontab, as a snippet in "/etc/cron.d".'
-  echo "$SCHEDULE $USER $CMD_OR_SCRIPT_PATH >> $SCRIPT_LOG_PATH 2>&1" > "$SNIPPET_PATH"
+
+  if [ "$LOG_ENABLED" = true ]; then
+    echo "$SCHEDULE $USER $CMD_OR_SCRIPT_PATH >> $SCRIPT_LOG_PATH 2>&1" > "$SNIPPET_PATH"
+  else
+    echo "$SCHEDULE $USER $CMD_OR_SCRIPT_PATH" > "$SNIPPET_PATH"
+  fi
 
   printComment 'Checking snippet added to "/etc/cron.d"…'
   printSeparator
