@@ -31,7 +31,17 @@ compareOsVersion () {
 }
 
 #-------------------------------------------------------------------------------
-# Gets the Linux distribution codename the host machine is running.
+# Gets the host machine architecture, e.g. amd64, arm64, etc.
+#-------------------------------------------------------------------------------
+getHostArchitecture () {
+  local HOST_ARCHITECTURE="$(dpkg --print-architecture)"
+
+  echo "$HOST_ARCHITECTURE"
+}
+
+#-------------------------------------------------------------------------------
+# Gets the Linux distribution codename the host machine is running, e.g. 
+# bookworm, focal, jammy, etc.
 #-------------------------------------------------------------------------------
 getOsCodename () {
   # local OS_CODENAME="$(grep '^VERSION_CODENAME=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
