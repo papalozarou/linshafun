@@ -36,7 +36,7 @@ addScriptToCron () {
   printComment 'Adding to the system crontab, as a snippet in "/etc/cron.d".'
 
   if [ "$LOG_TF" = true ]; then
-    local SCRIPT_LOG_PATH="$USER_DIR_PATH/log/$SNIPPET_NAME.log"
+    local SCRIPT_LOG_PATH="$USER_LOG_DIR_PATH/$SNIPPET_NAME.log"
 
     echo "$SCHEDULE $USER $CMD_OR_SCRIPT_PATH >> $SCRIPT_LOG_PATH 2>&1" > "$SNIPPET_PATH"
   else
