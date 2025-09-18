@@ -80,13 +80,6 @@ checkForAndCreateSshConfig () {
     printComment "$SSH_CONF_PATH"
     createFiles "$SSH_CONF_PATH"
 
-    cat <<EOF > "$SSH_CONF_PATH"
-Host *
-  AddKeysToAgent yes
-  IdentitiesOnly yes
-  
-EOF
-
     setPermissions 600 "$SSH_CONF_PATH"
     setOwner "$SUDO_USER" "$SSH_CONF_PATH"
   fi
