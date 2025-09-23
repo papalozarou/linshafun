@@ -24,6 +24,9 @@
 # 
 # - "getCronFilenames"; and
 # - "getCronSchedule".
+# 
+# If the check for the snippet file in "/etc/cron.d" fails, the function exits 
+# with status 1.
 #-------------------------------------------------------------------------------
 addScriptToCron () {
   local USER="${1:-"root"}"
@@ -43,15 +46,22 @@ addScriptToCron () {
     echo "$SCHEDULE $USER $CMD_OR_SCRIPT_PATH" > "$SNIPPET_PATH"
   fi
 
-  printComment 'Checking snippet added to "/etc/cron.d"…'
-  printSeparator
-  ls -lha "$SNIPPET_PATH"
-  printSeparator
-  printComment 'Checking contents of snippet…'
-  printSeparator
-  cat "$SNIPPET_PATH"
-  printSeparator
-  printComment 'Script added to cron, using snippet.'
+
+  local SNIPPET_TF="$(checkForFileOrDirectory "$SNIPPET_PATH")"
+
+  printCheckResult 'to see if the snippet was created' "$SNIPPET_TF"
+
+  if [ "$SNIPPET_TF" = true ]; then
+    printComment 'Checking contents of snippet…'
+    printSeparator
+    cat "$SNIPPET_PATH"
+    printSeparator
+    printComment 'Script added to cron, using a snippet in "/etc/crond.d".'
+  else
+    printComment 'An error occurred when creating the snippet.' 'error'
+
+    exit 1
+  fi 
 }
 
 #-------------------------------------------------------------------------------
@@ -60,7 +70,7 @@ addScriptToCron () {
 checkForAndCreateUserLogDir () {
   local LOG_DIR_TF="$(checkForFileOrDirectory "$USER_LOG_DIR_PATH")"
 
-  printCheckResult 'to see if' 'a "~/log" directory' 'exists' "$LOG_DIR_TF"
+  printCheckResult 'to see if a "~/log" directory exists' "$LOG_DIR_TF"
 
   if [ "$USER_LOG_DIR_TF" = true ]; then
     printComment 'The "~/log" directory already exists.' 'warning'

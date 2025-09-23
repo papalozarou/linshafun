@@ -42,7 +42,7 @@ checkForPackagesAndInstall () {
   for PACKAGE in "$@"; do
     local PACKAGE_TF="$(checkForPackage "$PACKAGE")"
 
-    printCheckResult 'to see if' "$PACKAGE" 'is installed' "$PACKAGE_TF"
+    printCheckResult "to see if $PACKAGE is installed" "$PACKAGE_TF"
 
     if [ "$PACKAGE_TF" = true ]; then
       printComment "You have already installed $PACKAGE."
@@ -65,8 +65,8 @@ checkForPackagesAndRemove () {
 
   for PACKAGE in "$@"; do
     local PACKAGE_TF="$(checkForPackage "$PACKAGE")"
-    
-    printCheckResult 'to see if' "$PACKAGE" 'is installed' "$PACKAGE_TF"
+
+    printCheckResult "to see if $PACKAGE is installed" "$PACKAGE_TF"
 
     if [ "$PACKAGE_TF" = true ]; then
       printComment "You need to remove $PACKAGE." 'warning'

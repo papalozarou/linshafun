@@ -42,7 +42,7 @@ addKeyToAuthorizedKeys () {
 checkForAndCreateAuthorizedKeys () {
   local SSH_AUTH_KEYS_TF="$(checkForFileOrDirectory "$SSH_AUTH_KEYS_PATH")"
 
-  printCheckResult 'to see if' 'an authorized keys file' 'exists' "$SSH_AUTH_KEYS_TF"
+  printCheckResult 'to see if an "~/.ssh/authorized_keys" file exists' "$SSH_AUTH_KEYS_TF"
 
   if [ "$SSH_AUTH_KEYS_TF" = true ]; then
     printComment 'The authorized keys file already exists.' 'warning'

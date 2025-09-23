@@ -27,22 +27,18 @@ COMMENT_SEPARATOR='-------------------------------------------------------------
 #-------------------------------------------------------------------------------
 # Prints consistent output for an item check. Takes two mandatory arguments:
 # 
-# 1. "${1:?}" – a prefix, i.e. "to see if" or "for a", defaulting to "to see if"; 
-# 2. "${2:?}" – the item being checked;
-# 3. "${3:?}" – the postfix, i.e. "exists" or "is set", defaulting to "exists";
-#    and
-# 4. "${4:?}" – the result of a "checkFor…" function.
+# 1. "${1:?}" – the item being checked including a prefix and postfix if 
+#    required, i.e. "to see if the file exists" or "the snippet is set";
+# 2. "${2:?}" – the result of a "checkFor…" function.
 # 
 # N.B.
 # The function exits with status 1 if the check result is not "true" or "false".
 #-------------------------------------------------------------------------------
 printCheckResult () {
-  local PREFIX="${1:-'to see if'}"
-  local ITEM="${2:?}"
-  local POSTFIX="${3:-'exists'}"
-  local ITEM_TF="${3:?}"
+  local ITEM="${1:?}"
+  local ITEM_TF="${2:?}"
 
-  printComment "Checking $PREFIX $ITEM $POSTFIX…"
+  printComment "Checking $ITEM…"
 
   if [ "$ITEM_TF" = true ]; then
     printComment "Check returned $ITEM_TF."

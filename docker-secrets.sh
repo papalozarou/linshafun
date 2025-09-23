@@ -31,7 +31,7 @@ createDockerSecretFile () {
 checkForAndCreateDockerSecretsDir () {
   local DKR_SECRETS_DIR_TF="$(checkForFileOrDirectory "$DKR_SECRETS_DIR_PATH")"
 
-  printCheckResult 'to see if' 'a docker secrets directory' 'exists' "$DKR_SECRETS_DIR_TF"
+  printCheckResult 'to see if a docker secrets directory exists' "$DKR_SECRETS_DIR_TF"
 
   if [ "$DKR_SECRETS_DIR_TF" = true ]; then
     printComment 'The docker secrets directory already exists.' 'warning'

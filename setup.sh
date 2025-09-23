@@ -42,7 +42,7 @@ initialiseScript () {
   local CONF_KEY="${1:?}"
   local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
 
-  printCheckResult 'the' 'setup config' 'to see if this step has already been performed' "$CONF_OPTION_TF"
+  printCheckResult 'the setup config to see if this step has already been performed' "$CONF_OPTION_TF"
 
   if [ "$CONF_OPTION_TF" = true ]; then
     printComment 'You have already performed this step.' 'warning'

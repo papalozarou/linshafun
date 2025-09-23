@@ -55,11 +55,8 @@ checkForAndCreateSetupConfigFileAndDir () {
   local SETUP_CONF_TF="$(checkForFileOrDirectory "$SETUP_CONF_PATH")"
   local SETUP_CONF_DIR_TF="$(checkForFileOrDirectory "$SETUP_CONF_DIR_PATH")"
 
-  printComment 'Checking for the setup config file and directory at:'
-  printComment "$SETUP_CONF_PATH"
-
-  printComment "Check for config file returned $SETUP_CONF_TF."
-  printComment "Check for config directory returned $SETUP_CONF_DIR_TF."
+  printCheckResult 'to see if a "~/.config" directory exists' "$SETUP_CONF_DIR_TF"
+  printCheckResult 'to see if a setup config file exists' "$SETUP_CONF_TF"
 
   if [ "$SETUP_CONF_TF" = true ]; then
     printComment 'The setup config file and directory exist.'

@@ -77,7 +77,7 @@ checkAndSetDockerEnvVariables () {
   for ENV_VAR in "$@"; do
     local ENV_VAR_TF="$(checkIfDockerEnvVariableSet "$ENV_FILE_PATH" "$ENV_VAR")"
 
-    printCheckResult 'to see if' "$ENV_VAR" 'is set' "$ENV_VAR_TF"
+    printCheckResult "to see if $ENV_VAR is set" "$ENV_VAR_TF"
 
     changeDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR"
   done
