@@ -32,6 +32,9 @@ COMMENT_SEPARATOR='-------------------------------------------------------------
 # 3. "${3:?}" – the postfix, i.e. "exists" or "is set", defaulting to "exists";
 #    and
 # 4. "${4:?}" – the result of a "checkFor…" function.
+# 
+# N.B.
+# The function exits with status 1 if the check result is not "true" or "false".
 #-------------------------------------------------------------------------------
 printCheckResult () {
   local PREFIX="${1:-'to see if'}"
@@ -47,8 +50,9 @@ printCheckResult () {
     printComment "Check returned $ITEM_TF." 'warning'
   else
     printComment "An error occurred." 'error'
-  fi
 
+    exit 1
+  fi
 }
 
 #-------------------------------------------------------------------------------
