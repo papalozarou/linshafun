@@ -40,7 +40,15 @@ printCheckResult () {
   local ITEM_TF="${3:?}"
 
   printComment "Checking $PREFIX $ITEM $POSTFIX…"
-  printComment "Check returned $ITEM_TF."
+
+  if [ "$ITEM_TF" = true ]; then
+    printComment "Check returned $ITEM_TF."
+  elif [ "$ITEM_TF" = false ]; then
+    printComment "Check returned $ITEM_TF." 'warning'
+  else
+    printComment "An error occurred." 'error'
+  fi
+
 }
 
 #-------------------------------------------------------------------------------
