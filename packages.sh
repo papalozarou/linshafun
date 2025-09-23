@@ -41,7 +41,7 @@ checkForPackagesAndInstall () {
 
   for PACKAGE in "$@"; do
     local PACKAGE_TF="$(checkForPackage "$PACKAGE")"
-    printComment "Checking for $PACKAGE."
+    printComment "Checking for $PACKAGE…"
     printComment "Check returned $PACKAGE_TF."
 
     if [ "$PACKAGE_TF" = true ]; then
@@ -65,7 +65,7 @@ checkForPackagesAndRemove () {
 
   for PACKAGE in "$@"; do
     local PACKAGE_TF="$(checkForPackage "$PACKAGE")"
-    printComment "Checking for $PACKAGE."
+    printComment "Checking for $PACKAGE…"
     printComment "Check returned $PACKAGE_TF."
 
     if [ "$PACKAGE_TF" = true ]; then

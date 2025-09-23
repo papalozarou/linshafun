@@ -74,13 +74,13 @@ checkAndSetDockerEnvVariables () {
 
   shift
 
-  for i; do
-    local ENV_VAR_TF="$(checkIfDockerEnvVariableSet "$ENV_FILE_PATH" "$i")"
+  for ENV_VAR in "$@"; do
+    local ENV_VAR_TF="$(checkIfDockerEnvVariableSet "$ENV_FILE_PATH" "$ENV_VAR")"
 
-    printComment "Checking to see if $i is set…"
+    printComment "Checking to see if $ENV_VAR is set…"
     printComment "Check returned $ENV_VAR_TF."
 
-    changeDockerEnvVariable "$ENV_FILE_PATH" "$i"
+    changeDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR"
   done
 }
 
@@ -244,7 +244,7 @@ replaceDockerEnvPlaceholderVariable () {
 
   sed -i 's|'"$ENV_VAR"'|'"$ENV_VALUE"'|g' "$ENV_FILE_PATH"
 
-  printComment 'Checking variables have been replaced.'
+  printComment 'Checking variables have been replaced…'
   printSeparator
   grep "$ENV_VALUE" "$ENV_FILE_PATH"
   printSeparator

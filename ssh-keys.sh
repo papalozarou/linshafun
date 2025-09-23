@@ -42,7 +42,7 @@ addKeyToAuthorizedKeys () {
 checkForAndCreateAuthorizedKeys () {
   local SSH_AUTH_KEYS_TF="$(checkForFileOrDirectory "$SSH_AUTH_KEYS_PATH")"
 
-  printComment 'Checking for an authorized keys file.'
+  printComment 'Checking for an authorized keys file…'
   printComment "Check returned $SSH_AUTH_KEYS_TF."
 
   if [ "$SSH_AUTH_KEYS_TF" = true ]; then

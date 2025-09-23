@@ -67,7 +67,7 @@ setHostEnvVariable () {
     printComment "$PROFILE_PATH"
     echo "$EXPORT" >> "$PROFILE_PATH"
 
-    printComment 'Checking value added.'
+    printComment 'Checking value added…'
     printSeparator
     grep "$ENV_VAR" "$PROFILE_PATH"
     printSeparator

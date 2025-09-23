@@ -31,7 +31,7 @@ createDockerSecretFile () {
 checkForAndCreateDockerSecretsDir () {
   local DKR_SECRETS_DIR_TF="$(checkForFileOrDirectory "$DKR_SECRETS_DIR_PATH")"
 
-  printComment 'Checking for a docker secrets directory.'
+  printComment 'Checking for a docker secrets directory…'
   printComment "Check returned $DKR_SECRETS_DIR_TF."
 
   if [ "$DKR_SECRETS_DIR_TF" = true ]; then

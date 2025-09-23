@@ -24,12 +24,10 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   local ACTION="${3:-"recreate"}"
   local WARNING="$4"
 
+  local FILE_OR_DIR_TF="$(checkForFileOrDirectory "$FILE_OR_DIR_PATH")"
   printComment 'Checking for file or directory at:'
   printComment "$FILE_OR_DIR_PATH"
-
-  local FILE_OR_DIR_TF="$(checkForFileOrDirectory "$FILE_OR_DIR_PATH")"
-
-  printComment "The check returned $FILE_OR_DIR_TF."
+  printComment "Check returned $FILE_OR_DIR_TF."
 
   if [ "$FILE_OR_DIR_TF" = true ]; then
     promptForUserInput "The file or directory exists. Do you want to $ACTION it (y/n)?" 'This cannot be undone if you answer y/Y.'

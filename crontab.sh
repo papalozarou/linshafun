@@ -60,7 +60,7 @@ addScriptToCron () {
 checkForAndCreateUserLogDir () {
   local LOG_DIR_TF="$(checkForFileOrDirectory "$USER_LOG_DIR_PATH")"
 
-  printComment 'Checking for an "~/log" directory.'
+  printComment 'Checking for a "~/log" directory…'
   printComment "Check returned $LOG_DIR_TF."
 
   if [ "$USER_LOG_DIR_TF" = true ]; then
