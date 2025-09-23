@@ -25,6 +25,25 @@ COMMENT_PREFIX_ERROR=' ***ERROR***: '
 COMMENT_SEPARATOR='------------------------------------------------------------------'
 
 #-------------------------------------------------------------------------------
+# Prints consistent output for an item check. Takes two mandatory arguments:
+# 
+# 1. "${1:?}" – a prefix, i.e. "to see if" or "for a", defaulting to "to see if"; 
+# 2. "${2:?}" – the item being checked;
+# 3. "${3:?}" – the postfix, i.e. "exists" or "is set", defaulting to "exists";
+#    and
+# 4. "${4:?}" – the result of a "checkFor…" function.
+#-------------------------------------------------------------------------------
+printCheckResult () {
+  local PREFIX="${1:-'to see if'}"
+  local ITEM="${2:?}"
+  local POSTFIX="${3:-'exists'}"
+  local ITEM_TF="${3:?}"
+
+  printComment "Checking $PREFIX $ITEM $POSTFIX…"
+  printComment "Check returned $ITEM_TF."
+}
+
+#-------------------------------------------------------------------------------
 # Prints a comment of any length, via "printLine". Takes two arguments:
 # 
 # 1. "${1:?}" – the full comment to print; and
