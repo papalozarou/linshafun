@@ -38,7 +38,7 @@ changeDockerEnvVariable () {
   printComment "$ENV_VALUE"
   printSeparator
 
-  promptForUserInput "Do you want to set a new value for $ENV_VAR?" 'This may break existing setups if running these scripts again.'
+  promptForUserInput "Do you want to set a new value for $ENV_VAR (y/n)?" 'This may break existing setups if running these scripts again.'
   ENV_VAR_SET_YN="$(getUserInputYN)"
 
   if [ "$ENV_VAR_SET_YN" = true ] && [ "$ENV_VAR" = "H_RTT_PORT" ]; then
