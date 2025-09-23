@@ -69,7 +69,7 @@ checkForAndCreateSshDir () {
 checkForAndCreateSshConfig () {
   local SSH_CONF_TF="$(checkForFileOrDirectory "$SSH_CONF_PATH")"
 
-  printCheckResult 'to see if an ssh config file exists' "$SSH_CONF_TF"
+  printCheckResult 'to see if an "~/.ssh/config" file exists' "$SSH_CONF_TF"
 
   if [ "$SSH_CONF_TF" = true ]; then
     printComment 'The ssh config file already exists.'
