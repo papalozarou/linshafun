@@ -92,12 +92,11 @@ checkForAndCreateSetupConfigFileAndDir () {
 #-------------------------------------------------------------------------------
 checkForSetupConfigOption () {
   local CONF_KEY="${1:?}"
-  local CONF_OPTION="$(grep "$CONF_KEY" "$SETUP_CONF_PATH")"
 
-  if [ -z "$CONF_OPTION" ]; then
-    echo false
-  else
+  if grep -q "^$CONF_KEY" "$SETUP_CONF_PATH"; then
     echo true
+  else
+    echo false
   fi
 }
 
