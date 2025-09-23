@@ -48,8 +48,7 @@ addHostToSshConfig () {
 checkForAndCreateSshDir () {
   local SSH_DIR_TF="$(checkForFileOrDirectory "$SSH_DIR_PATH")"
 
-  printComment 'Checking for an "~/.ssh" directory…'
-  printComment "Check returned $SSH_DIR_TF."
+  printCheckResult 'to see if' 'an "~/.ssh" directory' 'exists' "$SSH_DIR_TF"
 
   if [ "$SSH_DIR_TF" = true ]; then
     printComment 'The "~/.ssh" directory already exists.'
@@ -70,8 +69,7 @@ checkForAndCreateSshDir () {
 checkForAndCreateSshConfig () {
   local SSH_CONF_TF="$(checkForFileOrDirectory "$SSH_CONF_PATH")"
 
-  printComment 'Checking for an ssh config file…'
-  printComment "Check returned $SSH_CONF_TF."
+  printCheckResult 'to see if' 'an ssh config file' 'exists' "$SSH_CONF_TF"
 
   if [ "$SSH_CONF_TF" = true ]; then
     printComment 'The ssh config file already exists.'
