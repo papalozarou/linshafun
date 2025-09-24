@@ -5,6 +5,25 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+# Checks if the host machine is a Raspberry Pi. Returns true if it is, false if
+# it is not.
+# 
+# N.B.
+# The check is done by looking for "Raspberry Pi" in "/proc/device-tree/model",
+# using grep -qi to make the search quiet (q) and case insensitive (i).
+#
+# If the file doesn't exist (e.g. not a Raspberry Pi), any error output is
+# redirected to /dev/null.
+#-------------------------------------------------------------------------------
+checkIfRaspberryPi () {
+  if grep -qi 'raspberry pi' /proc/device-tree/model 2>/dev/null; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+#-------------------------------------------------------------------------------
 # Compares the current Linux distribution version against a given version. Takes 
 # one mandatory argument:
 #
@@ -40,6 +59,15 @@ getHostArchitecture () {
 }
 
 #-------------------------------------------------------------------------------
+# Gets the Linux kernal version number the host machine is running.
+#-------------------------------------------------------------------------------
+getKernalVersion () {
+  local KERNAL_VERSION="$(uname -r)"
+
+  echo "$KERNAL_VERSION"
+}
+
+#-------------------------------------------------------------------------------
 # Gets the Linux distribution codename the host machine is running, e.g. 
 # bookworm, focal, jammy, etc.
 #-------------------------------------------------------------------------------
@@ -70,11 +98,21 @@ getOsVersion () {
   echo "$OS_VERSION"
 }
 
+# ------------------------------------------------------------------------------
+# Gets the Raspberry Pi model number if the host machine is a Raspberry Pi. If 
+# the host machine is not a Raspberry Pi an empty string is returned.
+# 
+# N.B.
+# The model number is extracted from "/proc/device-tree/model" using "grep -oi" 
+# to case insensitively match only the pattern "raspberry pi [0-9]", and then 
+# cut to extract just the model number.
 #-------------------------------------------------------------------------------
-# Gets the Linux kernal version number the host machine is running.
-#-------------------------------------------------------------------------------
-getKernalVersion () {
-  local KERNAL_VERSION="$(uname -r)"
+getRaspberryPiModel () {
+  local RPI_TF="$(checkIfRaspberryPi)"
 
-  echo "$KERNAL_VERSION"
+  if [ "$RPI_TF" = true ]; then
+    local MODEL="$(grep -oi 'raspberry pi [0-9]' /proc/device-tree/model | cut -d' ' -f3)"
+
+    echo "$MODEL"
+  fi
 }
