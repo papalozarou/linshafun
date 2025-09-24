@@ -65,6 +65,26 @@ changeCase () {
   echo "$STRING"
 }
 
+# ------------------------------------------------------------------------------
+# Checks a file for a given string. Takes two mandatory arguments:
+#
+# 1. "${1:?}" – the file, including directory path; and
+# 2. "${2:?}" – the string to look for.
+#
+# The function returns true if the string is found in the file, and false if it
+# is not.
+# ------------------------------------------------------------------------------
+checkFileContainsString () {
+  local FILE_PATH="${1:?}"
+  local STRING="${2:?}"
+
+  if grep -q "$STRING" "$FILE_PATH"; then
+    echo true
+  else
+    echo false
+  fi
+}
+
 #-------------------------------------------------------------------------------
 # Checks a string for a given substring. Takes two mandatory arguments:
 #
@@ -87,26 +107,6 @@ checkStringContainsSubstring () {
   local SUBSTRING="${2:?}"
 
   if [ "${STRING#*"$SUBSTRING"}" != "$STRING" ]; then
-    echo true
-  else
-    echo false
-  fi
-}
-
-# ------------------------------------------------------------------------------
-# Checks a file for a given string. Takes two mandatory arguments:
-#
-# 1. "${1:?}" – the file, including directory path; and
-# 2. "${2:?}" – the string to look for.
-#
-# The function returns true if the string is found in the file, and false if it
-# is not.
-# ------------------------------------------------------------------------------
-checkFileContainsString () {
-  local FILE_PATH="${1:?}"
-  local STRING="${2:?}"
-
-  if grep -q "$STRING" "$FILE_PATH"; then
     echo true
   else
     echo false
