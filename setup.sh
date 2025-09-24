@@ -40,7 +40,7 @@ finaliseScript () {
 #-------------------------------------------------------------------------------
 initialiseScript () {
   local CONF_KEY="${1:?}"
-  local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
+  local CONF_OPTION_TF="$(checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY")"
 
   printCheckResult 'the setup config to see if this step has already been performed' "$CONF_OPTION_TF"
 

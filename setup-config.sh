@@ -75,29 +75,6 @@ checkForAndCreateSetupConfigFileAndDir () {
 }
 
 #-------------------------------------------------------------------------------
-# Checks for a setup config option. Takes one mandatory argument:
-# 
-# 1. "${1:?}" – the key of the config option.
-#
-# The function returns true or false depending on if the config option is 
-# present in the config file.
-# 
-# N.B.
-# The config key must be formatted exactly as in the config option file, i.e. 
-# using camelCase. A list of the config keys can be found in 
-# "setup.conf.example" in the relevant setup directory.
-#-------------------------------------------------------------------------------
-checkForSetupConfigOption () {
-  local CONF_KEY="${1:?}"
-
-  if grep -q "^$CONF_KEY" "$SETUP_CONF_PATH"; then
-    echo true
-  else
-    echo false
-  fi
-}
-
-#-------------------------------------------------------------------------------
 # Creates the setup config directory and sets the correct ownership.
 #-------------------------------------------------------------------------------
 createSetupConfigDirectory () {
@@ -185,7 +162,7 @@ readSetupConfigValue () {
 #-------------------------------------------------------------------------------
 removeSetupConfigOption () {
   local CONF_KEY="${1:?}"
-  local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
+  local CONF_OPTION_TF="$(checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY")"
 
   printComment "Removing $CONF_KEY from:"
   printComment "$SETUP_CONF_PATH"
@@ -233,7 +210,7 @@ reloadVarFile () {
 writeSetupConfigOption () {
   local CONF_KEY="${1:?}"
   local CONF_VALUE="${2:?}"
-  local CONF_OPTION_TF="$(checkForSetupConfigOption "$CONF_KEY")"
+  local CONF_OPTION_TF="$(checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY")"
 
   printComment "Writing $CONF_KEY with value $CONF_VALUE to:"
   printComment "$SETUP_CONF_PATH"
