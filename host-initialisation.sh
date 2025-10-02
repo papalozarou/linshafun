@@ -23,6 +23,10 @@ addPiCgroupOptionsToCmdline () {
     printComment 'A cmdline.txt file was not found in /boot/firmware or /boot.' 'error'
 
     return 1
+  fi
+
+  if grep -q "$CGROUP_OPTIONS" "$CMDLINE_PATH"; then
+    printComment 'Cgroup memory options are already set in cmdline.txt.' 'warning'
   else
     printComment 'Adding cgroup memory options to cmdline.txt file at:' 
     printComment "$CMDLINE_PATH"
@@ -55,6 +59,10 @@ addPiVideoModesToCmdline () {
     printComment 'cmdline.txt file not found in /boot/firmware or /boot.' 'error'
 
     return 1
+  fi
+
+  if grep -q "$VIDEO_MODES" "$CMDLINE_PATH"; then
+    printComment 'Video modes are already set in cmdline.txt.' 'warning'
   else
     printComment 'Adding video modes to cmdline.txt file at:' 
     printComment "$CMDLINE_PATH"
