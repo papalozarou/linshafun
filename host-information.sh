@@ -87,7 +87,6 @@ getOsDistribution () {
   echo "$OS_DISTRIBUTION"
 }
 
-
 #-------------------------------------------------------------------------------
 # Gets the Linux distribution version number the host machine is running.
 #-------------------------------------------------------------------------------
