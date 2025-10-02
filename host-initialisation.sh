@@ -122,9 +122,9 @@ checkPiConfigLocation () {
 # does not exist in either location, the function exits with an error.
 #
 # N.B.
-# The function checks for existing entries using grep -Fxq to search for a fixed
-# string (-F), not a regex, and an exact match (-x) to avoid duplicates. Quiet mode
-# (-q) is used to suppress output.
+# The function checks for existing entries using "grep -Fxq" to search for a 
+# fixed string (-F), not a regex, and an exact match (-x) to avoid duplicates. 
+# Quiet mode (-q) is used to suppress output.
 #
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
@@ -233,9 +233,9 @@ EOF
 # does not exist in either location, the function exits with an error.
 #
 # N.B.
-# The function checks for existing entries using grep -Fxq to search for a fixed
-# string (-F), not a regex, and an exact match (-x) to avoid duplicates. Quiet mode
-# (-q) is used to suppress output.
+# The function checks for existing entries using "grep -Fxq" to search for a 
+# fixed string (-F), not a regex, and an exact match (-x) to avoid duplicates. 
+# Quiet mode (-q) is used to suppress output.
 #
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
