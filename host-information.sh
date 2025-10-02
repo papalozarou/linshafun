@@ -10,10 +10,10 @@
 # 
 # N.B.
 # The check is done by looking for "Raspberry Pi" in "/proc/device-tree/model",
-# using grep -qi to make the search quiet (q) and case insensitive (i).
+# using "grep -qi" to make the search quiet (q) and case insensitive (i).
 #
 # If the file doesn't exist (e.g. not a Raspberry Pi), any error output is
-# redirected to /dev/null.
+# redirected to "/dev/null".
 #-------------------------------------------------------------------------------
 checkIfRaspberryPi () {
   if grep -qi 'raspberry pi' /proc/device-tree/model 2>/dev/null; then
@@ -102,15 +102,17 @@ getOsVersion () {
 # the host machine is not a Raspberry Pi an empty string is returned.
 # 
 # N.B.
-# The model number is extracted from "/proc/device-tree/model" using "grep -oi" 
-# to case insensitively match only the pattern "raspberry pi [0-9]", and then 
-# cut to extract just the model number.
+# The model number is extracted from the binary file "/proc/device-tree/model", 
+# trimming null bytes with "tr -d '\0'" to enable safe parsing as text, then 
+# using "grep -oi" to case insensitively match only the pattern 
+# "raspberry pi [0-9]", and then cut to extract just the model number.
 #-------------------------------------------------------------------------------
 getRaspberryPiModel () {
   local RPI_TF="$(checkIfRaspberryPi)"
+  local MODEL_FILE_PATH='/proc/device-tree/model'
 
   if [ "$RPI_TF" = true ]; then
-    local MODEL="$(grep -oi 'raspberry pi [0-9]' /proc/device-tree/model | cut -d' ' -f3)"
+    local MODEL="$(tr -d '\0' < "$MODEL_FILE_PATH" | grep -oi 'raspberry pi [0-9]' | cut -d' ' -f3)"
 
     echo "$MODEL"
   fi
