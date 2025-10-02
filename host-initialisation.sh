@@ -254,7 +254,7 @@ enablePiPcieGen3InConfigTxt () {
   local ENABLE_PCIE1_GEN3='dtparam=pciex1_gen=3'
 
   if [ "$MODEL" -le 4 ]; then
-    printComment 'Raspberry Pi models 1, 2, 3 and 4do not have PCIe so PCIe Gen 3 cannot be enabled.' 'warning'
+    printComment 'Raspberry Pi models 1, 2, 3 and 4 do not have PCIe so PCIe Gen 3 cannot be enabled.' 'warning'
 
     return
   fi
