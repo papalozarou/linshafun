@@ -37,6 +37,8 @@ addPiCgroupOptionsToCmdline () {
     grep "$CGROUP_OPTIONS" "$CMDLINE_PATH"
     printSeparator
     printComment 'Cgroup memory options added. A reboot is required for changes to take effect.' 'warning'
+
+    writeSetupConfigOption 'addedPiCgroupOptions' 'true'
   fi
 }
 
@@ -73,6 +75,8 @@ addPiVideoModesToCmdline () {
     grep "$VIDEO_MODES" "$CMDLINE_PATH"
     printSeparator
     printComment 'Video modes added. A reboot is required for changes to take effect.' 'warning'
+
+    writeSetupConfigOption 'addedPiVideoModes' 'true'
   fi
 }
 
@@ -187,6 +191,8 @@ EOF
     grep "$DISABLE_PWR_LED" "$CONFIG_PATH"
     printSeparator
     printComment 'LEDs disabled in config.txt file. A reboot is required for changes to take effect.' 'warning'
+
+    writeSetupConfigOption 'disabledPiLeds' 'true'
   fi
 }
 
@@ -226,6 +232,8 @@ EOF
     grep "$DISABLE_WIFI" "$CONFIG_PATH"
     printSeparator
     printComment 'WiFi disabled in config.txt file. A reboot is required for changes to take effect.' 'warning'
+  
+    writeSetupConfigOption 'disabledPiWifi' 'true'
   fi
 }
 
@@ -281,6 +289,8 @@ EOF
     grep "$ENABLE_PCIE1_GEN3" "$CONFIG_PATH"
     printSeparator
     printComment 'PCIe Gen 3 enabled in config.txt file. A reboot is required for changes to take effect.' 'warning'
+
+    writeSetupConfigOption 'enabledPiPcieGen3' 'true'
   fi
 }
 
@@ -314,6 +324,8 @@ setPiPowerOffOnHalt () {
     rm /tmp/bootconf.txt
 
     printComment 'A reboot is required for changes to take effect.' 'warning'
+
+    writeSetupConfigOption 'setPiPowerOffOnHalt' 'true'
   else
     printComment 'Failed to update POWER_OFF_ON_HALT.' 'error'
 
@@ -347,6 +359,8 @@ updatePiBootloader () {
 
   if [ $? -eq 0 ]; then
     printComment 'Bootloader updated. A reboot is required for changes to take effect.' 'warning'
+
+    writeSetupConfigOption 'updatedPiBootloader' 'true'
   else
     printComment 'Failed to update bootloader.' 'error'
 
@@ -378,6 +392,8 @@ updatePiFirmware () {
 
   if [ $? -eq 0 ]; then
     printComment 'Firmware updated. A reboot is required for changes to take effect.' 'warning'
+
+    writeSetupConfigOption 'updatedPiFirmware' 'true'
   else
     printComment 'Failed to update firmware.' 'error'
 
