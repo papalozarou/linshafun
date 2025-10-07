@@ -36,7 +36,8 @@ addPiCgroupOptionsToCmdline () {
     printSeparator
     grep "$CGROUP_OPTIONS" "$CMDLINE_PATH"
     printSeparator
-    printComment 'Cgroup memory options added. A reboot is required for changes to take effect.' 'warning'
+    printComment 'Cgroup memory options added.'
+    printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'addedPiCgroupOptions' 'true'
   fi
@@ -74,7 +75,8 @@ addPiVideoModesToCmdline () {
     printSeparator
     grep "$VIDEO_MODES" "$CMDLINE_PATH"
     printSeparator
-    printComment 'Video modes added. A reboot is required for changes to take effect.' 'warning'
+    printComment 'Video modes added.'
+    printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'addedPiVideoModes' 'true'
   fi
@@ -190,7 +192,8 @@ EOF
     grep "$DISABLE_ACT_LED" "$CONFIG_PATH"
     grep "$DISABLE_PWR_LED" "$CONFIG_PATH"
     printSeparator
-    printComment 'LEDs disabled in config.txt file. A reboot is required for changes to take effect.' 'warning'
+    printComment 'LEDs disabled in config.txt file.'
+    printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'disabledPiLeds' 'true'
   fi
@@ -231,7 +234,8 @@ EOF
     printSeparator
     grep "$DISABLE_WIFI" "$CONFIG_PATH"
     printSeparator
-    printComment 'WiFi disabled in config.txt file. A reboot is required for changes to take effect.' 'warning'
+    printComment 'WiFi disabled in config.txt file'
+    printComment 'A reboot is required for changes to take effect.' 'warning'
   
     writeSetupConfigOption 'disabledPiWifi' 'true'
   fi
@@ -288,7 +292,8 @@ EOF
     printSeparator
     grep "$ENABLE_PCIE1_GEN3" "$CONFIG_PATH"
     printSeparator
-    printComment 'PCIe Gen 3 enabled in config.txt file. A reboot is required for changes to take effect.' 'warning'
+    printComment 'PCIe Gen 3 enabled in config.txt file.'
+    printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'enabledPiPcieGen3' 'true'
   fi
@@ -371,7 +376,8 @@ updatePiBootloader () {
   printSeparator
 
   if [ $? -eq 0 ]; then
-    printComment 'Bootloader updated. A reboot is required for changes to take effect.' 'warning'
+    printComment 'Bootloader updated.'
+    printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'updatedPiBootloader' 'true'
   else
@@ -404,7 +410,8 @@ updatePiFirmware () {
   printSeparator
 
   if [ $? -eq 0 ]; then
-    printComment 'Firmware updated. A reboot is required for changes to take effect.' 'warning'
+    printComment 'Firmware updated.'
+    printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'updatedPiFirmware' 'true'
   else
