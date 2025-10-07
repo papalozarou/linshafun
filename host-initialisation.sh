@@ -296,7 +296,7 @@ rebootSystem () {
   
   printComment "Your system will reboot in ${WAIT} seconds." 'warning'
   sleep "$WAIT"
-  reboot
+  reboot now
 }
 
 #-------------------------------------------------------------------------------
