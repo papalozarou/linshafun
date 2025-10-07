@@ -24,17 +24,22 @@ checkIfRaspberryPi () {
 }
 
 #-------------------------------------------------------------------------------
-# Checks if the system was rebooted in the last 2 minutes by parsing the output
-# of "who -b" into seconds, and comparing against the current time.
+# Checks if the system was rebooted by parsing the output of "who -b" into 
+# seconds, and comparing against the current time. Takes argument:
+# 
+# 1. "${1:?}" – the time in seconds within which a reboot is considered recent, 
+#    defaulting to 60 seconds.
 #
-# Returns true if the system was rebooted within 2 minutes and false if not.
+# Returns true if the system was rebooted within the given timeframe and false 
+# if not.
 #-------------------------------------------------------------------------------
 checkIfSystemRebooted () {
+  local REBOOT_TIME="${1:-60}"
   local CURRENT_TIME="$(date +%s)"
   local LAST_BOOT="$(date -d "$(who -b | awk '{print $3" "$4}')" +%s 2>/dev/null)"
   local TIME_DIFF="$((CURRENT_TIME - LAST_BOOT))"
-  
-  if [ "$TIME_DIFF" -le 120 ]; then
+
+  if [ "$TIME_DIFF" -le "$REBOOT_TIME" ]; then
     echo true
   else
     echo false
