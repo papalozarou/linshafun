@@ -33,6 +33,7 @@ checkIfSystemRebooted () {
   local CURRENT_TIME="$(date +%s)"
   local LAST_BOOT="$(date -d "$(who -b | awk '{print $3" "$4}')" +%s 2>/dev/null)"
   local TIME_DIFF="$((CURRENT_TIME - LAST_BOOT))"
+  
   if [ "$TIME_DIFF" -le 120 ]; then
     echo true
   else
