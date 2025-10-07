@@ -290,6 +290,10 @@ EOF
 # Reboots the system. Takes one mandatory argument:
 # 
 # 1. ${1:?} - the time to wait before rebooting, in seconds.
+# 
+# N.B.
+# The function exits with "exit 0" to ensure the calling script stops executing
+# after the reboot command is issued.
 #-------------------------------------------------------------------------------
 rebootSystem () {
   local WAIT="${1:?}"
@@ -297,6 +301,8 @@ rebootSystem () {
   printComment "Your system will reboot in ${WAIT} seconds." 'warning'
   sleep "$WAIT"
   reboot now
+
+  exit 0
 }
 
 #-------------------------------------------------------------------------------
