@@ -143,7 +143,6 @@ checkPiConfigLocation () {
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
 disablePiLedsInConfigTxt () {
-  local MODEL="$(getRaspberryPiModel)"
   local CONFIG_PATH="$(checkPiConfigLocation)"
 
   local COMMENT='# Disable LEDs'
@@ -151,12 +150,6 @@ disablePiLedsInConfigTxt () {
   local DISABLE_ETH_LED1='dtparam=eth_led1='
   local DISABLE_ACT_LED='dtparam=act_led_trigger=none'
   local DISABLE_PWR_LED='dtparam=pwr_led_activelow=off'
-
-  if [ "$MODEL" -le 3 ]; then
-    printComment 'Raspberry Pi models 1, 2 or 3 do not have configurable LEDs so they cannot be disabled.' 'warning'
-
-    return
-  fi
 
   if [ -z "$CONFIG_PATH" ]; then
     printComment 'config.txt file not found in /boot/firmware or /boot.' 'error'
@@ -265,12 +258,6 @@ enablePiPcieGen3InConfigTxt () {
   local ENABLE_PCIE1='dtparam=pciex1'
   local ENABLE_PCIE1_GEN3='dtparam=pciex1_gen=3'
 
-  if [ "$MODEL" -le 4 ]; then
-    printComment 'Raspberry Pi models 1, 2, 3 and 4 do not have PCIe so PCIe Gen 3 cannot be enabled.' 'warning'
-
-    return
-  fi
-
   if [ -z "$CONFIG_PATH" ]; then
     printComment 'config.txt file not found in /boot/firmware or /boot.' 'error'
 
@@ -325,14 +312,6 @@ rebootSystem () {
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
 setPiPowerOffOnHalt () {
-  local MODEL="$(getRaspberryPiModel)"
-
-  if [ "$MODEL" -le 3 ]; then
-    printComment 'Raspberry Pi models 1, 2 or 3 do not have an EEPROM so "POWER_OFF_ON_HALT" cannot be set.' 'warning'
-
-    return
-  fi
-
   rpi-eeprom-config --edit | sed 's/POWER_OFF_ON_HALT=0/POWER_OFF_ON_HALT=1/' > /tmp/bootconf.txt
 
   if grep -q 'POWER_OFF_ON_HALT=1' /tmp/bootconf.txt; then
@@ -362,14 +341,6 @@ setPiPowerOffOnHalt () {
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
 updatePiBootloader () {
-  local MODEL="$(getRaspberryPiModel)"
-
-  if [ "$MODEL" -le 3 ]; then
-    printComment 'Bootloader updates are not supported, or needed, on Raspberry Pi models 1, 2 or 3.' 'warning'
-
-    return
-  fi
-
   printComment "Updating Raspberry Pi bootloader…"
   printSeparator
   rpi-eeprom-update -a
@@ -396,14 +367,6 @@ updatePiBootloader () {
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
 updatePiFirmware () {
-  local MODEL="$(getRaspberryPiModel)"
-
-  if [ "$MODEL" -le 3 ]; then
-    printComment 'Firmware updates are not required on Raspberry Pi models 1, 2 or 3.' 'warning'
-
-    return
-  fi
-
   printComment "Updating Raspberry Pi firmware…"
   printSeparator
   rpi-update
