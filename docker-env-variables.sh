@@ -108,7 +108,7 @@ checkIfDockerEnvVariableSet () {
 
 #-------------------------------------------------------------------------------
 # Compares an environment file value with a given value and updates the 
-# environment value if requested. Takes two or more mandatory arguements:
+# environment value if requested. Takes two or more mandatory arguments:
 # 
 # 1. "${1:?}" – the environment file, including the directory path and
 #    defaulting to "$DKR_ENV_FILE_PATH"; and

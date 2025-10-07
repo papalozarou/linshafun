@@ -295,6 +295,19 @@ EOF
 }
 
 #-------------------------------------------------------------------------------
+# Reboots the system. Takes one mandatory argument:
+# 
+# 1. ${1:?} - the time to wait before rebooting, in seconds.
+#-------------------------------------------------------------------------------
+rebootSystem () {
+  local WAIT="${1:?}"
+  
+  printComment "Your system will reboot in ${WAIT} seconds." 'warning'
+  sleep "$WAIT"
+  reboot
+}
+
+#-------------------------------------------------------------------------------
 # Set the Raspberry Pi EEPROM option "POWER_OFF_ON_HALT" to 1, if the host
 # machine is a Raspberry Pi 4 or newer.
 # 
