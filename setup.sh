@@ -40,9 +40,15 @@ finaliseScript () {
 #-------------------------------------------------------------------------------
 initialiseScript () {
   local CONF_KEY="${1:?}"
-  local CONF_OPTION_TF="$(checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY")"
+  local CONF_FILE_TF="$(checkForFileOrDirectory "$SETUP_CONF_PATH")"
 
   printCheckResult 'the setup config to see if this step has already been performed' "$CONF_OPTION_TF"
+
+  if [ "$CONF_FILE_TF" = false ]; then
+    local CONF_OPTION_TF=false
+  elif [ "$CONF_FILE_TF" = true ]; then
+    local CONF_OPTION_TF="$(checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY")"
+  fi
 
   if [ "$CONF_OPTION_TF" = true ]; then
     printComment 'You have already performed this step.' 'warning'
