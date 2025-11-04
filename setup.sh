@@ -40,10 +40,9 @@ finaliseScript () {
 #-------------------------------------------------------------------------------
 initialiseScript () {
   local CONF_KEY="${1:?}"
-
-  printComment "It gets to here $SETUP_CONF_PATH" 'error'
-
   local CONF_FILE_TF="$(checkForFileOrDirectory "$SETUP_CONF_PATH")"
+
+  printComment "But it doesn't get here" 'error'
 
   printCheckResult 'the setup config to see if this step has already been performed' "$CONF_OPTION_TF"
 
