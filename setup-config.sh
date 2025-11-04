@@ -36,7 +36,9 @@ EOF
 		printSeparator
 		printComment '$'"$VAR_NAME variable added."
 	else
-		
+    printComment 'There was a problem adding the $'"$VAR_NAME variable. Please check the variable file at:" 'error'
+    printComment "$VAR_FILE_PATH" 'error'
+
 		exit 1
 	fi
 	
