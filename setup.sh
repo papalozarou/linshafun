@@ -41,7 +41,7 @@ finaliseScript () {
 initialiseScript () {
   local CONF_KEY="${1:?}"
 
-  printComment "IT gets to here" 'error'
+  printComment "It gets to here $SETUP_CONF_PATH" 'error'
 
   local CONF_FILE_TF="$(checkForFileOrDirectory "$SETUP_CONF_PATH")"
 
