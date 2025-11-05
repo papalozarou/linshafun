@@ -153,6 +153,22 @@ readSetupConfigValue () {
 }
 
 #-------------------------------------------------------------------------------
+# Reloads a variable file that has been added to as part of a script. Takes one
+# mandatory argument:
+#
+# 1. "${1:?}" – the variable file to reload, including directory path and
+#    defaulting to "$SETUP_VAR_PATH"
+#-------------------------------------------------------------------------------
+reloadVarFile () {
+	local VAR_FILE_PATH="${1:-"$SETUP_VAR_PATH"}"
+
+	printComment 'Reloading setup variable file at:'
+	printComment "$VAR_FILE_PATH"
+	
+	. "$VAR_FILE_PATH"
+}
+
+#-------------------------------------------------------------------------------
 # Removes a setup config option. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the key of the config option.
@@ -181,19 +197,39 @@ removeSetupConfigOption () {
 }
 
 #-------------------------------------------------------------------------------
-# Reloads a variable file that has been added to as part of a script. Takes one
-# mandatory argument:
+# Replaces a variable in "./setup/[project-name]-setup.var". Takes three 
+# mandatory arguments:
+# 
+# 1. "${1:?}" – the project's setup variable file name, without "-setup.var" and 
+#    excluding the directory path;
+# 2. "${2:?}" – the name of the variable to be replaced; and
+# 3. "${3:?}" – the new value of the variable.
 #
-# 1. "${1:?}" – the variable file to reload, including directory path and
-#    defaulting to "$SETUP_VAR_PATH"
+# The function uses "sed" to find the line starting with "$VAR_NAME" and replace
+# the entire matched line with "$VAR_NAME="$VAR_VALUE"".
 #-------------------------------------------------------------------------------
-reloadVarFile () {
-	local VAR_FILE_PATH="${1:-"$SETUP_VAR_PATH"}"
+replaceSetupVar () {
+  VAR_FILE_NAME="${1:?}"
+  VAR_NAME="${2:?}"
+  VAR_VALUE="${3:?}"
+  VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
 
-	printComment 'Reloading setup variable file at:'
-	printComment "$VAR_FILE_PATH"
+  printComment 'Replacing $'"$VAR_NAME"' in:'
+  printComment "$VAR_FILE_PATH"
+
+  sed -i '/^'"$VAR_NAME"'/c\'"$VAR_NAME=\"$VAR_VALUE\"" "$VAR_FILE_PATH"
+
+	if grep "$VAR_NAME" "$VAR_FILE_PATH"; then
+		printSeparator
+		printComment '$'"$VAR_NAME variable added."
+	else
+    printComment 'There was a problem replacing the $'"$VAR_NAME variable. Please check the variable file at:" 'error'
+    printComment "$VAR_FILE_PATH" 'error'
+
+		exit 1
+	fi
 	
-	. "$VAR_FILE_PATH"
+	reloadVarFile "$VAR_FILE_PATH"
 }
 
 #-------------------------------------------------------------------------------
