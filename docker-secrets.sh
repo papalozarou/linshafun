@@ -7,19 +7,27 @@
 #-------------------------------------------------------------------------------
 # Creates a docker secret. Takes two mandatory arguments:
 # 
-# 1. "${1:?}" - the secret file name, excluding directory path; and
+# 1. "${1:?}" - the secret file name, either including or excluding the 
+#    directory path; and
 # 2. "${2:?}" - the secret value.
+# 
+# The function uses case to check if "$SECRET_FILE" contains "/" and sets 
+# "$SECRET_FILE_PATH" accordingly.
 #-------------------------------------------------------------------------------
 createDockerSecretFile () {
-  local SECRET_FILE_NAME="${1:?}"
+  local SECRET_FILE="${1:?}"
   local SECRET_VALUE="${2:?}"
-  local SECRET_FILE_PATH="$DKR_SECRETS_DIR_PATH/$SECRET_FILE_NAME"
+
+  case "$SECRET_FILE" in
+    */*) SECRET_FILE_PATH="$SECRET_FILE" ;;
+    *)  SECRET_FILE_PATH="$DKR_SECRETS_DIR_PATH/$SECRET_FILE" ;;
+  esac
 
   printComment 'Generating a secret file at:'
-  printComment "$SECRET_FILE_NAME"
+  printComment "$SECRET_FILE_PATH"
   echo "$SECRET_VALUE" >> "$SECRET_FILE_PATH"
 
-  setPermissions '644' "$SECRET_FILE_PATH"
+  setPermissions '400' "$SECRET_FILE_PATH"
 
   listDirectories "$DKR_SECRETS_DIR_PATH"
 }
