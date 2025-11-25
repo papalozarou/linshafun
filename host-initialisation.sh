@@ -324,7 +324,7 @@ setPiPowerOffOnHalt () {
   rpi-eeprom-config --edit > "$TEMP_FILE_PATH"
 
   if grep -q 'POWER_OFF_ON_HALT=0' "$TEMP_FILE_PATH"; then
-    sed 's/POWER_OFF_ON_HALT=0/POWER_OFF_ON_HALT=1/' > "$TEMP_FILE_PATH"
+    sed 's/POWER_OFF_ON_HALT=0/POWER_OFF_ON_HALT=1/' "$TEMP_FILE_PATH"
   elif grep -q 'POWER_OFF_ON_HALT=1' "$TEMP_FILE_PATH"; then
     printComment 'POWER_OFF_ON_HALT already set to 1.'
   else
