@@ -319,7 +319,7 @@ rebootSystem () {
 setPiPowerOffOnHalt () {
   local TEMP_FILE_PATH='/tmp/bootconf.txt'
 
-  rpi-eeprom-config --edit > "$TEMP_FILE_PATH"
+  rpi-eeprom-config --out "$TEMP_FILE_PATH"
 
   if grep -q 'POWER_OFF_ON_HALT=0' "$TEMP_FILE_PATH"; then
     printComment 'Setting POWER_OFF_ON_HALT to 1 in EEPROM config.'
