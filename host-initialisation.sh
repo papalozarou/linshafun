@@ -40,6 +40,7 @@ addPiCgroupOptionsToCmdline () {
     printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'addedPiCgroupOptions' 'true'
+    printSeparator
   fi
 }
 
@@ -79,6 +80,7 @@ addPiVideoModesToCmdline () {
     printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'addedPiVideoModes' 'true'
+    printSeparator
   fi
 }
 
@@ -189,6 +191,7 @@ EOF
     printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'disabledPiLeds' 'true'
+    printSeparator
   fi
 }
 
@@ -231,6 +234,7 @@ EOF
     printComment 'A reboot is required for changes to take effect.' 'warning'
   
     writeSetupConfigOption 'disabledPiWifi' 'true'
+    printSeparator
   fi
 }
 
@@ -283,6 +287,7 @@ EOF
     printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'enabledPiPcieGen3' 'true'
+    printSeparator
   fi
 }
 
@@ -342,6 +347,7 @@ EOF
     printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'setPiPowerOffOnHalt' 'true'
+    printSeparator
   else
     printComment 'Failed to update POWER_OFF_ON_HALT.' 'error'
   fi
@@ -368,6 +374,7 @@ updatePiBootloader () {
     printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'updatedPiBootloader' 'true'
+    printSeparator
   else
     printComment 'Failed to update bootloader.' 'error'
 
@@ -394,6 +401,7 @@ updatePiFirmware () {
     printComment 'A reboot is required for changes to take effect.' 'warning'
 
     writeSetupConfigOption 'updatedPiFirmware' 'true'
+    printSeparator
   else
     printComment 'Failed to update firmware.' 'error'
 
