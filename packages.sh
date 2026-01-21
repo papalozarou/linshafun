@@ -118,7 +118,7 @@ updateUpgrade () {
   local PKGCACHE_PATH='/var/cache/apt/pkgcache.bin'
   local CURRENT_TIME="$(date +%s)"
   local LAST_UPDATE="$(stat -c %Y "$PKGCACHE_PATH" 2>/dev/null || echo 0)"
-  local TIME_DIFF="$((CURRENT_TIME - LAST_UPDATE))"
+  local TIME_DIFF=$((CURRENT_TIME - LAST_UPDATE))
 
   if [ "$TIME_DIFF" -ge 86400 ] || [ "$LAST_UPDATE" -eq 0 ]; then
     printComment 'Updating and upgrading packages…'
