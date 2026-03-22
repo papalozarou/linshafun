@@ -19,7 +19,7 @@ controlService () {
   if [ "$SERVICE" = 'ufw' ]; then
     "$SERVICE" "$ACTION"
   else
-    systemctl "$ACTION" "$SERVICE"
+    systemctl "$ACTION" "$SERVICE" --no-pager
   fi
   
   ACTION="$(changeCase "$ACTION" 'sentence')"
