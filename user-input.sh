@@ -14,8 +14,8 @@ getUserInput () {
 }
 
 #-------------------------------------------------------------------------------
-# Specifically gets "y/Y" or "n/N" input, forcing user to chose one. Returns
-# true for "y/Y" and false for "n/N".
+# Specifically gets "y/Y" or "n/N" input, forcing the user to choose one. 
+# Returns true for "y/Y" and false for "n/N".
 #-------------------------------------------------------------------------------
 getUserInputYN () {
   local INPUT_YN="$(getUserInput)"
