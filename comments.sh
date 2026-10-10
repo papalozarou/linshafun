@@ -38,6 +38,24 @@ setCommentLogPath () {
 }
 
 #-------------------------------------------------------------------------------
+# Enables timestamps on logged comment lines. Takes no arguments.
+#
+# Once enabled, "printLogLine" prefixes each logged line with the date and time
+# in the format "%Y-%m-%d %H:%M:%S", i.e.:
+#
+# 2026-10-10 05:00:03 SETUP SCRIPT: Stopping stacks.
+#
+# Terminal output from "printLine" does not include timestamps.
+#
+# N.B.
+# Timestamps are off by default, so log output only changes for scripts that
+# call this function.
+#-------------------------------------------------------------------------------
+setCommentLogTimestamp () {
+  COMMENT_LOG_TIMESTAMP=true
+}
+
+#-------------------------------------------------------------------------------
 # Prints consistent output for an item check. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the item being checked including a prefix and postfix if 
