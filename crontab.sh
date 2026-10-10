@@ -68,9 +68,9 @@ addScriptToCron () {
 # # Checks to see if the "~/log" directory exist and creates it if not.
 #-------------------------------------------------------------------------------
 checkForAndCreateUserLogDir () {
-  local LOG_DIR_TF="$(checkForFileOrDirectory "$USER_LOG_DIR_PATH")"
+  local USER_LOG_DIR_TF="$(checkForFileOrDirectory "$USER_LOG_DIR_PATH")"
 
-  printCheckResult 'to see if a "~/log" directory exists' "$LOG_DIR_TF"
+  printCheckResult 'to see if a "~/log" directory exists' "$USER_LOG_DIR_TF"
 
   if [ "$USER_LOG_DIR_TF" = true ]; then
     printComment 'The "~/log" directory already exists.' 'warning'
