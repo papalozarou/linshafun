@@ -24,6 +24,7 @@ COMMENT_PREFIX_WARN='   NOTA BENE: '
 COMMENT_PREFIX_ERROR=' ***ERROR***: '
 COMMENT_SEPARATOR='------------------------------------------------------------------'
 COMMENT_LOG_PATH=
+COMMENT_LOG_TIMESTAMP=
 
 #-------------------------------------------------------------------------------
 # Enables comment logging to a file. Takes one mandatory argument:
