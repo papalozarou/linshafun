@@ -25,6 +25,7 @@ COMMENT_PREFIX_ERROR=' ***ERROR***: '
 COMMENT_SEPARATOR='------------------------------------------------------------------'
 COMMENT_LOG_PATH=
 COMMENT_LOG_TIMESTAMP=
+COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
 
 #-------------------------------------------------------------------------------
 # Enables comment logging to a file. Takes one mandatory argument:
@@ -41,7 +42,8 @@ setCommentLogPath () {
 # Enables timestamps on logged comment lines. Takes no arguments.
 #
 # Once enabled, "printLogLine" prefixes each logged line with the date and time
-# in the format "%Y-%m-%d %H:%M:%S", i.e.:
+# in the format set by "COMMENT_LOG_TIMESTAMP_FORMAT", defaulting to
+# "%Y-%m-%d %H:%M:%S", i.e.:
 #
 # 2026-10-10 05:00:03 SETUP SCRIPT: Stopping stacks.
 #
@@ -162,21 +164,29 @@ printLine () {
 # 1. "${1:?}" - the comment line to log; and
 # 2. "${2:-regular}" - a flag indicating if the comment is "regular", a
 #    "warning", or an "error", defaulting to "regular".
+#
+# If "setCommentLogTimestamp" has been called, each line is prefixed with the
+# date and time, i.e. "2026-10-10 05:00:03 SETUP SCRIPT: Stopping stacks.".
 #-------------------------------------------------------------------------------
 printLogLine () {
   local LINE="${1:?}"
   local TYPE="${2:-regular}"
+  local TIMESTAMP=
 
   if [ -z "$COMMENT_LOG_PATH" ]; then
     return 0
   fi
 
+  if [ "$COMMENT_LOG_TIMESTAMP" = true ]; then
+    TIMESTAMP="$(date "+$COMMENT_LOG_TIMESTAMP_FORMAT") "
+  fi
+
   if [ "$TYPE" = 'warning' ]; then
-    printf "%s%s\n" "$COMMENT_PREFIX_WARN" "$LINE" >> "$COMMENT_LOG_PATH"
+    printf "%s%s%s\n" "$TIMESTAMP" "$COMMENT_PREFIX_WARN" "$LINE" >> "$COMMENT_LOG_PATH"
   elif [ "$TYPE" = 'error' ]; then
-    printf "%s%s\n" "$COMMENT_PREFIX_ERROR" "$LINE" >> "$COMMENT_LOG_PATH"
+    printf "%s%s%s\n" "$TIMESTAMP" "$COMMENT_PREFIX_ERROR" "$LINE" >> "$COMMENT_LOG_PATH"
   else
-    printf "%s%s\n" "$COMMENT_PREFIX" "$LINE" >> "$COMMENT_LOG_PATH"
+    printf "%s%s%s\n" "$TIMESTAMP" "$COMMENT_PREFIX" "$LINE" >> "$COMMENT_LOG_PATH"
   fi
 }
 
