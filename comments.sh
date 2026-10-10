@@ -23,6 +23,18 @@ COMMENT_PREFIX='SETUP SCRIPT: '
 COMMENT_PREFIX_WARN='   NOTA BENE: '
 COMMENT_PREFIX_ERROR=' ***ERROR***: '
 COMMENT_SEPARATOR='------------------------------------------------------------------'
+COMMENT_LOG_PATH=
+
+#-------------------------------------------------------------------------------
+# Enables comment logging to a file. Takes one mandatory argument:
+#
+# 1. "${1:?}" - the log file path, including directory path.
+#-------------------------------------------------------------------------------
+setCommentLogPath () {
+  COMMENT_LOG_PATH="${1:?}"
+
+  touch "$COMMENT_LOG_PATH"
+}
 
 #-------------------------------------------------------------------------------
 # Prints consistent output for an item check. Takes two mandatory arguments:
@@ -119,6 +131,33 @@ printLine () {
     printf "%b%s%s\n%b" "$COMMENT_COLOUR_ERROR" "$COMMENT_PREFIX_ERROR" "$LINE" "$COMMENT_COLOUR_RESET"
   else
     printf "%b%s%b%s\n" "$COMMENT_COLOUR_PREFIX" "$COMMENT_PREFIX" "$COMMENT_COLOUR_RESET" "$LINE"
+  fi
+
+  printLogLine "$LINE" "$TYPE"
+}
+
+#-------------------------------------------------------------------------------
+# Logs a comment line using the same prefixes as terminal output. Takes two
+# arguments:
+#
+# 1. "${1:?}" - the comment line to log; and
+# 2. "${2:-regular}" - a flag indicating if the comment is "regular", a
+#    "warning", or an "error", defaulting to "regular".
+#-------------------------------------------------------------------------------
+printLogLine () {
+  local LINE="${1:?}"
+  local TYPE="${2:-regular}"
+
+  if [ -z "$COMMENT_LOG_PATH" ]; then
+    return 0
+  fi
+
+  if [ "$TYPE" = 'warning' ]; then
+    printf "%s%s\n" "$COMMENT_PREFIX_WARN" "$LINE" >> "$COMMENT_LOG_PATH"
+  elif [ "$TYPE" = 'error' ]; then
+    printf "%s%s\n" "$COMMENT_PREFIX_ERROR" "$LINE" >> "$COMMENT_LOG_PATH"
+  else
+    printf "%s%s\n" "$COMMENT_PREFIX" "$LINE" >> "$COMMENT_LOG_PATH"
   fi
 }
 
