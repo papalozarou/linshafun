@@ -90,6 +90,44 @@ removeArchivedCommentLogs () {
 }
 
 #-------------------------------------------------------------------------------
+# Rotates a comment log so each script run starts with a fresh log. Takes two
+# mandatory arguments:
+#
+# 1. "${1:?}" – the log file path, including directory path; and
+# 2. "${2:?}" – the maximum age, in days, to keep archived logs for.
+#
+# The function:
+#
+# 1. creates the log directory if it does not exist;
+# 2. renames the current log file to "<log file name>.<YYYYmmdd-HHMMSS>", if
+#    it exists and is not empty; and
+# 3. removes archived logs older than the maximum age, via
+#    "removeArchivedCommentLogs".
+#
+# Call it once at the start of a script, before "setCommentLogPath", so its
+# own output only goes to the terminal.
+#
+# N.B.
+# Renaming keeps the file's modification time, so an archived log's age is
+# measured from the last line written to it, not from when it was archived.
+#-------------------------------------------------------------------------------
+rotateCommentLog () {
+  local LOG_FILE_PATH="${1:?}"
+  local LOG_MAX_AGE_DAYS="${2:?}"
+  local LOG_DIR_PATH="$(dirname "$LOG_FILE_PATH")"
+  local LOG_FILE_NAME="$(basename "$LOG_FILE_PATH")"
+  local ARCHIVED_LOG_FILE_NAME="$LOG_FILE_NAME.$(date '+%Y%m%d-%H%M%S')"
+
+  createDirectory "$LOG_DIR_PATH"
+
+  if [ -f "$LOG_FILE_PATH" ] && [ -s "$LOG_FILE_PATH" ]; then
+    renameFileOrDirectory "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$ARCHIVED_LOG_FILE_NAME"
+  fi
+
+  removeArchivedCommentLogs "$LOG_FILE_PATH" "$LOG_MAX_AGE_DAYS"
+}
+
+#-------------------------------------------------------------------------------
 # Prints consistent output for an item check. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the item being checked including a prefix and postfix if 
