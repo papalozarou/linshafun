@@ -58,6 +58,38 @@ setCommentLogTimestamp () {
 }
 
 #-------------------------------------------------------------------------------
+# Removes archived comment logs older than a given number of days. Takes two
+# mandatory arguments:
+#
+# 1. "${1:?}" – the log file path, including directory path; and
+# 2. "${2:?}" – the maximum age, in days, to keep archived logs for.
+#
+# Archived logs are files named "<log file name>.*" in the same directory as
+# the log file, as created by "rotateCommentLog". The current log file is never
+# removed.
+#
+# N.B.
+# "-mtime" ignores part days, so a maximum age of "7" removes archived logs at
+# least 8 full days old.
+#
+# "find" also searches subdirectories of the log directory, as "-maxdepth" is
+# not POSIX.
+#
+# "$ARCHIVED_LOG_FILE_PATHS" is not quoted when passed to
+# "removeFileOrDirectory", to allow for word splitting, so the log directory
+# path must not contain spaces.
+#-------------------------------------------------------------------------------
+removeArchivedCommentLogs () {
+  local LOG_FILE_PATH="${1:?}"
+  local LOG_MAX_AGE_DAYS="${2:?}"
+  local LOG_DIR_PATH="$(dirname "$LOG_FILE_PATH")"
+  local LOG_FILE_NAME="$(basename "$LOG_FILE_PATH")"
+  local ARCHIVED_LOG_FILE_PATHS="$(find "$LOG_DIR_PATH" -type f -name "$LOG_FILE_NAME.*" -mtime "+$LOG_MAX_AGE_DAYS")"
+
+  removeFileOrDirectory $ARCHIVED_LOG_FILE_PATHS
+}
+
+#-------------------------------------------------------------------------------
 # Prints consistent output for an item check. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the item being checked including a prefix and postfix if 
