@@ -224,6 +224,21 @@ generateRandomString () {
 }
 
 #-------------------------------------------------------------------------------
+# Gets the first characters of the first line of a file. Takes two mandatory
+# arguments:
+#
+# 1. "${1:?}" – the file, including directory path; and
+# 2. "${2:?}" – the number of characters to get.
+#-------------------------------------------------------------------------------
+getFirstCharsFromFirstLine () {
+  local FILE_PATH="${1:?}"
+  local CHAR_COUNT="${2:?}"
+  local FIRST_CHARS="$(head -n 1 "$FILE_PATH" | cut -c "1-$CHAR_COUNT")"
+
+  echo "$FIRST_CHARS"
+}
+
+#-------------------------------------------------------------------------------
 # Removes a prefix from a string. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the string; and
