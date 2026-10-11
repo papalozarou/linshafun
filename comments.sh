@@ -26,6 +26,7 @@ COMMENT_SEPARATOR='-------------------------------------------------------------
 COMMENT_LOG_PATH=
 COMMENT_LOG_TIMESTAMP=
 COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
+COMMENT_LOG_ARCHIVE_FORMAT='%Y%m%d-%H%M%S'
 
 #-------------------------------------------------------------------------------
 # Enables comment logging to a file. Takes one mandatory argument:
@@ -99,8 +100,9 @@ removeArchivedCommentLogs () {
 # The function:
 #
 # 1. creates the log directory if it does not exist;
-# 2. renames the current log file to "<log file name>.<YYYYmmdd-HHMMSS>", if
-#    it exists and is not empty; and
+# 2. renames the current log file to "<log file name>.<date and time>", if it
+#    exists and is not empty, using the format set by
+#    "COMMENT_LOG_ARCHIVE_FORMAT", defaulting to "%Y%m%d-%H%M%S"; and
 # 3. removes archived logs older than the maximum age, via
 #    "removeArchivedCommentLogs".
 #
@@ -116,7 +118,7 @@ rotateCommentLog () {
   local LOG_MAX_AGE_DAYS="${2:?}"
   local LOG_DIR_PATH="$(dirname "$LOG_FILE_PATH")"
   local LOG_FILE_NAME="$(basename "$LOG_FILE_PATH")"
-  local ARCHIVED_LOG_FILE_NAME="$LOG_FILE_NAME.$(date '+%Y%m%d-%H%M%S')"
+  local ARCHIVED_LOG_FILE_NAME="$LOG_FILE_NAME.$(date "+$COMMENT_LOG_ARCHIVE_FORMAT")"
 
   createDirectory "$LOG_DIR_PATH"
 
