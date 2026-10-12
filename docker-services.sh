@@ -15,6 +15,9 @@
 # 
 # N.B.
 # The optional flags, "$4", are not quoted as we explicitly want word splitting.
+#
+# Returns the exit status of "docker compose", so callers can stop if an action
+# failed, i.e. not archiving a database whose service failed to stop.
 #-------------------------------------------------------------------------------
 controlDockerService () {
   local COMPOSE_FILE_PATH="${1:-$DKR_COMPOSE_FILE_PATH}"
@@ -32,8 +35,16 @@ controlDockerService () {
     docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" "$SERVICE" $FLAGS
   fi
 
+  local STATUS="$?"
+
   printSeparator
   ACTION="$(changeCase "$ACTION" 'sentence')"
+
+  if [ "$STATUS" -ne 0 ]; then
+    printComment "$ACTION failed for $SERVICE with exit status $STATUS." 'error'
+    return "$STATUS"
+  fi
+
   printComment "$ACTION performed for $SERVICE."
 }
 
