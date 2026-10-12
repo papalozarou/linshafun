@@ -38,14 +38,20 @@ COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
 # The function:
 #
 # 1. creates the log directory if it does not exist;
-# 2. rotates the current log, via "rotateCommentLog"; and
-# 3. sets the log path and creates the log file.
+# 2. sets the log path;
+# 3. rotates the current log, via "rotateCommentLog"; and
+# 4. creates the log file.
 #
 # Call it once at the start of a script.
 #
 # N.B.
-# "COMMENT_LOG_PATH" is set after rotating, as "printLogLine" writes to it, so
-# output from creating the directory and rotating only goes to the terminal.
+# "COMMENT_LOG_PATH" is set after creating the log directory, as "printLogLine"
+# writes to it, and "createDirectory" prints output before the directory exists.
+#
+# Setting it before rotating means output from removing archived logs is written
+# to the new log, as the current log is renamed first. Nothing must be printed
+# between setting it and renaming the current log, or it is written to the
+# current log instead.
 #-------------------------------------------------------------------------------
 initialiseCommentLogs () {
   local LOG_DIR_PATH="${1:?}"
@@ -57,9 +63,9 @@ initialiseCommentLogs () {
     createDirectory "$LOG_DIR_PATH"
   fi
 
-  rotateCommentLog "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$LOG_MAX_AGE_DAYS"
-
   COMMENT_LOG_PATH="$LOG_DIR_PATH/$LOG_FILE_NAME"
+
+  rotateCommentLog "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$LOG_MAX_AGE_DAYS"
 
   touch "$COMMENT_LOG_PATH"
 }
