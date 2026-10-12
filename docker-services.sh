@@ -49,25 +49,33 @@ controlDockerService () {
 }
 
 #-------------------------------------------------------------------------------
-# Starts and stops multiple related services. Takes at least two arguments:
-# 
-# 1. "${1:?}" - the action to be taken, either "up" or "stop"; or
+# Controls multiple related docker services. Takes at least two arguments:
+#
+# 1. "${1:?}" – the action to perform, such as "up", "stop", "rm" or "down"; and
 # 2. "$@" – one or more services to perform the action on.
+#
+# N.B.
+# Returns 1 if the action failed for any service, so callers can stop if an
+# action failed. The remaining services are still acted on, so every failure is
+# reported.
 #-------------------------------------------------------------------------------
 controlRelatedDockerServices () {
   local ACTION="${1:?}"
+  local STATUS=0
 
   shift
 
   for SERVICE in "$@"; do
     if [ "$ACTION" = 'up' ]; then
-      controlDockerService "" "$ACTION" "$SERVICE" '--no-deps'
+      controlDockerService "" "$ACTION" "$SERVICE" '--no-deps' || STATUS=1
     elif [ "$ACTION" = 'rm' ]; then
-      controlDockerService "" "$ACTION" "$SERVICE" '-f'
+      controlDockerService "" "$ACTION" "$SERVICE" '-f' || STATUS=1
     else 
-      controlDockerService "" "$ACTION" "$SERVICE"
+      controlDockerService "" "$ACTION" "$SERVICE" || STATUS=1
     fi
   done
+
+  return "$STATUS"
 }
 
 #-------------------------------------------------------------------------------
