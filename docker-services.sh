@@ -91,6 +91,36 @@ controlDockerStack () {
 }
 
 #-------------------------------------------------------------------------------
+# Controls every service in multiple docker compose stacks. Takes at least two
+# arguments:
+#
+# 1. "${1:?}" – the action to perform, such as "up", "stop" or "pull"; and
+# 2. "$@" – one or more stack directory paths, i.e.
+#    "/volume1/docker/stack-one".
+#
+# Each stack's compose file is found with "getDockerComposeFilePath", then
+# the action is performed via "controlDockerStack".
+#
+# N.B.
+# Returns 1 if the action failed for any stack, so callers can stop if an
+# action failed. The remaining stacks are still acted on, so every failure is
+# reported.
+#-------------------------------------------------------------------------------
+controlDockerStacks () {
+  local ACTION="${1:?}"
+  local STACK_DIR_PATH
+  local STATUS=0
+
+  shift
+
+  for STACK_DIR_PATH in "$@"; do
+    controlDockerStack "$(getDockerComposeFilePath "$STACK_DIR_PATH")" "$ACTION" || STATUS=1
+  done
+
+  return "$STATUS"
+}
+
+#-------------------------------------------------------------------------------
 # Controls multiple related docker services. Takes at least two arguments:
 #
 # 1. "${1:?}" – the action to perform, such as "up", "stop", "rm" or "down"; and
@@ -118,4 +148,35 @@ controlRelatedDockerServices () {
   done
 
   return "$STATUS"
+}
+
+#-------------------------------------------------------------------------------
+# Gets the compose file path for a docker compose stack. Takes one mandatory
+# argument:
+#
+# 1. "${1:?}" – the stack directory path, i.e. "/volume1/docker/stack-one".
+#
+# Echoes "<stack directory path>/compose.yml" if it exists, otherwise
+# "<stack directory path>/docker-compose.yml".
+#
+# N.B.
+# "docker compose -f" needs an exact file path, so Compose's own search for a
+# compose file in the working directory is not used. Only the ".yml" names are
+# checked.
+#
+# If neither file exists, the "docker compose" command given the path fails,
+# which callers already treat as a failed action.
+#
+# - https://docs.docker.com/compose/intro/compose-application-model/
+# - https://docs.docker.com/reference/cli/docker/compose/
+#-------------------------------------------------------------------------------
+getDockerComposeFilePath () {
+  local STACK_DIR_PATH="${1:?}"
+  local COMPOSE_FILE_PATH="$STACK_DIR_PATH/compose.yml"
+
+  if [ "$(checkForFileOrDirectory "$COMPOSE_FILE_PATH")" = false ]; then
+    COMPOSE_FILE_PATH="$STACK_DIR_PATH/docker-compose.yml"
+  fi
+
+  echo "$COMPOSE_FILE_PATH"
 }
