@@ -277,10 +277,13 @@ removeFileOrDirectory () {
   for FILE_OR_DIR_PATH in "$@"; do
     printComment 'Removing file or directory at:'
     printComment "$FILE_OR_DIR_PATH"
-    rm -R "$FILE_OR_DIR_PATH"
 
-    printComment 'File or directory removed.'
-  done    
+    if rm -R "$FILE_OR_DIR_PATH"; then
+      printComment 'File or directory removed.'
+    else
+      printComment 'File or directory could not be removed. Please check it exists and that you have permission to remove it.' 'error'
+    fi
+  done
 }
 
 #-------------------------------------------------------------------------------
