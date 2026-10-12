@@ -280,7 +280,9 @@ printServiceWait () {
 #
 # "$ARCHIVED_LOG_FILE_PATHS" is not quoted when passed to
 # "removeFileOrDirectory", to allow for word splitting, so the log directory
-# path must not contain spaces.
+# path must not contain spaces. A path with spaces is split into separate paths,
+# and any of those that exist are removed, i.e. "/volume1/my logs" removes the
+# "/volume1/my" directory if it exists.
 #-------------------------------------------------------------------------------
 removeArchivedCommentLogs () {
   local LOG_DIR_PATH="${1:?}"
