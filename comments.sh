@@ -294,6 +294,28 @@ removeArchivedCommentLogs () {
 }
 
 #-------------------------------------------------------------------------------
+# Removes the ANSI colour codes from comment output if it is not going to a
+# terminal. Takes no arguments.
+#
+# Call it at the start of a script that runs on a schedule, i.e. from DSM
+# Task Scheduler or cron. Their output is saved to a file or sent by email,
+# where the colour codes would show as raw characters, i.e. "^[[32m". When the
+# same script is run by hand, its output keeps its colours.
+#
+# N.B.
+# The log file written by "printLogLine" never contains colour codes, so this
+# function only affects the script's own output.
+#-------------------------------------------------------------------------------
+removeCommentColoursIfNotTerminal () {
+  if [ ! -t 1 ]; then
+    COMMENT_COLOUR_PREFIX=''
+    COMMENT_COLOUR_WARN=''
+    COMMENT_COLOUR_ERROR=''
+    COMMENT_COLOUR_RESET=''
+  fi
+}
+
+#-------------------------------------------------------------------------------
 # Rotates a comment log so each script run starts with a fresh log. Takes three
 # mandatory arguments:
 #
