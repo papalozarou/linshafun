@@ -7,7 +7,7 @@ Read `README.md` first. It sets out the variable naming, the `verbObject` functi
 ## Scope
 
 - There is little to no error checking, by design (README N.B.). Do not add error-handling layers, input validation or `set -e`.
-- Where a function does report a failure, it prints an error with `printComment '…' 'error'`. Only `return 1` or `exit 1` where similar existing functions already do. The exceptions are `controlDockerService` and `controlRelatedDockerServices`, which return a failure status because callers need to know if a `docker compose` action failed.
+- Where a function does report a failure, it prints an error with `printComment '…' 'error'`. Only `return 1` or `exit 1` where similar existing functions already do. The exceptions are `controlDockerService`, `controlDockerStack` and `controlRelatedDockerServices`, which return a failure status because callers need to know if a `docker compose` action failed.
 - `local` is not POSIX, but is used throughout and supported by `sh`, `dash` and `bash`. Do not remove it.
 - Scripts in other projects use this library as a git submodule, so treat function names and arguments as a public interface. Check callers in other projects before changing them.
 

@@ -49,6 +49,48 @@ controlDockerService () {
 }
 
 #-------------------------------------------------------------------------------
+# Controls every service in a docker compose stack. Takes three arguments:
+#
+# 1. "${1:?}" – the compose file, including directory path and defaulting to
+#    "$DKR_COMPOSE_FILE_PATH";
+# 2. "${2:?}" – the action to perform; and
+# 3. "$3" – any optional flags.
+#
+# N.B.
+# The optional flags, "$3", are not quoted as we explicitly want word splitting.
+#
+# Returns the exit status of "docker compose", so callers can stop if an action
+# failed.
+#-------------------------------------------------------------------------------
+controlDockerStack () {
+  local COMPOSE_FILE_PATH="${1:-$DKR_COMPOSE_FILE_PATH}"
+  local ACTION="${2:?}"
+  local FLAGS="$3"
+
+  printComment "Performing $ACTION for the stack, using compose file:"
+  printComment "$COMPOSE_FILE_PATH"
+  printSeparator
+
+  if [ "$ACTION" = "up" ]; then
+    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" -d $FLAGS
+  else
+    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" $FLAGS
+  fi
+
+  local STATUS="$?"
+
+  printSeparator
+  ACTION="$(changeCase "$ACTION" 'sentence')"
+
+  if [ "$STATUS" -ne 0 ]; then
+    printComment "$ACTION failed for the stack with exit status $STATUS." 'error'
+    return "$STATUS"
+  fi
+
+  printComment "$ACTION performed for the stack."
+}
+
+#-------------------------------------------------------------------------------
 # Controls multiple related docker services. Takes at least two arguments:
 #
 # 1. "${1:?}" – the action to perform, such as "up", "stop", "rm" or "down"; and
