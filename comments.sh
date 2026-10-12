@@ -24,9 +24,45 @@ COMMENT_PREFIX_WARN='   NOTA BENE: '
 COMMENT_PREFIX_ERROR=' ***ERROR***: '
 COMMENT_SEPARATOR='------------------------------------------------------------------'
 COMMENT_LOG_PATH=
-COMMENT_LOG_TIMESTAMP=
 COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
-COMMENT_LOG_ARCHIVE_FORMAT='%Y%m%d-%H%M%S'
+
+#-------------------------------------------------------------------------------
+# Initialises comment logging to a file for the current script run. Takes three
+# arguments, two of which are mandatory:
+#
+# 1. "${1:?}" – the log directory path;
+# 2. "${2:?}" – the log file name; and
+# 3. "${3:-7}" – the maximum age, in days, to keep archived logs for,
+#    defaulting to 7.
+#
+# The function:
+#
+# 1. creates the log directory if it does not exist;
+# 2. rotates the current log, via "rotateCommentLog"; and
+# 3. sets the log path and creates the log file.
+#
+# Call it once at the start of a script.
+#
+# N.B.
+# "COMMENT_LOG_PATH" is set after rotating, as "printLogLine" writes to it, so
+# output from creating the directory and rotating only goes to the terminal.
+#-------------------------------------------------------------------------------
+initialiseCommentLogs () {
+  local LOG_DIR_PATH="${1:?}"
+  local LOG_FILE_NAME="${2:?}"
+  local LOG_MAX_AGE_DAYS="${3:-7}"
+  local LOG_DIR_TF="$(checkForFileOrDirectory "$LOG_DIR_PATH")"
+
+  if [ "$LOG_DIR_TF" = false ]; then
+    createDirectory "$LOG_DIR_PATH"
+  fi
+
+  rotateCommentLog "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$LOG_MAX_AGE_DAYS"
+
+  COMMENT_LOG_PATH="$LOG_DIR_PATH/$LOG_FILE_NAME"
+
+  touch "$COMMENT_LOG_PATH"
+}
 
 #-------------------------------------------------------------------------------
 # Prints consistent output for an item check. Takes two mandatory arguments:
@@ -136,8 +172,12 @@ printLine () {
 # 2. "${2:-regular}" - a flag indicating if the comment is "regular", a
 #    "warning", or an "error", defaulting to "regular".
 #
-# If "setCommentLogTimestamp" has been called, each line is prefixed with the
-# date and time, i.e. "2026-10-10 05:00:03 SETUP SCRIPT: Stopping stacks.".
+# Each line is prefixed with the date and time in the format set by
+# "COMMENT_LOG_TIMESTAMP_FORMAT", i.e.:
+#
+# 2026-10-10 05:00:03 SETUP SCRIPT: Stopping stacks.
+#
+# Nothing is logged until "initialiseCommentLogs" has been called.
 #-------------------------------------------------------------------------------
 printLogLine () {
   local LINE="${1:?}"
@@ -148,16 +188,14 @@ printLogLine () {
     return 0
   fi
 
-  if [ "$COMMENT_LOG_TIMESTAMP" = true ]; then
-    TIMESTAMP="$(date "+$COMMENT_LOG_TIMESTAMP_FORMAT") "
-  fi
+  TIMESTAMP="$(date "+$COMMENT_LOG_TIMESTAMP_FORMAT")"
 
   if [ "$TYPE" = 'warning' ]; then
-    printf "%s%s%s\n" "$TIMESTAMP" "$COMMENT_PREFIX_WARN" "$LINE" >> "$COMMENT_LOG_PATH"
+    printf "%s %s%s\n" "$TIMESTAMP" "$COMMENT_PREFIX_WARN" "$LINE" >> "$COMMENT_LOG_PATH"
   elif [ "$TYPE" = 'error' ]; then
-    printf "%s%s%s\n" "$TIMESTAMP" "$COMMENT_PREFIX_ERROR" "$LINE" >> "$COMMENT_LOG_PATH"
+    printf "%s %s%s\n" "$TIMESTAMP" "$COMMENT_PREFIX_ERROR" "$LINE" >> "$COMMENT_LOG_PATH"
   else
-    printf "%s%s%s\n" "$TIMESTAMP" "$COMMENT_PREFIX" "$LINE" >> "$COMMENT_LOG_PATH"
+    printf "%s %s%s\n" "$TIMESTAMP" "$COMMENT_PREFIX" "$LINE" >> "$COMMENT_LOG_PATH"
   fi
 }
 
@@ -217,15 +255,15 @@ printServiceWait () {
 }
 
 #-------------------------------------------------------------------------------
-# Removes archived comment logs older than a given number of days. Takes two
+# Removes archived comment logs older than a given number of days. Takes three
 # mandatory arguments:
 #
-# 1. "${1:?}" – the log file path, including directory path; and
-# 2. "${2:?}" – the maximum age, in days, to keep archived logs for.
+# 1. "${1:?}" – the log directory path;
+# 2. "${2:?}" – the log file name; and
+# 3. "${3:?}" – the maximum age, in days, to keep archived logs for.
 #
-# Archived logs are files named "<log file name>.*" in the same directory as
-# the log file, as created by "rotateCommentLog". The current log file is never
-# removed.
+# Archived logs are files named "<log file name>.*" in the log directory, as
+# created by "rotateCommentLog". The current log file is never removed.
 #
 # N.B.
 # "-mtime" ignores part days, so a maximum age of "7" removes archived logs at
@@ -239,80 +277,65 @@ printServiceWait () {
 # path must not contain spaces.
 #-------------------------------------------------------------------------------
 removeArchivedCommentLogs () {
-  local LOG_FILE_PATH="${1:?}"
-  local LOG_MAX_AGE_DAYS="${2:?}"
-  local LOG_DIR_PATH="$(dirname "$LOG_FILE_PATH")"
-  local LOG_FILE_NAME="$(basename "$LOG_FILE_PATH")"
+  local LOG_DIR_PATH="${1:?}"
+  local LOG_FILE_NAME="${2:?}"
+  local LOG_MAX_AGE_DAYS="${3:?}"
   local ARCHIVED_LOG_FILE_PATHS="$(find "$LOG_DIR_PATH" -type f -name "$LOG_FILE_NAME.*" -mtime "+$LOG_MAX_AGE_DAYS")"
 
   removeFileOrDirectory $ARCHIVED_LOG_FILE_PATHS
 }
 
 #-------------------------------------------------------------------------------
-# Rotates a comment log so each script run starts with a fresh log. Takes two
+# Rotates a comment log so each script run starts with a fresh log. Takes three
 # mandatory arguments:
 #
-# 1. "${1:?}" – the log file path, including directory path; and
-# 2. "${2:?}" – the maximum age, in days, to keep archived logs for.
+# 1. "${1:?}" – the log directory path;
+# 2. "${2:?}" – the log file name; and
+# 3. "${3:?}" – the maximum age, in days, to keep archived logs for.
 #
 # The function:
 #
-# 1. creates the log directory if it does not exist;
-# 2. renames the current log file to "<log file name>.<date and time>", if it
-#    exists and is not empty, using the format set by
-#    "COMMENT_LOG_ARCHIVE_FORMAT", defaulting to "%Y%m%d-%H%M%S"; and
-# 3. removes archived logs older than the maximum age, via
+# 1. renames the current log file to "<log file name>.<date and time>", if it
+#    exists and is not empty, i.e. "docker-backup.log.2026-10-10-05-00-03"; and
+# 2. removes archived logs older than the maximum age, via
 #    "removeArchivedCommentLogs".
 #
-# Call it once at the start of a script, before "setCommentLogPath", so its
-# own output only goes to the terminal.
+# The date and time are read from the timestamp at the start of the log's first
+# line, so the archive is named after when the log was started. If the first
+# line does not start with a timestamp, the current date and time are used with
+# an "-untimestamped" suffix, i.e.
+# "docker-backup.log.2026-10-10-05-00-03-untimestamped".
+#
+# The suffix stops the archive having the same name as the next archive, as the
+# new log is started in the same second, which would overwrite it.
 #
 # N.B.
+# The timestamp length is taken from the current date and time, so
+# "COMMENT_LOG_TIMESTAMP_FORMAT" must produce a fixed length string.
+#
+# Spaces and colons in the timestamp are replaced with hyphens to keep the
+# archived log file name free of them.
+#
 # Renaming keeps the file's modification time, so an archived log's age is
 # measured from the last line written to it, not from when it was archived.
 #-------------------------------------------------------------------------------
 rotateCommentLog () {
-  local LOG_FILE_PATH="${1:?}"
-  local LOG_MAX_AGE_DAYS="${2:?}"
-  local LOG_DIR_PATH="$(dirname "$LOG_FILE_PATH")"
-  local LOG_FILE_NAME="$(basename "$LOG_FILE_PATH")"
-  local ARCHIVED_LOG_FILE_NAME="$LOG_FILE_NAME.$(date "+$COMMENT_LOG_ARCHIVE_FORMAT")"
-
-  createDirectory "$LOG_DIR_PATH"
+  local LOG_DIR_PATH="${1:?}"
+  local LOG_FILE_NAME="${2:?}"
+  local LOG_MAX_AGE_DAYS="${3:?}"
+  local LOG_FILE_PATH="$LOG_DIR_PATH/$LOG_FILE_NAME"
+  local CURRENT_TIMESTAMP="$(date "+$COMMENT_LOG_TIMESTAMP_FORMAT")"
+  local LOG_TIMESTAMP=
 
   if [ -f "$LOG_FILE_PATH" ] && [ -s "$LOG_FILE_PATH" ]; then
-    renameFileOrDirectory "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$ARCHIVED_LOG_FILE_NAME"
+    LOG_TIMESTAMP="$(getFirstCharsFromFirstLine "$LOG_FILE_PATH" "${#CURRENT_TIMESTAMP}")"
+
+    case "$LOG_TIMESTAMP" in
+      ''|*[!0-9\ :-]*) LOG_TIMESTAMP="$CURRENT_TIMESTAMP-untimestamped" ;;
+    esac
+
+    renameFileOrDirectory "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$LOG_FILE_NAME.$(echo "$LOG_TIMESTAMP" | tr ' :' '--')"
   fi
 
-  removeArchivedCommentLogs "$LOG_FILE_PATH" "$LOG_MAX_AGE_DAYS"
-}
-
-#-------------------------------------------------------------------------------
-# Enables comment logging to a file. Takes one mandatory argument:
-#
-# 1. "${1:?}" - the log file path, including directory path.
-#-------------------------------------------------------------------------------
-setCommentLogPath () {
-  COMMENT_LOG_PATH="${1:?}"
-
-  touch "$COMMENT_LOG_PATH"
-}
-
-#-------------------------------------------------------------------------------
-# Enables timestamps on logged comment lines. Takes no arguments.
-#
-# Once enabled, "printLogLine" prefixes each logged line with the date and time
-# in the format set by "COMMENT_LOG_TIMESTAMP_FORMAT", defaulting to
-# "%Y-%m-%d %H:%M:%S", i.e.:
-#
-# 2026-10-10 05:00:03 SETUP SCRIPT: Stopping stacks.
-#
-# Terminal output from "printLine" does not include timestamps.
-#
-# N.B.
-# Timestamps are off by default, so log output only changes for scripts that
-# call this function.
-#-------------------------------------------------------------------------------
-setCommentLogTimestamp () {
-  COMMENT_LOG_TIMESTAMP=true
+  removeArchivedCommentLogs "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$LOG_MAX_AGE_DAYS"
 }
