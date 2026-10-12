@@ -77,19 +77,3 @@ controlRelatedDockerServices () {
 
   return "$STATUS"
 }
-
-#-------------------------------------------------------------------------------
-# Stops all running services and runs "docker compose ps -a" as a check.
-#-------------------------------------------------------------------------------
-stopRunningDockerServices () {
-  printComment 'Stopping all running service containers…'
-  printSeparator
-  docker compose down
-
-  printComment 'Running "docker compose ps -a" to check containers have stopped…'
-  printSeparator
-  docker compose ps -a
-  printSeparator
-
-  printComment 'Assuming no containers are listed above, all containers have been stopped.'
-}
