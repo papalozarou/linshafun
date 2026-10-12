@@ -49,6 +49,10 @@ addPostfix () {
 # - https://medium.com/mkdir-awesome/case-transformation-in-bash-and-posix-with-examples-acdc1e0d0bc4
 # - https://tech.io/snippet/JCFhOEk
 # - https://unix.stackexchange.com/a/554909
+#
+# N.B.
+# Sentence case uses "awk" rather than "sed", as the "\<" and "\u" needed in
+# "sed" are GNU extensions, which don't work in macOS or BusyBox "sed".
 #-------------------------------------------------------------------------------
 changeCase () {
   local STRING="${1:?}"
@@ -59,7 +63,7 @@ changeCase () {
   elif [ "$CASE" = 'lower' ]; then
     STRING="$(echo "$STRING" | tr '[:upper:]' '[:lower:]')"
   elif [ "$CASE" = 'sentence' ]; then
-    STRING="$(echo "$STRING" | sed 's/\<\([[:lower:]]\)\([^[:punct:]]*\)/\u\1\2/g')"
+    STRING="$(echo "$STRING" | awk '{ print toupper(substr($0, 1, 1)) substr($0, 2) }')"
   fi
 
   echo "$STRING"
