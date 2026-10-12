@@ -29,107 +29,6 @@ COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
 COMMENT_LOG_ARCHIVE_FORMAT='%Y%m%d-%H%M%S'
 
 #-------------------------------------------------------------------------------
-# Enables comment logging to a file. Takes one mandatory argument:
-#
-# 1. "${1:?}" - the log file path, including directory path.
-#-------------------------------------------------------------------------------
-setCommentLogPath () {
-  COMMENT_LOG_PATH="${1:?}"
-
-  touch "$COMMENT_LOG_PATH"
-}
-
-#-------------------------------------------------------------------------------
-# Enables timestamps on logged comment lines. Takes no arguments.
-#
-# Once enabled, "printLogLine" prefixes each logged line with the date and time
-# in the format set by "COMMENT_LOG_TIMESTAMP_FORMAT", defaulting to
-# "%Y-%m-%d %H:%M:%S", i.e.:
-#
-# 2026-10-10 05:00:03 SETUP SCRIPT: Stopping stacks.
-#
-# Terminal output from "printLine" does not include timestamps.
-#
-# N.B.
-# Timestamps are off by default, so log output only changes for scripts that
-# call this function.
-#-------------------------------------------------------------------------------
-setCommentLogTimestamp () {
-  COMMENT_LOG_TIMESTAMP=true
-}
-
-#-------------------------------------------------------------------------------
-# Removes archived comment logs older than a given number of days. Takes two
-# mandatory arguments:
-#
-# 1. "${1:?}" – the log file path, including directory path; and
-# 2. "${2:?}" – the maximum age, in days, to keep archived logs for.
-#
-# Archived logs are files named "<log file name>.*" in the same directory as
-# the log file, as created by "rotateCommentLog". The current log file is never
-# removed.
-#
-# N.B.
-# "-mtime" ignores part days, so a maximum age of "7" removes archived logs at
-# least 8 full days old.
-#
-# "find" also searches subdirectories of the log directory, as "-maxdepth" is
-# not POSIX.
-#
-# "$ARCHIVED_LOG_FILE_PATHS" is not quoted when passed to
-# "removeFileOrDirectory", to allow for word splitting, so the log directory
-# path must not contain spaces.
-#-------------------------------------------------------------------------------
-removeArchivedCommentLogs () {
-  local LOG_FILE_PATH="${1:?}"
-  local LOG_MAX_AGE_DAYS="${2:?}"
-  local LOG_DIR_PATH="$(dirname "$LOG_FILE_PATH")"
-  local LOG_FILE_NAME="$(basename "$LOG_FILE_PATH")"
-  local ARCHIVED_LOG_FILE_PATHS="$(find "$LOG_DIR_PATH" -type f -name "$LOG_FILE_NAME.*" -mtime "+$LOG_MAX_AGE_DAYS")"
-
-  removeFileOrDirectory $ARCHIVED_LOG_FILE_PATHS
-}
-
-#-------------------------------------------------------------------------------
-# Rotates a comment log so each script run starts with a fresh log. Takes two
-# mandatory arguments:
-#
-# 1. "${1:?}" – the log file path, including directory path; and
-# 2. "${2:?}" – the maximum age, in days, to keep archived logs for.
-#
-# The function:
-#
-# 1. creates the log directory if it does not exist;
-# 2. renames the current log file to "<log file name>.<date and time>", if it
-#    exists and is not empty, using the format set by
-#    "COMMENT_LOG_ARCHIVE_FORMAT", defaulting to "%Y%m%d-%H%M%S"; and
-# 3. removes archived logs older than the maximum age, via
-#    "removeArchivedCommentLogs".
-#
-# Call it once at the start of a script, before "setCommentLogPath", so its
-# own output only goes to the terminal.
-#
-# N.B.
-# Renaming keeps the file's modification time, so an archived log's age is
-# measured from the last line written to it, not from when it was archived.
-#-------------------------------------------------------------------------------
-rotateCommentLog () {
-  local LOG_FILE_PATH="${1:?}"
-  local LOG_MAX_AGE_DAYS="${2:?}"
-  local LOG_DIR_PATH="$(dirname "$LOG_FILE_PATH")"
-  local LOG_FILE_NAME="$(basename "$LOG_FILE_PATH")"
-  local ARCHIVED_LOG_FILE_NAME="$LOG_FILE_NAME.$(date "+$COMMENT_LOG_ARCHIVE_FORMAT")"
-
-  createDirectory "$LOG_DIR_PATH"
-
-  if [ -f "$LOG_FILE_PATH" ] && [ -s "$LOG_FILE_PATH" ]; then
-    renameFileOrDirectory "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$ARCHIVED_LOG_FILE_NAME"
-  fi
-
-  removeArchivedCommentLogs "$LOG_FILE_PATH" "$LOG_MAX_AGE_DAYS"
-}
-
-#-------------------------------------------------------------------------------
 # Prints consistent output for an item check. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the item being checked including a prefix and postfix if 
@@ -263,25 +162,6 @@ printLogLine () {
 }
 
 #-------------------------------------------------------------------------------
-# Tells the user an action is taking place and a wait is needed. Takes three
-# mandatory arguments:
-# 
-# 1. "${1:?}" - the service the action is being performed on;
-# 2. "${2:?}" - the action being performed; and
-# 3. "${3:-"60"}" - the length of time, in seconds to wait, defaults to 60.
-#-------------------------------------------------------------------------------
-printServiceWait () {
-  local SERVICE="${1:?}"
-  local ACTION="${2:?}"
-  local WAIT="${3:-"60"}"
-
-  printComment "To give $SERVICE time to $ACTION we will wait at least $WAIT seconds."
-  printComment 'Please do not stop the script.' 'warning'
-  
-  sleep "$WAIT"
-}
-
-#-------------------------------------------------------------------------------
 # Tells the user that the script is exiting. Takes one optional argument:
 #
 # 1. $1 - flag for if exiting with changes.
@@ -315,4 +195,124 @@ printScriptFinished () {
 #-------------------------------------------------------------------------------
 printSeparator () {
   printComment "$COMMENT_SEPARATOR"
+}
+
+#-------------------------------------------------------------------------------
+# Tells the user an action is taking place and a wait is needed. Takes three
+# mandatory arguments:
+# 
+# 1. "${1:?}" - the service the action is being performed on;
+# 2. "${2:?}" - the action being performed; and
+# 3. "${3:-"60"}" - the length of time, in seconds to wait, defaults to 60.
+#-------------------------------------------------------------------------------
+printServiceWait () {
+  local SERVICE="${1:?}"
+  local ACTION="${2:?}"
+  local WAIT="${3:-"60"}"
+
+  printComment "To give $SERVICE time to $ACTION we will wait at least $WAIT seconds."
+  printComment 'Please do not stop the script.' 'warning'
+  
+  sleep "$WAIT"
+}
+
+#-------------------------------------------------------------------------------
+# Removes archived comment logs older than a given number of days. Takes two
+# mandatory arguments:
+#
+# 1. "${1:?}" – the log file path, including directory path; and
+# 2. "${2:?}" – the maximum age, in days, to keep archived logs for.
+#
+# Archived logs are files named "<log file name>.*" in the same directory as
+# the log file, as created by "rotateCommentLog". The current log file is never
+# removed.
+#
+# N.B.
+# "-mtime" ignores part days, so a maximum age of "7" removes archived logs at
+# least 8 full days old.
+#
+# "find" also searches subdirectories of the log directory, as "-maxdepth" is
+# not POSIX.
+#
+# "$ARCHIVED_LOG_FILE_PATHS" is not quoted when passed to
+# "removeFileOrDirectory", to allow for word splitting, so the log directory
+# path must not contain spaces.
+#-------------------------------------------------------------------------------
+removeArchivedCommentLogs () {
+  local LOG_FILE_PATH="${1:?}"
+  local LOG_MAX_AGE_DAYS="${2:?}"
+  local LOG_DIR_PATH="$(dirname "$LOG_FILE_PATH")"
+  local LOG_FILE_NAME="$(basename "$LOG_FILE_PATH")"
+  local ARCHIVED_LOG_FILE_PATHS="$(find "$LOG_DIR_PATH" -type f -name "$LOG_FILE_NAME.*" -mtime "+$LOG_MAX_AGE_DAYS")"
+
+  removeFileOrDirectory $ARCHIVED_LOG_FILE_PATHS
+}
+
+#-------------------------------------------------------------------------------
+# Rotates a comment log so each script run starts with a fresh log. Takes two
+# mandatory arguments:
+#
+# 1. "${1:?}" – the log file path, including directory path; and
+# 2. "${2:?}" – the maximum age, in days, to keep archived logs for.
+#
+# The function:
+#
+# 1. creates the log directory if it does not exist;
+# 2. renames the current log file to "<log file name>.<date and time>", if it
+#    exists and is not empty, using the format set by
+#    "COMMENT_LOG_ARCHIVE_FORMAT", defaulting to "%Y%m%d-%H%M%S"; and
+# 3. removes archived logs older than the maximum age, via
+#    "removeArchivedCommentLogs".
+#
+# Call it once at the start of a script, before "setCommentLogPath", so its
+# own output only goes to the terminal.
+#
+# N.B.
+# Renaming keeps the file's modification time, so an archived log's age is
+# measured from the last line written to it, not from when it was archived.
+#-------------------------------------------------------------------------------
+rotateCommentLog () {
+  local LOG_FILE_PATH="${1:?}"
+  local LOG_MAX_AGE_DAYS="${2:?}"
+  local LOG_DIR_PATH="$(dirname "$LOG_FILE_PATH")"
+  local LOG_FILE_NAME="$(basename "$LOG_FILE_PATH")"
+  local ARCHIVED_LOG_FILE_NAME="$LOG_FILE_NAME.$(date "+$COMMENT_LOG_ARCHIVE_FORMAT")"
+
+  createDirectory "$LOG_DIR_PATH"
+
+  if [ -f "$LOG_FILE_PATH" ] && [ -s "$LOG_FILE_PATH" ]; then
+    renameFileOrDirectory "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$ARCHIVED_LOG_FILE_NAME"
+  fi
+
+  removeArchivedCommentLogs "$LOG_FILE_PATH" "$LOG_MAX_AGE_DAYS"
+}
+
+#-------------------------------------------------------------------------------
+# Enables comment logging to a file. Takes one mandatory argument:
+#
+# 1. "${1:?}" - the log file path, including directory path.
+#-------------------------------------------------------------------------------
+setCommentLogPath () {
+  COMMENT_LOG_PATH="${1:?}"
+
+  touch "$COMMENT_LOG_PATH"
+}
+
+#-------------------------------------------------------------------------------
+# Enables timestamps on logged comment lines. Takes no arguments.
+#
+# Once enabled, "printLogLine" prefixes each logged line with the date and time
+# in the format set by "COMMENT_LOG_TIMESTAMP_FORMAT", defaulting to
+# "%Y-%m-%d %H:%M:%S", i.e.:
+#
+# 2026-10-10 05:00:03 SETUP SCRIPT: Stopping stacks.
+#
+# Terminal output from "printLine" does not include timestamps.
+#
+# N.B.
+# Timestamps are off by default, so log output only changes for scripts that
+# call this function.
+#-------------------------------------------------------------------------------
+setCommentLogTimestamp () {
+  COMMENT_LOG_TIMESTAMP=true
 }

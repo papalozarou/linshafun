@@ -5,6 +5,21 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+# Adds a public key to the "authorized_keys" file. Takes one mandatory argument:
+# 
+# 1. "${1:?}" – the key file, including directory path.
+# 
+#-------------------------------------------------------------------------------
+addKeyToAuthorizedKeys () {
+  local KEY_PATH="${1:?}.pub"
+
+  printComment 'Adding public key to:'
+  printComment "$SSH_AUTH_KEYS_PATH"
+  cat "$KEY_PATH" >> "$SSH_AUTH_KEYS_PATH"
+  printComment 'Key added.'
+}
+
+#-------------------------------------------------------------------------------
 # Start the "ssh-agent" and add a generated key to it. Takes one mandatory 
 # argument:
 # 
@@ -19,21 +34,6 @@ addSshKeytoAgent () {
   ssh-add "$KEY_PATH"
   printSeparator
   printComment 'Key added to agent.'
-}
-
-#-------------------------------------------------------------------------------
-# Adds a public key to the "authorized_keys" file. Takes one mandatory argument:
-# 
-# 1. "${1:?}" – the key file, including directory path.
-# 
-#-------------------------------------------------------------------------------
-addKeyToAuthorizedKeys () {
-  local KEY_PATH="${1:?}.pub"
-
-  printComment 'Adding public key to:'
-  printComment "$SSH_AUTH_KEYS_PATH"
-  cat "$KEY_PATH" >> "$SSH_AUTH_KEYS_PATH"
-  printComment 'Key added.'
 }
 
 #-------------------------------------------------------------------------------

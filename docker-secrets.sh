@@ -5,6 +5,23 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
+# Creates a docker secrets directory at "$DKR_SECRETS_DIR_PATH", first checking 
+# to see if it already exists. If it exists, do nothing. If it doesn't create it.
+#-------------------------------------------------------------------------------
+checkForAndCreateDockerSecretsDir () {
+  local DKR_SECRETS_DIR_TF="$(checkForFileOrDirectory "$DKR_SECRETS_DIR_PATH")"
+
+  printCheckResult 'to see if a docker secrets directory exists' "$DKR_SECRETS_DIR_TF"
+
+  if [ "$DKR_SECRETS_DIR_TF" = true ]; then
+    printComment 'The docker secrets directory already exists.' 'warning'
+  elif [ "$DKR_SECRETS_DIR_TF" = false ]; then
+    createDirectory "$DKR_SECRETS_DIR_PATH"
+    setPermissions '600' "$DKR_SECRETS_DIR_PATH"
+  fi
+}
+
+#-------------------------------------------------------------------------------
 # Creates a docker secret. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" - the secret file name, either including or excluding the 
@@ -30,23 +47,6 @@ createDockerSecretFile () {
   setPermissions '400' "$SECRET_FILE_PATH"
 
   listDirectories "$DKR_SECRETS_DIR_PATH"
-}
-
-#-------------------------------------------------------------------------------
-# Creates a docker secrets directory at "$DKR_SECRETS_DIR_PATH", first checking 
-# to see if it already exists. If it exists, do nothing. If it doesn't create it.
-#-------------------------------------------------------------------------------
-checkForAndCreateDockerSecretsDir () {
-  local DKR_SECRETS_DIR_TF="$(checkForFileOrDirectory "$DKR_SECRETS_DIR_PATH")"
-
-  printCheckResult 'to see if a docker secrets directory exists' "$DKR_SECRETS_DIR_TF"
-
-  if [ "$DKR_SECRETS_DIR_TF" = true ]; then
-    printComment 'The docker secrets directory already exists.' 'warning'
-  elif [ "$DKR_SECRETS_DIR_TF" = false ]; then
-    createDirectory "$DKR_SECRETS_DIR_PATH"
-    setPermissions '600' "$DKR_SECRETS_DIR_PATH"
-  fi
 }
 
 #-------------------------------------------------------------------------------
