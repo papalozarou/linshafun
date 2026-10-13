@@ -1,7 +1,8 @@
 #!/bin/sh
 
 #-------------------------------------------------------------------------------
-# Functions to print comments and help with comment consistency.
+# Functions to print comments, help with comment consistency, and write and
+# rotate comment logs.
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
