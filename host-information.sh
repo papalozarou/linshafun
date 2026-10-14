@@ -24,6 +24,41 @@ checkIfRaspberryPi () {
 }
 
 #-------------------------------------------------------------------------------
+# Checks if the script is being run as a given user. Takes one argument:
+#
+# 1. "${1:-root}" – the user name, defaulting to "root".
+#
+# Returns true if it is, false if it is not.
+#-------------------------------------------------------------------------------
+checkIfRunAsUser () {
+  local USER_NAME="${1:-root}"
+
+  if [ "$(id -un)" = "$USER_NAME" ]; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+#-------------------------------------------------------------------------------
+# Checks if the script is being run with "sudo". Returns true if it is, false if
+# it is not.
+#
+# N.B.
+# Both checks are needed. A script run as root without "sudo", i.e. from a root
+# login, has no "$SUDO_USER", which setup scripts need for ownership and paths.
+# "$SUDO_USER" is an ordinary variable that anyone can set, so it alone does not
+# prove the script is running as root.
+#-------------------------------------------------------------------------------
+checkIfRunWithSudo () {
+  if [ "$(id -u)" -eq 0 ] && [ -n "$SUDO_USER" ]; then
+    echo true
+  else
+    echo false
+  fi
+}
+
+#-------------------------------------------------------------------------------
 # Checks if the system was rebooted by parsing the output of "who -b" into 
 # seconds, and comparing against the current time. Takes argument:
 # 
