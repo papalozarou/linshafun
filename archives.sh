@@ -22,9 +22,9 @@
 # matches patterns against any part of a path, e.g. "stack-one/cache" matches
 # "docker/stack-one/cache".
 #
-# When the date flag is "true", the date is added to the end of the file name
-# before any file extensions. An archive created earlier on the same day is
-# overwritten.
+# The date flag adds the current date to the end of the file name before any
+# file extensions. "sed" matches the file name only and any suffix after ".tar"
+# is kept. "printf" is used so backslashes in the path are not changed.
 #
 # The function returns the exit status of "tar" for the caller to handle. For
 # GNU tar:
@@ -36,9 +36,6 @@
 # tar prints its errors, and the names of files that changed, to stderr.
 #
 # N.B.
-# "sed" matches the file name only. Any suffix after ".tar" is kept. "printf"
-# is used so backslashes in the path are not changed.
-#
 # Exclude patterns are split with parameter expansion rather than an unquoted
 # "for" loop. Keeping them in quotes stops the shell replacing a wildcard with
 # matching file names.
