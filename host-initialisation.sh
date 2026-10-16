@@ -360,16 +360,21 @@ EOF
 # newer. The function uses the "rpi-eeprom-update -a" command to apply any
 # available updates.
 #
+# Returns 1 if "rpi-eeprom-update" fails, without writing the setup config
+# option, so callers can stop before rebooting.
+#
 # N.B.
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
 updatePiBootloader () {
+  local STATUS=0
+
   printComment "Updating Raspberry Pi bootloader…"
   printSeparator
-  rpi-eeprom-update -a
+  rpi-eeprom-update -a || STATUS="$?"
   printSeparator
 
-  if [ $? -eq 0 ]; then
+  if [ "$STATUS" -eq 0 ]; then
     printComment 'Bootloader updated.'
     printComment 'A reboot is required for changes to take effect.' 'warning'
 
@@ -385,18 +390,23 @@ updatePiBootloader () {
 #-------------------------------------------------------------------------------
 # Updates the Raspberry Pi firmware if the host machine is a Raspberry Pi 4 or
 # newer. The function uses the "rpi-update" command to apply any available 
-# updates. 
+# updates.
+#
+# Returns 1 if "rpi-update" fails, without writing the setup config option, so
+# callers can stop before rebooting.
 #
 # N.B.
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
 updatePiFirmware () {
+  local STATUS=0
+
   printComment "Updating Raspberry Pi firmware…"
   printSeparator
-  rpi-update
+  rpi-update || STATUS="$?"
   printSeparator
 
-  if [ $? -eq 0 ]; then
+  if [ "$STATUS" -eq 0 ]; then
     printComment 'Firmware updated.'
     printComment 'A reboot is required for changes to take effect.' 'warning'
 
