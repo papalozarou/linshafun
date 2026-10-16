@@ -212,15 +212,18 @@ printComment () {
 # - "%s" prints a string; and
 # - "\n" is used to ensure that each line ends properly, especially when the 
 #   last line does not reach the maximum length.
+#
+# Warnings and errors go to stderr, so they are not captured when called using
+# "$(…)".
 #-------------------------------------------------------------------------------
 printLine () {
   local LINE="${1:?}"
   local TYPE="${2:-regular}"
 
   if [ "$TYPE" = 'warning' ]; then
-    printf "%b%s%s\n%b" "$COMMENT_COLOUR_WARN" "$COMMENT_PREFIX_WARN" "$LINE" "$COMMENT_COLOUR_RESET"
+    printf "%b%s%s\n%b" "$COMMENT_COLOUR_WARN" "$COMMENT_PREFIX_WARN" "$LINE" "$COMMENT_COLOUR_RESET" >&2
   elif [ "$TYPE" = 'error' ]; then
-    printf "%b%s%s\n%b" "$COMMENT_COLOUR_ERROR" "$COMMENT_PREFIX_ERROR" "$LINE" "$COMMENT_COLOUR_RESET"
+    printf "%b%s%s\n%b" "$COMMENT_COLOUR_ERROR" "$COMMENT_PREFIX_ERROR" "$LINE" "$COMMENT_COLOUR_RESET" >&2
   else
     printf "%b%s%b%s\n" "$COMMENT_COLOUR_PREFIX" "$COMMENT_PREFIX" "$COMMENT_COLOUR_RESET" "$LINE"
   fi
