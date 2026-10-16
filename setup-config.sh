@@ -130,26 +130,21 @@ listSetupConfig () {
 # 
 # 1. "${1:?}" – the key of the config value.
 # 
-# The config line is read by "grep" and stored in "$CONFIG". This is split by 
-# "set" into it's key, "$1", and it's value, "$2" – the "-f" flag prevents 
-# pathname expansion for safety. Taken from:
+# "grep" finds the first line starting with the key followed by a space. The key
+# and the space are then removed with parameter expansion, leaving the value.
+# Values containing spaces are returned whole. If the key isn't found, nothing
+# is returned.
 #
-# - https://stackoverflow.com/a/1478245
-# 
 # N.B.
-# "$CONFIG" is not quoted as we need word splitting in this instance. 
-#
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
 #-------------------------------------------------------------------------------
 readSetupConfigValue () {
   local CONF_KEY="${1:?}"
-  local CONF_OPTION="$(grep "$CONF_KEY" "$SETUP_CONF_PATH")"
+  local CONF_OPTION="$(grep "^$CONF_KEY " "$SETUP_CONF_PATH" | head -n 1)"
 
-  set -f $CONF_OPTION
-  
-  echo "$2"
+  echo "${CONF_OPTION#"$CONF_KEY "}"
 }
 
 #-------------------------------------------------------------------------------
