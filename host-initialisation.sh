@@ -314,22 +314,23 @@ rebootSystem () {
 # Set the Raspberry Pi EEPROM option "POWER_OFF_ON_HALT" to 1, if the host
 # machine is a Raspberry Pi 4 or newer.
 #
-# The captures the current EEPROM config in a temporary file, then either 
-# updates "POWER_OFF_ON_HALT" to 1 or appends "POWER_OFF_ON_HALT=1". The updated
-# temporary config is then applied using the "rpi-eeprom-config --apply" command.
+# The function captures the current EEPROM config in a temporary file, then
+# either updates "POWER_OFF_ON_HALT" to 1 or appends "POWER_OFF_ON_HALT=1". The
+# updated temporary config is then applied using the "rpi-eeprom-config --apply"
+# command.
 #
 # N.B.
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
 setPiPowerOffOnHalt () {
-  local TEMP_FILE_PATH='/tmp/bootconf.txt'
+  local TEMP_FILE_PATH="$(mktemp)"
 
   rpi-eeprom-config --out "$TEMP_FILE_PATH"
 
   if grep -q 'POWER_OFF_ON_HALT=0' "$TEMP_FILE_PATH"; then
     printComment 'Setting POWER_OFF_ON_HALT to 1 in EEPROM config.'
 
-    sed 's/POWER_OFF_ON_HALT=0/POWER_OFF_ON_HALT=1/' "$TEMP_FILE_PATH"
+    sed -i 's/POWER_OFF_ON_HALT=0/POWER_OFF_ON_HALT=1/' "$TEMP_FILE_PATH"
   elif grep -q 'POWER_OFF_ON_HALT=1' "$TEMP_FILE_PATH"; then
     printComment 'POWER_OFF_ON_HALT already set to 1 in EEPROM config.'
   else
