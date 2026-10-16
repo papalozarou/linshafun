@@ -1,48 +1,179 @@
-# Agent guidance for linshafun
+# Coding standards
 
-linshafun is a hand-made library of POSIX shell functions, sourced by setup and maintenance scripts in other projects. It does not follow any shared `AGENTS.md` template. Changes must stay in the style of the existing code, and must not refactor or rewrite it to meet other standards.
+This file defines various coding standards for agents to adhere to.
 
-Read `README.md` first. It sets out the variable naming, the `verbObject` function naming, POSIX compliance and the use of `local`.
+## Core policy
+- MUST: Treat this file as the default project policy for all files in this repository.
+- MUST: If instructions conflict, ask for clarification before editing files.
 
-## Scope
+## Workflow and approvals
+- MUST: Never assume — ask for clarification when requirements are unclear
+- MUST: Until told otherwise, detail suggestions before any live edits
+- MUST: Ask for explicit permission before making edits
+- MUST NOT: Make file edits before explicit user approval
+- MUST: Review existing files and patterns before proposing any change
+- MUST: Propose minimal, standards-compliant edits first, then ask for permission
+- MUST: After approval, apply focused edits and avoid unrelated changes
+- MUST: Summarise what changed and suggest updates to this file when useful patterns emerge
+- MUST: Ensure the repository is initialised with Git and has at least one baseline commit before any coding changes begin
+- MUST: If no baseline commit exists, stop and request user approval to create an initial commit before proceeding with code edits
+- MUST: When a new rule is requested, ask whether it should be project-local (`AGENTS.local.md`) or added to the shared template (`AGENTS.md`) before editing rules
+- SHOULD: If the rule is project-local, suggest creating or updating `AGENTS.local.md` and ensure it is ignored by baseline ignore files
+- SHOULD: If a requested change set is focused but substantial, suggest working on a dedicated Git branch before applying edits, creating the branch if necessary
 
-- There is little to no error checking, by design (README N.B.). Do not add error-handling layers, input validation or `set -e`.
-- Where a function does report a failure, it prints an error with `printComment '…' 'error'`. Only `return 1` or `exit 1` where similar existing functions already do. The exceptions are `controlDockerService`, `controlDockerStack` and `controlRelatedDockerServices`, which return a failure status because callers need to know if a `docker compose` action failed.
-- `local` is not POSIX, but is used throughout and supported by `sh`, `dash` and `bash`. Do not remove it.
-- Scripts in other projects use this library as a git submodule, so treat function names and arguments as a public interface. Check callers in other projects before changing them.
+## Branch and commit flow
+- MUST: Before any edits, state current branch and intended target branch in one line
+- MUST: Before creating a new branch for approved work, check whether an existing relevant branch already exists and prefer using it where practical
+- MUST: If you propose implementing on a specific branch, perform the work on that branch first and only merge to main after user confirmation
+- MUST: After each block of suggested and user-approved changes is applied, explicitly suggest a commit (with a clear commit message) before moving to the next change block
 
-## Structure
+## Regression prevention
+- MUST: For any bug fix, define the user-visible behaviour contract before editing
+- MUST: For any bug fix, state the suspected root cause before editing and distinguish evidence from inference where needed
+- MUST: For any bug fix, identify the whole root-cause boundary before proposing code changes. Include the failing behaviour, affected adjacent flows, and why narrower symptom fixes would be insufficient
+- MUST: If the root-cause boundary is unclear, stop after diagnosis and ask for clarification or approval to investigate further before editing
+- MUST: For any bug fix, define a regression contract that states the pre-fix failure, the expected post-fix behaviour, and the checks or tests that prove it
+- MUST: For any fix to runtime, auth, sync, state, or Telegram logic, add or update regression tests that exercise the full behaviour boundary, not just the modified function
+- MUST: Before merge, perform an explicit regression review covering adjacent flows, documentation alignment, and restart, retry, and backlog behaviour where relevant
+- MUST NOT: Describe a fix as complete or regression-safe unless the behavioural contract has been rechecked against code, tests, and documentation
 
-- Functions in each file are in alphabetical order.
-- Global variables are declared at the top of a file and treated as constants. Only make a variable global if it must be read across functions, i.e. `COMMENT_LOG_PATH`.
-- Indent with two spaces.
+## Documentation
+- MUST: Use UK English, not US
+- MUST: Ensure a README.md exists
+- MUST: Match the writing style from available examples in my [GitHub repository](https://github.com/papalozarou) and [blog](https://lozworld.com)
+- MUST: If available examples are insufficient to infer style confidently, ask for a sample before large edits
+- MUST: Write documentation in plain, practical UK English
+- MUST: Prefer direct, operational wording over formal, academic, or marketing language
+- MUST: Use short, explicit sentences and avoid fluff
+- MUST: Lead documentation with a quick-start path before linking to deeper reference material
+- SHOULD: Split large documents into focused companion files once a single README.md becomes unwieldy
+- MUST: Ensure each document answers one clear job well
+- MUST: Use conversational but technical prose; mild personality is fine, but waffle is not
+- MUST NOT: Use AI-generic phrasing such as vague claims about being "robust", "scalable", or "streamlined"
+- MUST NOT: Enforce 80-character line wrapping for Markdown documentation files
+- MUST: Define behaviour with explicit rules covering what happens, when it happens, and what happens next
+- MUST: Include concrete examples for schedule or time-based behaviour
+- MUST: For command documentation, include exact accepted input formats and exact output text where relevant
+- MUST: Use one term consistently for the same concept across related documentation
+- MUST: Keep headings action-oriented and predictable where practical (for example `Quick start`, `Configuration`, `Operations`)
+- MUST: Keep bullet grammar consistent within each section
+- SHOULD: Use `N.B.` blocks for non-obvious caveats and gotchas
+- MUST: Keep caveats short, concrete, and free from defensive over-explanation
+- MUST: Before finalising documentation, run a style pass for brevity, UK spelling, consistency, and ambiguity
+- MUST: If behaviour changes in code, document old versus new behaviour where confusion is likely
 
-## Doc comments
+## Source comments
+- MUST: Use the same syntax and formatting for comments as in my other GitHub projects
+- MUST: Write verbose, highly structured, comments that would enable debugging at 2am
+- SHOULD: Add source links for non-obvious logic (for example Stack Overflow or official documentation)
+- MUST: Add an overview comment at the top, or near the top, of source files describing what the file does
+- MUST: Add comments directly above functions and methods, describing purpose, arguments, return values, and notable caveats
+- MUST: Wrap every comment block with separator lines above and below
+- MUST: A separator line must use the language comment prefix, one space, then hyphens filling the remainder of the line to the 80-character limit
+- MUST: Do not indent comment blocks; comment separators and comment prose lines must start at the first column allowed by the language syntax
+- MUST: In Docker Compose files, place service comment blocks directly above each service declaration line (for example above "  service-name:") and never inside the service block body
+- MUST: Use sentence-case prose in comments with full sentences and terminal punctuation
+- MUST: For function comments include purpose, numbered arguments, behaviour notes, and failure or exit behaviour where relevant
+- MUST: Do not add inline comments inside function or method bodies unless external constraints require it
+- MUST: When referring to arguments, parameters, flags, or equivalent inputs in prose or comments, use double quotes instead of single-quoted identifiers
 
-Every function has a header comment in this format:
-
-```sh
-#-------------------------------------------------------------------------------
-# Does something to a thing. Takes two arguments, one of which is mandatory:
-#
-# 1. "${1:?}" – the thing, including directory path; and
-# 2. "${2:-7}" – the number of things, defaulting to 7.
-#
-# N.B.
-# Anything non-obvious, such as why the code does something.
-#-------------------------------------------------------------------------------
+Examples:
+```text
+"${1:?}"
+"${2:-default}"
+"--flag"
+"PARAM_NAME"
 ```
+- SHOULD: Include an `N.B.` subsection for caveats, constraints, or gotchas where relevant
+- SHOULD: Add source links for non-obvious logic as a short bullet list under the comment block
+- MUST: Use consistent separator and heading phrasing across files (for example `Imported ...`, `Run the script.`, `Functions for ...`)
+- MUST: Use paragraph spacing in comments, including blank comment lines between intro, argument lists, `N.B.`, and notes or reference sections
+- MUST: Keep source-code comment lines at or below 80 characters, including separator lines
 
-- Do not document dependencies on other linshafun files.
-- Explain why, not what the code plainly does.
+## Comment compliance
+- MUST: Treat source-comment compliance as a release-blocking requirement, not a polish pass
+- MUST: Before any commit, review every new or changed project file for comment or explanatory-text compliance against `AGENTS.md`
+- MUST: Apply the comment standard across languages and file types, not just Python source
+- MUST: Treat any file that defines behaviour, runtime wiring, scheduling, security, or operational flow as requiring explicit explanatory comments or prose
+- MUST: Do not mark a change block complete until module comments, class comments, function comments, Compose comments, shell comments, and configuration-file explanations are all present and structurally compliant where applicable
+- MUST: For new or heavily edited files, do the comment and explanation pass before final tests so any code or config reshaping needed for clarity happens before verification
+- MUST: If a file cannot be brought to the required comment standard within the current change block, stop and say so explicitly rather than deferring it silently
+- MUST: Treat Docker Compose files as source files for comment purposes
+- MUST: Treat example environment files as operational configuration that still requires grouped, explicit explanatory comments even where the source separator rule does not map literally
+- MUST: Prefer over-explaining non-obvious behaviour, constraints, and failure modes over leaving terse or implied comments
+- MUST: Never assume an existing comment density in a template file is sufficient for this project; re-evaluate it against local rules every time
+- MUST: Run an explicit comment-compliance pass before suggesting a commit
+- MUST: If the user has previously corrected comment quality in this repository, raise the bar on the next change rather than repeating the same minimum standard
 
-## Code
+## General coding rules
+- MUST: Prefer DRY standards
+- MUST NOT: Use nested for-loops or nested if-statements
+- MUST: Prefer separation of concerns across the codebase; do not mix entrypoint, orchestration, integration, and domain logic across the same files, modules, components, services, functions, or scripts when they can be separated cleanly
+- MUST: Follow recognised best-practice coding standards
+- MUST: Ensure logic is clear, robust, and easy to reason about
+- MUST: Prefer readability and maintainability over clever or overly complex implementations
+- MUST: Where practical, design and implement code as a coherent system, not isolated patches
+- MUST NOT: Build for requirements that don't exist yet; keep code easy to change through separation of concerns and removing duplication
+- MUST NOT: Use quick-fix, hacky, or temporary code in final changes
+- MUST: Implement production-ready solutions with explicit error handling and clear control flow
+- MUST: Prefer root-cause fixes over patches, hot fixes, or symptom-only changes where practical
+- MUST: Refactor instead of layering workarounds when existing code structure is weak
+- MUST: Remove dead code, debug artefacts, and commented-out code before completion
+- SHOULD: Use TDD where practical
 
-- Local variables are uppercase. Store check results in a `_TF` variable, i.e. `local LOG_DIR_TF="$(checkForFileOrDirectory "$LOG_DIR_PATH")"`.
-- `check…` functions echo `true` or `false`. `get…` functions echo their result for the caller to capture with `$(…)`.
-- All output goes through `printComment`, so it is consistent and can be logged.
-- Use British English in comments and printed output.
+## Repository and template files
+- MUST: Add generic, project-relevant ignore files (for example git and docker), while keeping AGENTS.md tracked for submodule-based reuse across projects
+- MUST: Proactively suggest an appropriate licence for each new repository based on intended usage (for example MIT, Apache-2.0, GPL-3.0-only, or proprietary)
+- MUST: If no licence choice is provided, ask for confirmation before adding any licence file
+- MUST: Add `TODO.md` to baseline ignore files to keep local project task tracking out of version control unless explicitly requested
+- MUST: In ignore files, order declarations within each section as follows: 1) dot-prefixed entries (".name"), 2) wildcard entries ("*name"), 3) exact matches; and keep alphabetical order within each group
 
-## Commits
+## Docker and Compose
+- MUST: Use `compose.yml` for new example files; do not rename existing compose files unless explicitly requested
+- MUST: For example files, add `.example` as a filename suffix
+- MUST: Keep concrete compose files such as `compose.yml` and `docker-compose.yml` out of template repositories unless explicitly required
+- MUST: Prefer checked-in example variants for compose files (for example `compose.yml.example` and `docker-compose.yml.example`)
+- MUST: When creating compose examples, ensure real local compose filenames are included in ignore files
+- MUST: For Docker and Compose environment variables, prefix host-scoped values with "H_" and container-scoped values with "C_"
+- MUST: For Docker and Compose variable identifiers tied to services, use compact three-character service codes by default (for example "RTT", "ATA", "PAR"), unless an external interface or existing project convention requires otherwise
+- MUST: For Compose example files, keep top-level declaration order as used in existing project examples: "name", then any "x-*" extension blocks, then "secrets", then "services", then "networks", then "volumes" when present
+- MUST: Keep environment variables in ".env" or ".env.example" files; Compose files should reference variables rather than hardcoding values where practical
+- MUST: Group env variables by domain and keep group ordering consistent with Compose structure (versions/core first, host variables, container variables, per-service variables, then networks)
+- MUST: For service-scoped variables, use three-character uppercase service codes (for example "TFK", "ATA", "RTT"), and keep related variable blocks in the same service order used in Compose files
+- MUST: For network variables, use "C_NW_<SCOPE>" for base ranges and "C_NW_<SCOPE>_<SVC>" for service IP assignments
+- MUST: In service blocks, use this key order unless project constraints require otherwise: "image", "container_name", "hostname", "build", "init", "networks", "ports", "expose", "mem_limit", "deploy", "secrets", "<<", "environment", "command", "volumes", "labels", "cap_drop", "read_only", "restart", "depends_on"
 
-Commit messages are in the past tense and describe the change, i.e. "Added function to rotate comment logs".
+## Naming rules
+- MUST: Use UPPER_SNAKE_CASE for variable names by default unless language-specific standards override this
+- MUST: Only deviate from variable naming rules when required by external interfaces, libraries, or framework constraints
+- MUST: Name functions and methods using verbValue or verbObject patterns
+- MUST: Prefer these verb prefixes for function and method names where applicable: add, change, check, create, generate, get, read, set
+- MUST: Name variables explicitly to reflect type and scope (for example FILE_NAME, FILE_PATH, DIR_NAME, DIR_PATH)
+- MUST: Use consistent abbreviations in variable names (for example DIR, CONF, VAR)
+- MUST: Apply one variable naming convention per language as defined in language-specific standards, and do not mix conventions within the same file or function
+- MUST: When a language-specific rule overrides a global rule, apply the override consistently across the entire change set
+- MUST: If external-interface constraints require a different name, isolate and document that exception directly above the affected code
+- SHOULD: Prefer local variables where practical in functions and methods
+
+## Language-specific rules
+- MUST: Language-specific rules override global naming rules when conflicts occur
+- MUST: For Python, use snake_case for functions and methods unless external interfaces require otherwise
+- MUST: For Python, use snake_case for local variables and parameters unless external interfaces require otherwise
+- MUST: For Python, reserve UPPER_SNAKE_CASE for constants and configuration identifiers
+- MUST: For shell and Bash, use camelCase for function names following verbValue or verbObject patterns
+- MUST: For shell and Bash, use UPPER_SNAKE_CASE for variables
+- MUST: For shell and Bash, keep scripts POSIX-compliant unless Bash is explicitly required
+- MUST: For JavaScript and TypeScript, use camelCase for functions, methods, and variables
+- MUST: For JavaScript and TypeScript, use PascalCase for classes and components
+- MUST: For JavaScript and TypeScript, use UPPER_SNAKE_CASE for constants
+- MUST: For HTML and CSS, use BEM naming for CSS classes
+- MUST: For HTML and CSS, keep semantic HTML structure and accessibility attributes by default
+- MUST: For Swift (iOS, iPadOS, and Catalyst), follow Swift API Design Guidelines naming
+- MUST: For Swift, prefer SwiftUI plus MVVM unless project constraints require UIKit
+- MUST: For Swift, isolate platform-specific code behind adapters or extensions for Catalyst compatibility
+- MUST: For Kotlin (Android), use Kotlin conventions for naming
+- MUST: For Kotlin, prefer Jetpack Compose plus MVVM for new UI work
+- MUST: For Kotlin, keep business and domain logic platform-agnostic where practical to ease iOS and Android parity
+- MUST: For iOS and Android parity work, define shared feature specifications, naming, and state models before implementation
+- MUST: For iOS and Android parity work, keep domain logic, API contracts, and validation rules aligned across platforms
+- SHOULD: For iOS and Android parity work, mirror folder and module structure between iOS and Android apps where practical
