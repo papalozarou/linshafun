@@ -169,15 +169,18 @@ printCheckResult () {
 # even if it does not reach the maximum length, via the last for loop.
 # 
 # N.B.
-# "$COMMENT_LINE" is not quoted in the for loop to allow for word splitting when
-# it is parsed.
+# "$COMMENT" is not quoted in the "for" loop so it is split into words. "set -f"
+# stops the shell also replacing wildcards with matching file names, and is
+# turned off again after the loop.
 #-------------------------------------------------------------------------------
 printComment () {
   local COMMENT="${1:?}"
   local COMMENT_TYPE="$2"
   local LINE_LENGTH=66
+  local CURRENT_LINE=
+  local WORD
 
-  CURRENT_LINE=
+  set -f
 
   for WORD in $COMMENT; do
     if [ -z "$CURRENT_LINE" ]; then
@@ -189,6 +192,8 @@ printComment () {
       CURRENT_LINE="$WORD"
     fi
   done
+
+  set +f
 
   printLine "$CURRENT_LINE" "$COMMENT_TYPE"
 }
