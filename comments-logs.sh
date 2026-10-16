@@ -71,22 +71,29 @@ createUserLogDir () {
 }
 
 #-------------------------------------------------------------------------------
-# Initialises comment logging to a file for the current script run. Takes three
-# arguments, two of which are mandatory:
+# Initialises comment logging to a file for the current script run. Takes five
+# arguments, three of which are mandatory:
 #
 # 1. "${1:?}" – the log directory path;
-# 2. "${2:?}" – the log file name; and
-# 3. "${3:-7}" – the maximum age, in days, to keep archived logs for,
+# 2. "${2:?}" – the log file name;
+# 3. "${3:?}" – the log user;
+# 4. "${4:-$3}" – the log group, defaulting to the log user; and
+# 5. "${5:-7}" – the maximum age, in days, to keep archived logs for,
 #    defaulting to 7.
 #
 # The function:
 #
-# 1. creates the log directory if it does not exist;
-# 2. sets the log path;
-# 3. rotates the current log, via "rotateCommentLog"; and
-# 4. creates the log file.
+# 1. creates the parent of the log directory if it does not exist;
+# 2. creates the log directory if it does not exist;
+# 3. sets the log path;
+# 4. rotates the current log;
+# 5. creates the log file; and
+# 6. sets the permissions and ownership for the log directory and its files.
 #
-# Call it once at the start of a script.
+# The parent of the log directory is created first as otherwise it would be
+# created as root and the user would not be able to open it. The owner is set
+# last, so the new log and every archived log belong to the user. "700" keeps
+# the logs private, as they list file names and paths.
 #
 # N.B.
 # "COMMENT_LOG_PATH" is set after creating the log directory, as "printLogLine"
@@ -100,8 +107,12 @@ createUserLogDir () {
 initialiseCommentLogs () {
   local LOG_DIR_PATH="${1:?}"
   local LOG_FILE_NAME="${2:?}"
-  local LOG_MAX_AGE_DAYS="${3:-7}"
+  local LOG_USER="${3:?}"
+  local LOG_GROUP="${4:-$LOG_USER}"
+  local LOG_MAX_AGE_DAYS="${5:-7}"
   local LOG_DIR_TF="$(checkForFileOrDirectory "$LOG_DIR_PATH")"
+
+  createUserLogDir "$(dirname "$LOG_DIR_PATH")" "$LOG_USER" "$LOG_GROUP"
 
   if [ "$LOG_DIR_TF" = false ]; then
     createDirectory "$LOG_DIR_PATH"
@@ -112,6 +123,9 @@ initialiseCommentLogs () {
   rotateCommentLog "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$LOG_MAX_AGE_DAYS"
 
   touch "$COMMENT_LOG_PATH"
+
+  setOwner "$LOG_USER" "$LOG_DIR_PATH" "$LOG_GROUP"
+  setPermissions '700' "$LOG_DIR_PATH"
 }
 
 #-------------------------------------------------------------------------------
