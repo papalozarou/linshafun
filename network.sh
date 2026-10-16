@@ -33,7 +33,7 @@ checkAgainstExistingPortNumber () {
 # returns true, re-run the function to generate a new port number. If the check 
 # returns false, return the generated port number. Takes one mandatory argument:
 # 
-# 1. "{1:?}" – the service to check against.
+# 1. "${1:?}" – the service to check against.
 #-------------------------------------------------------------------------------
 generateAndCheckPort () {
   local SERVICE="${1:?}"
@@ -42,7 +42,7 @@ generateAndCheckPort () {
 
   if [ "$PORT_TF" = true ]; then
     printComment "Port check returned $PORT_TF. Re-running to generate another port number." 'warning'
-    generateAndCheckPort
+    generateAndCheckPort "$SERVICE"
   elif [ "$PORT_TF" = false ]; then
     echo "$PORT"    
   fi
