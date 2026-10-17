@@ -28,12 +28,21 @@ checkForAndCreateDockerSecretsDir () {
 #    directory path; and
 # 2. "${2:?}" - the secret value.
 # 
-# The function uses case to check if "$SECRET_FILE" contains "/" and sets 
-# "$SECRET_FILE_PATH" accordingly.
+# The function uses case to check if "$SECRET_FILE" contains "/" and sets
+# "$SECRET_FILE_PATH" accordingly. An existing file at "$SECRET_FILE_PATH" is
+# replaced, not appended to. The directory containing the file is then listed.
+#
+# Returns 1 if the secret file can't be written.
+#
+# N.B.
+# The value is written with "printf '%s\n'", not "echo", so values such as
+# "-n" or "a\nb" are written exactly as given. The file ends with a newline.
 #-------------------------------------------------------------------------------
 createDockerSecretFile () {
   local SECRET_FILE="${1:?}"
   local SECRET_VALUE="${2:?}"
+  local SECRET_FILE_PATH
+  local STATUS=0
 
   case "$SECRET_FILE" in
     */*) SECRET_FILE_PATH="$SECRET_FILE" ;;
@@ -42,11 +51,17 @@ createDockerSecretFile () {
 
   printComment 'Generating a secret file at:'
   printComment "$SECRET_FILE_PATH"
-  echo "$SECRET_VALUE" >> "$SECRET_FILE_PATH"
+  printf '%s\n' "$SECRET_VALUE" > "$SECRET_FILE_PATH" || STATUS="$?"
+
+  if [ "$STATUS" -ne 0 ]; then
+    printComment "Failed to write the secret file at $SECRET_FILE_PATH." 'error'
+
+    return 1
+  fi
 
   setPermissions '400' "$SECRET_FILE_PATH"
 
-  listDirectories "$DKR_SECRETS_DIR_PATH"
+  listDirectories "${SECRET_FILE_PATH%/*}"
 }
 
 #-------------------------------------------------------------------------------
