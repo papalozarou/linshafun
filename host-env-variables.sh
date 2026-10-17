@@ -5,19 +5,48 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Adds a "env_keep" statement for a given environment variable. Takes one 
+# Adds an "env_keep" statement for a given environment variable to
+# "$SUDOERS_DEFAULT_CONF_PATH", so "sudo" keeps the variable. Takes one
 # mandatory argument:
-# 
-# 1. "${1:?}" -the  name of the environment variable.
-# 
+#
+# 1. "${1:?}" - the name of the environment variable.
+#
+# If the statement is already present, no changes are made. If not, its syntax
+# is checked with "visudo", it is appended and the file's mode is set to 440.
+# The file is created if it doesn't exist.
+#
+# Returns 1 if the syntax check, the write or "chmod" fails.
+#
 # N.B.
-# This function assumes that the sudoers config file exists.
+# "visudo -c -f -" reads the statement from standard input, so only the new
+# statement is checked, not the whole file.
+#
+# - https://www.sudo.ws/docs/man/visudo.man/
 #-------------------------------------------------------------------------------
 addHostEnvVariableToSudoersConf () {
   local ENV_VAR="${1:?}"
   local ENV_KEEP="Defaults env_keep += \"$ENV_VAR\""
 
-  echo "$ENV_KEEP" >> "$SUDOERS_DEFAULT_CONF"
+  if grep -Fqx "$ENV_KEEP" "$SUDOERS_DEFAULT_CONF_PATH" 2>/dev/null; then
+    printComment "Already added $ENV_VAR. No changes made."
+
+    return 0
+  fi
+
+  if ! echo "$ENV_KEEP" | visudo -c -f - > /dev/null; then
+    printComment "$ENV_VAR failed the sudoers syntax check." 'error'
+
+    return 1
+  fi
+
+  if ! echo "$ENV_KEEP" >> "$SUDOERS_DEFAULT_CONF_PATH" \
+    || ! chmod 440 "$SUDOERS_DEFAULT_CONF_PATH"; then
+    printComment "Failed to add $ENV_VAR to $SUDOERS_DEFAULT_CONF_PATH." 'error'
+
+    return 1
+  fi
+
+  printComment "Added $ENV_VAR to $SUDOERS_DEFAULT_CONF_PATH."
 }
 
 #-------------------------------------------------------------------------------
