@@ -10,7 +10,7 @@
 #
 # The function checks for the cmdline.txt file first in "/boot/firmware", then
 # in "/boot", adjusting "$CMDLINE_PATH" accordingly. If the "cmdline.txt" file
-# does not exist in either location, the function exits with an error.
+# does not exist in either location, it prints an error and returns 1.
 #
 # N.B.
 # A reboot is required for changes to take effect.
@@ -50,7 +50,7 @@ addPiCgroupOptionsToCmdline () {
 #
 # The function checks for the cmdline.txt file first in "/boot/firmware", then
 # in "/boot", adjusting "$CMDLINE_PATH" accordingly. If the "cmdline.txt" file
-# does not exist in either location, the function exits with an error.
+# does not exist in either location, it prints an error and returns 1.
 #
 # N.B.
 # A reboot is required for changes to take effect.
@@ -128,23 +128,39 @@ checkPiConfigLocation () {
 # Disables the Raspberry Pi's onboard LEDs by adding the following lines to the
 # end of the "config.txt" file:
 #
-# - "dtparam=eth_led0=4" (Pi 5) or "dtparam=eth_led0=14" (Pi 4)
-# - "dtparam=eth_led1=4" (Pi 5) or "dtparam=eth_led1=14" (Pi 4)
+# - "dtparam=eth_led0=4" (Pi 5) or "dtparam=eth_led0=14" (Pi 3 and 4)
+# - "dtparam=eth_led1=4" (Pi 5) or "dtparam=eth_led1=14" (Pi 3 and 4)
 # - "dtparam=act_led_trigger=none"
 # - "dtparam=pwr_led_activelow=off"
 #
+# The function gets the model from "getRaspberryPiModel". Only Raspberry Pi
+# models 3, 4 and 5 are supported.
+#
 # The function checks for the config.txt file first in "/boot/firmware", then
-# in "/boot", adjusting "$CONFIG_PATH" accordingly. If the "config.txt" file 
-# does not exist in either location, the function exits with an error.
+# in "/boot", adjusting "$CONFIG_PATH" accordingly. If the "config.txt" file
+# does not exist in either location, it prints an error and returns 1.
+#
+# Returns 1 if the host is not a Raspberry Pi 3, 4 or 5, without changing
+# "config.txt" or writing the setup config option.
 #
 # N.B.
-# The function checks for existing entries using "grep -Fxq" to search for a 
-# fixed string (-F), not a regex, and an exact match (-x) to avoid duplicates. 
+# The function checks for existing entries using "grep -Fxq" to search for a
+# fixed string (-F), not a regex, and an exact match (-x) to avoid duplicates.
 # Quiet mode (-q) is used to suppress output.
+#
+# The "eth_led" parameters only apply to the Pi 3B+, 4 and 5, so on a Pi 3B or
+# 3A+ those two lines have no effect. As per:
+#
+# - https://github.com/raspberrypi/firmware/blob/master/boot/overlays/README
+#
+# The README lists "14" as off for the Pi 3B+ only, and "4" as off for the Pi 4
+# and 5. The Pi 4 still uses "14", as that is the value running on existing Pi
+# 4 hosts, and online reports differ on whether "4" works on a Pi 4.
 #
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
 disablePiLedsInConfigTxt () {
+  local MODEL="$(getRaspberryPiModel)"
   local CONFIG_PATH="$(checkPiConfigLocation)"
 
   local COMMENT='# Disable LEDs'
@@ -159,15 +175,19 @@ disablePiLedsInConfigTxt () {
     return 1
   fi
 
-  if [ "$MODEL" -eq 5 ]; then
+  if [ "$MODEL" = 5 ]; then
     local DISABLE_ETH_LED0="$DISABLE_ETH_LED0"'4'
     local DISABLE_ETH_LED1="$DISABLE_ETH_LED1"'4'
-  elif [ "$MODEL" -eq 4 ]; then
+  elif [ "$MODEL" = 4 ] || [ "$MODEL" = 3 ]; then
     local DISABLE_ETH_LED0="$DISABLE_ETH_LED0"'14'
     local DISABLE_ETH_LED1="$DISABLE_ETH_LED1"'14'
+  else
+    printComment 'Disabling LEDs is only supported on Raspberry Pi 3, 4 and 5.' 'error'
+
+    return 1
   fi
 
-  if grep -Fxq "$DISABLE_ETH_LED0" "$CONFIG_PATH" "$CONFIG_PATH"; then
+  if grep -Fxq "$DISABLE_ETH_LED0" "$CONFIG_PATH"; then
     printComment 'LEDs are already disabled in config.txt.' 'warning'
   else
     printComment 'Disabling LEDs in config.txt file at:' 
@@ -201,7 +221,7 @@ EOF
 #
 # The function checks for the config.txt file first in "/boot/firmware", then 
 # in "/boot", adjusting "$CONFIG_PATH" accordingly. If the "config.txt" file 
-# does not exist in either location, the function exits with an error.
+# does not exist in either location, it prints an error and returns 1.
 #
 # N.B.
 # A reboot is required for changes to take effect.
@@ -247,11 +267,14 @@ EOF
 #
 # The function checks for the config.txt file first in "/boot/firmware", then 
 # in "/boot", adjusting "$CONFIG_PATH" accordingly. If the "config.txt" file 
-# does not exist in either location, the function exits with an error.
+# does not exist in either location, it prints an error and returns 1.
+#
+# Returns 1 if the host is not a Raspberry Pi 5 or newer, without changing
+# "config.txt" or writing the setup config option.
 #
 # N.B.
-# The function checks for existing entries using "grep -Fxq" to search for a 
-# fixed string (-F), not a regex, and an exact match (-x) to avoid duplicates. 
+# The function checks for existing entries using "grep -Fxq" to search for a
+# fixed string (-F), not a regex, and an exact match (-x) to avoid duplicates.
 # Quiet mode (-q) is used to suppress output.
 #
 # A reboot is required for changes to take effect.
@@ -264,6 +287,12 @@ enablePiPcieGen3InConfigTxt () {
 
   if [ -z "$CONFIG_PATH" ]; then
     printComment 'config.txt file not found in /boot/firmware or /boot.' 'error'
+
+    return 1
+  fi
+
+  if [ -z "$MODEL" ] || [ "$MODEL" -lt 5 ]; then
+    printComment 'PCIe Gen 3 is only supported on Raspberry Pi 5 and newer.' 'error'
 
     return 1
   fi
