@@ -20,23 +20,6 @@ addKeyToAuthorizedKeys () {
 }
 
 #-------------------------------------------------------------------------------
-# Start the "ssh-agent" and add a generated key to it. Takes one mandatory 
-# argument:
-# 
-# 1. "${1:?}" – the key file, including directory path.
-#-------------------------------------------------------------------------------
-addSshKeytoAgent () {
-  local KEY_PATH="${1:?}.pub"
-
-  printComment 'Adding the generated key to the ssh-agent.'
-  printSeparator
-  eval "$(ssh-agent -s)"
-  ssh-add "$KEY_PATH"
-  printSeparator
-  printComment 'Key added to agent.'
-}
-
-#-------------------------------------------------------------------------------
 # Checks to see if the "~/.ssh/authorized_keys" file exist and creates it if not.
 #-------------------------------------------------------------------------------
 checkForAndCreateAuthorizedKeys () {
