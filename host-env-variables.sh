@@ -51,7 +51,8 @@ addHostEnvVariableToSudoersConf () {
 
 #-------------------------------------------------------------------------------
 # Checks for a given environment variable in "$PROFILE_PATH". Returns 0 if the
-# variable is present, returns 1 if not. Takes one mandatory argument:
+# variable is present, returns 1 if not. Only a line starting with
+# "export NAME=" counts. Takes one mandatory argument:
 # 
 # 1. "{1:?}" - the name of the environment variable.
 #
@@ -62,7 +63,7 @@ addHostEnvVariableToSudoersConf () {
 checkForHostEnvVariable () {
   local ENV_VAR="${1:?}"
 
-  grep -q "$ENV_VAR" "$PROFILE_PATH"
+  grep -q "^export $ENV_VAR=" "$PROFILE_PATH"
 }
 
 #-------------------------------------------------------------------------------

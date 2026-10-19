@@ -42,6 +42,7 @@
 
 - `addHostEnvVariableToSudoersConf` writes to `SUDOERS_DEFAULT_CONF_PATH`, skips a line that's already there, checks the new line with `visudo` before adding it, sets the file's mode to 440, and returns 1 with an error on failure. Previously it wrote to the unset `SUDOERS_DEFAULT_CONF`, so it always failed.
 - `checkForHostEnvVariable` returns 0 if the variable is present, 1 if not, or 2 if `PROFILE_PATH` can't be read, and prints nothing. Previously it printed `true` or `false`.
+- `checkForHostEnvVariable` only matches a line starting with `export NAME=`, so `HOST_DOMAIN` no longer matches `HOST_DOMAIN_OLD`, `MY_HOST_DOMAIN` or a comment, and `setHostEnvVariable` adds the variable instead of reporting it as already added. A variable set any other way, e.g. `HOST_DOMAIN=x` then `export HOST_DOMAIN`, is no longer found, so `setHostEnvVariable` appends an `export` line.
 
 ### `host-information.sh`
 
