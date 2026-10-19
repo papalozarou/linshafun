@@ -11,6 +11,8 @@
 # 1. "${1:?}" – the port to check; and
 # 2. "${2:?}" – the service to check against.
 # 
+# Returns 0 if the port matches the service's existing port, 1 if not.
+# 
 # N.B.
 # The config option key must be formatted exactly as in the config option file,
 # i.e. using camelCase. A list of the config keys can be found in 
@@ -22,28 +24,27 @@ checkAgainstExistingPortNumber () {
   local EXISTING_PORT="$(readSetupConfigValue "$SERVICE")"
 
   if [ "$COMPARISON_PORT" = "$EXISTING_PORT" ]; then
-    echo true
+    return 0
   else 
-    echo false
+    return 1
   fi
 }
 
 #-------------------------------------------------------------------------------
 # Generates a port number then checks against a given service. If the check
-# returns true, re-run the function to generate a new port number. If the check 
-# returns false, return the generated port number. Takes one mandatory argument:
+# returns 0, re-run the function to generate a new port number. If the check 
+# returns 1, return the generated port number. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the service to check against.
 #-------------------------------------------------------------------------------
 generateAndCheckPort () {
   local SERVICE="${1:?}"
   local PORT="$(generatePortNumber)"
-  local PORT_TF="$(checkAgainstExistingPortNumber "$PORT" "$SERVICE")"
 
-  if [ "$PORT_TF" = true ]; then
-    printComment "Port check returned $PORT_TF. Re-running to generate another port number." 'warning'
+  if checkAgainstExistingPortNumber "$PORT" "$SERVICE"; then
+    printComment "Port $PORT is already used by $SERVICE. Re-running to generate another port number." 'warning'
     generateAndCheckPort "$SERVICE"
-  elif [ "$PORT_TF" = false ]; then
+  else
     echo "$PORT"    
   fi
 }

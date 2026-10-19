@@ -5,8 +5,8 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Checks if the host machine is a Raspberry Pi. Returns true if it is, false if
-# it is not.
+# Checks if the host machine is a Raspberry Pi. Returns 0 if it is, 1 if it is
+# not.
 # 
 # N.B.
 # The check is done by looking for "Raspberry Pi" in "/proc/device-tree/model",
@@ -17,9 +17,9 @@
 #-------------------------------------------------------------------------------
 checkIfRaspberryPi () {
   if grep -qi 'raspberry pi' /proc/device-tree/model 2>/dev/null; then
-    echo true
+    return 0
   else
-    echo false
+    return 1
   fi
 }
 
@@ -28,21 +28,21 @@ checkIfRaspberryPi () {
 #
 # 1. "${1:-root}" – the user name, defaulting to "root".
 #
-# Returns true if it is, false if it is not.
+# Returns 0 if it is, 1 if it is not.
 #-------------------------------------------------------------------------------
 checkIfRunAsUser () {
   local USER_NAME="${1:-root}"
 
   if [ "$(id -un)" = "$USER_NAME" ]; then
-    echo true
+    return 0
   else
-    echo false
+    return 1
   fi
 }
 
 #-------------------------------------------------------------------------------
-# Checks if the script is being run with "sudo". Returns true if it is, false if
-# it is not.
+# Checks if the script is being run with "sudo". Returns 0 if it is, 1 if it is
+# not.
 #
 # N.B.
 # Both checks are needed. A script run as root without "sudo", i.e. from a root
@@ -52,9 +52,9 @@ checkIfRunAsUser () {
 #-------------------------------------------------------------------------------
 checkIfRunWithSudo () {
   if [ "$(id -u)" -eq 0 ] && [ -n "$SUDO_USER" ]; then
-    echo true
+    return 0
   else
-    echo false
+    return 1
   fi
 }
 
@@ -65,8 +65,7 @@ checkIfRunWithSudo () {
 # 1. "${1:?}" – the time in seconds within which a reboot is considered recent, 
 #    defaulting to 60 seconds.
 #
-# Returns true if the system was rebooted within the given timeframe and false 
-# if not.
+# Returns 0 if the system was rebooted within the given timeframe and 1 if not.
 #-------------------------------------------------------------------------------
 checkIfSystemRebooted () {
   local REBOOT_TIMEFRAME="${1:-60}"
@@ -75,9 +74,9 @@ checkIfSystemRebooted () {
   local TIME_DIFF=$((CURRENT_TIME - LAST_BOOT))
 
   if [ "$TIME_DIFF" -le "$REBOOT_TIMEFRAME" ]; then
-    echo true
+    return 0
   else
-    echo false
+    return 1
   fi
 }
 
@@ -87,8 +86,8 @@ checkIfSystemRebooted () {
 #
 # 1. "${1:?}" – the OS version number to compare to.
 #
-# The function returns true if the current OS is less than or equal to the given 
-# version, and false if it is higher.
+# The function returns 0 if the current OS is less than or equal to the given 
+# version, and 1 if it is higher.
 #
 # N.B.
 # As shell can't compare floating decimal points, both the comparison OS and the
@@ -101,9 +100,9 @@ compareOsVersion () {
   local CURRENT_OS="$(getOsVersion | cut -d'.' -f1)"
 
   if [ "$CURRENT_OS" -gt "$COMPARISON_OS" ] ; then
-    echo false
+    return 1
   else
-    echo true
+    return 0
   fi
 }
 
@@ -166,10 +165,9 @@ getOsVersion () {
 # "raspberry pi [0-9]", and then cut to extract just the model number.
 #-------------------------------------------------------------------------------
 getRaspberryPiModel () {
-  local RPI_TF="$(checkIfRaspberryPi)"
   local MODEL_FILE_PATH='/proc/device-tree/model'
 
-  if [ "$RPI_TF" = true ]; then
+  if checkIfRaspberryPi; then
     local MODEL="$(tr -d '\0' < "$MODEL_FILE_PATH" | grep -oi 'raspberry pi [0-9]' | cut -d' ' -f3)"
 
     echo "$MODEL"

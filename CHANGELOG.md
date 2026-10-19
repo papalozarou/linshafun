@@ -20,6 +20,10 @@
 
 - `addHostEnvVariableToSudoersConf` writes to `SUDOERS_DEFAULT_CONF_PATH`, skips a line that's already there, checks the new line with `visudo` before adding it, sets the file's mode to 440, and returns 1 with an error on failure. Previously it wrote to the unset `SUDOERS_DEFAULT_CONF`, so it always failed.
 
+### `host-information.sh`
+
+- `checkIfRaspberryPi`, `checkIfRunAsUser`, `checkIfRunWithSudo`, `checkIfSystemRebooted` and `compareOsVersion` return 0 or 1 and print nothing. Previously they printed `true` or `false`, so callers must use `if checkIfRaspberryPi; then` instead of comparing `"$(checkIfRaspberryPi)"`.
+
 ### `host-initialisation.sh`
 
 - `disablePiLedsInConfigTxt` gets the Pi model itself instead of relying on the caller's `MODEL`. It supports models 3, 4 and 5, using `14` for models 3 and 4, and returns 1 with an error on any other model. Previously an unset `MODEL` or an unsupported model wrote `dtparam=eth_led0=` and `dtparam=eth_led1=` with no value and reported success.
@@ -33,7 +37,9 @@
 
 ### `network.sh`
 
+- `checkAgainstExistingPortNumber` returns 0 if the port matches the service's existing port and 1 if not, and prints nothing. Previously it printed `true` or `false`.
 - `generateAndCheckPort` passes the service when it re-runs after a port clash. Previously the re-run failed and the calling script exited.
+- `generateAndCheckPort` warns "Port 1234 is already used by rtt. Re-running to generate another port number." when it re-runs, instead of "Port check returned true. …".
 
 ### `packages.sh`
 
@@ -53,3 +59,7 @@
 - `commentInLine` uncomments lines that use a comment character other than `#`, e.g. `;`. Previously it found the line, left it commented and reported success.
 - `commentInLine` and `commentOutLine` accept `/` and `|` in the partial and the comment character. Previously `/` as the comment character made `sed` fail.
 - `commentInLine` and `commentOutLine` match partials literally, so `\`, `[`, `.`, `*`, `^` and `$` are no longer treated as regular expression characters. Previously `[main]` matched any line starting with `m`, `a`, `i` or `n`.
+
+### `variables.sh`
+
+- `checkIfValidVariableName` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.

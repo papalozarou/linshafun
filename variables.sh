@@ -5,8 +5,8 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Checks if a variable name is valid. Returns true if the name contains only
-# letters, digits and underscores, and doesn't start with a digit, returns false
+# Checks if a variable name is valid. Returns 0 if the name contains only
+# letters, digits and underscores, and doesn't start with a digit, returns 1
 # otherwise. Takes one argument:
 #
 # 1. "$1" – the variable name, not its value, i.e. "DOCKER_DIR_PATH".
@@ -16,18 +16,18 @@
 # prevents that.
 #
 # N.B.
-# "$1" is used rather than "${1:?}", as an empty name must return false rather
-# than return nothing.
+# "$1" is used rather than "${1:?}", as an empty name must return 1 rather
+# than stop the script with an error.
 #-------------------------------------------------------------------------------
 checkIfValidVariableName () {
   local VAR_NAME="$1"
 
   case "$VAR_NAME" in
     ''|[0-9]*|*[!A-Za-z0-9_]*)
-      echo false
+      return 1
       ;;
     *)
-      echo true
+      return 0
       ;;
   esac
 }
@@ -54,14 +54,11 @@ checkIfValidVariableName () {
 #-------------------------------------------------------------------------------
 verifyVariablesSet () {
   local VAR_NAME
-  local VAR_NAME_TF
   local VAR_VALUE
   local VARS_STATUS=0
 
   for VAR_NAME in "$@"; do
-    VAR_NAME_TF="$(checkIfValidVariableName "$VAR_NAME")"
-
-    if [ "$VAR_NAME_TF" != true ]; then
+    if ! checkIfValidVariableName "$VAR_NAME"; then
       printComment "$VAR_NAME is not a valid variable name." 'error'
 
       VARS_STATUS=1
