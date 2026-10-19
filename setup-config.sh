@@ -13,6 +13,9 @@
 # 2. "${2:?}" – the name of the variable to be added; and
 # 3. "${3:?}" – the value of the variable to be added.
 #
+# If the variable can't be written, or isn't in the file afterwards, the
+# function prints an error and returns 1.
+#
 # Appending to a file using "cat" as per:
 # 
 # - https://stackoverflow.com/a/50098414
@@ -22,24 +25,25 @@ addSetupVar () {
 	local VAR_NAME="${2:?}"
 	local VAR_VALUE="${3:?}"
   local VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
+  local STATUS=0
 
 	printComment 'Adding $'"$VAR_NAME variable to:"
 	printComment "$VAR_FILE_PATH"
 	
-  cat <<EOF >> "$VAR_FILE_PATH"
+  cat <<EOF >> "$VAR_FILE_PATH" || STATUS="$?"
 $VAR_NAME="$VAR_VALUE"
 EOF
 
 	printSeparator
 	
-	if grep "$VAR_NAME" "$VAR_FILE_PATH"; then
+	if [ "$STATUS" -eq 0 ] && grep "$VAR_NAME" "$VAR_FILE_PATH"; then
 		printSeparator
 		printComment '$'"$VAR_NAME variable added."
 	else
     printComment 'There was a problem adding the $'"$VAR_NAME variable. Please check the variable file at:" 'error'
     printComment "$VAR_FILE_PATH" 'error'
 
-		exit 1
+		return 1
 	fi
 	
 	reloadVarFile "$VAR_FILE_PATH"
@@ -190,26 +194,31 @@ removeSetupConfigOption () {
 #
 # The function uses "sed" to find the line starting with "$VAR_NAME" and replace
 # the entire matched line with "$VAR_NAME="$VAR_VALUE"".
+#
+# If "sed" fails, or the variable isn't in the file afterwards, the function
+# prints an error and returns 1. "sed" succeeds even when no line matches, so
+# the file is still checked for the variable.
 #-------------------------------------------------------------------------------
 replaceSetupVar () {
   VAR_FILE_NAME="${1:?}"
   VAR_NAME="${2:?}"
   VAR_VALUE="${3:?}"
   VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
+  local STATUS=0
 
   printComment 'Replacing $'"$VAR_NAME"' in:'
   printComment "$VAR_FILE_PATH"
 
-  sed -i '/^'"$VAR_NAME"'/c\'"$VAR_NAME=\"$VAR_VALUE\"" "$VAR_FILE_PATH"
+  sed -i '/^'"$VAR_NAME"'/c\'"$VAR_NAME=\"$VAR_VALUE\"" "$VAR_FILE_PATH" || STATUS="$?"
 
-	if grep "$VAR_NAME" "$VAR_FILE_PATH"; then
+	if [ "$STATUS" -eq 0 ] && grep "$VAR_NAME" "$VAR_FILE_PATH"; then
 		printSeparator
 		printComment '$'"$VAR_NAME variable added."
 	else
     printComment 'There was a problem replacing the $'"$VAR_NAME variable. Please check the variable file at:" 'error'
     printComment "$VAR_FILE_PATH" 'error'
 
-		exit 1
+		return 1
 	fi
 	
 	reloadVarFile "$VAR_FILE_PATH"

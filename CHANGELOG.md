@@ -13,6 +13,7 @@
 ### `crontab.sh`
 
 - `addScriptToCron` no longer prints "Check returned true." or "Check returned false." after "Checking to see if …".
+- `addScriptToCron` returns 1 with an error if the snippet can't be written, instead of exiting the script, and no longer prints "Checking to see if the snippet was created…". Previously it checked that the snippet file existed, so a failed write over an existing snippet reported success.
 - `checkForAndCreateUserLogDir` is removed. Use `createDirectory "$USER_LOG_DIR_PATH" '700' "$SUDO_USER"`.
 
 ### `docker-env-variables.sh`
@@ -71,9 +72,11 @@
 - `checkForPackage` checks whether the package is installed with `dpkg-query`, instead of whether a command with that name exists. A package that isn't a command, e.g. `openssh-server`, now reads as installed, and a command that isn't a package reads as not installed. A removed package whose config files remain reads as not installed. Callers must pass package names, e.g. `docker-ce`, not `docker`.
 - `checkForPackage` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `checkForPackagesAndInstall` and `checkForPackagesAndRemove` no longer print "Check returned true." or "Check returned false." after "Checking to see if … is installed…".
+- `installRemovePackages` returns 1 with the error "Unknown action "update". Use "install" or "remove"." if the first argument isn't "install" or "remove". Previously it printed "Exiting script with no changes." and exited the script.
 
 ### `setup-config.sh`
 
+- `addSetupVar` and `replaceSetupVar` return 1 instead of exiting the script when the variable can't be written or isn't found afterwards. They also check the status of the write, so a failed write is reported even when the variable is already in the file.
 - `checkForAndCreateSetupConfigFileAndDir` no longer prints "Check returned …" after each "Checking …" line.
 - `createSetupConfigDirectory` is removed. `checkForAndCreateSetupConfigFileAndDir` calls `createDirectory` with `SUDO_USER` as owner.
 - `readSetupConfigValue` matches the whole key, so `ssh` no longer matches `sshPort`. Values containing spaces or wildcards are returned as written. It no longer runs `set -f` in the calling script.

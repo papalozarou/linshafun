@@ -25,8 +25,8 @@
 # - "getCronFilenames"; and
 # - "getCronSchedule".
 # 
-# If the check for the snippet file in "/etc/cron.d" fails, the function exits 
-# with status 1.
+# If the snippet can't be written to "/etc/cron.d", the function prints an
+# error and returns 1.
 #-------------------------------------------------------------------------------
 addScriptToCron () {
   local USER="${1:-"root"}"
@@ -35,30 +35,25 @@ addScriptToCron () {
   local SNIPPET_NAME="${4:-"$CRON_SNIPPET_NAME"}"
   local LOG_TF="${5:-true}"
   local SNIPPET_PATH="/etc/cron.d/$SNIPPET_NAME"
+  local CRON_LINE="$SCHEDULE $USER $CMD_OR_SCRIPT_PATH"
 
   printComment 'Adding to the system crontab, as a snippet in "/etc/cron.d".'
 
   if [ "$LOG_TF" = true ]; then
-    local SCRIPT_LOG_PATH="$USER_LOG_DIR_PATH/$SNIPPET_NAME.log"
-
-    echo "$SCHEDULE $USER $CMD_OR_SCRIPT_PATH >> $SCRIPT_LOG_PATH 2>&1" > "$SNIPPET_PATH"
-  else
-    echo "$SCHEDULE $USER $CMD_OR_SCRIPT_PATH" > "$SNIPPET_PATH"
+    CRON_LINE="$CRON_LINE >> $USER_LOG_DIR_PATH/$SNIPPET_NAME.log 2>&1"
   fi
 
-  printComment 'Checking to see if the snippet was created…'
-
-  if checkForFileOrDirectory "$SNIPPET_PATH"; then
-    printComment 'Checking contents of snippet…'
-    printSeparator
-    cat "$SNIPPET_PATH"
-    printSeparator
-    printComment 'Script added to cron, using a snippet in "/etc/crond.d".'
-  else
+  if ! echo "$CRON_LINE" > "$SNIPPET_PATH"; then
     printComment 'An error occurred when creating the snippet.' 'error'
 
-    exit 1
-  fi 
+    return 1
+  fi
+
+  printComment 'Checking contents of snippet…'
+  printSeparator
+  cat "$SNIPPET_PATH"
+  printSeparator
+  printComment 'Script added to cron, using a snippet in "/etc/crond.d".'
 }
 
 #-------------------------------------------------------------------------------

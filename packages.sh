@@ -87,18 +87,20 @@ checkForPackagesAndRemove () {
 # As per:
 # 
 # - https://unix.stackexchange.com/a/225951
+#
+# If the first argument isn't "install" or "remove", the function prints an
+# error and returns 1.
 #-------------------------------------------------------------------------------
 installRemovePackages () {
-  if [ "${1:?}" = 'install' ] || [ "${1:?}" = 'remove' ]; then
-    local ACTION="${1:?}"
-  
-    shift
-  else
-    
-    printScriptExiting
-    
-    exit 1
+  local ACTION="${1:?}"
+
+  if [ "$ACTION" != 'install' ] && [ "$ACTION" != 'remove' ]; then
+    printComment "Unknown action \"$ACTION\". Use \"install\" or \"remove\"." 'error'
+
+    return 1
   fi
+
+  shift
 
   for i; do
     printComment "Performing $ACTION for $i."
