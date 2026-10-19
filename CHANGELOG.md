@@ -54,9 +54,11 @@
 
 ### `host-initialisation.sh`
 
+- `addPiCgroupOptionsToCmdline`, `addPiVideoModesToCmdline`, `disablePiLedsInConfigTxt`, `disablePiWifiInConfigTxt` and `enablePiPcieGen3InConfigTxt` return 1 with an error, e.g. "Failed to disable WiFi in config.txt.", if `cmdline.txt` or `config.txt` can't be written, and don't write the setup config option. Previously they reported success and wrote the option as `true`, so a rerun skipped the step.
 - `disablePiLedsInConfigTxt` gets the Pi model itself instead of relying on the caller's `MODEL`. It supports models 3, 4 and 5, using `14` for models 3 and 4, and returns 1 with an error on any other model. Previously an unset `MODEL` or an unsupported model wrote `dtparam=eth_led0=` and `dtparam=eth_led1=` with no value and reported success.
 - `enablePiPcieGen3InConfigTxt` returns 1 with an error below a Raspberry Pi 5. Previously it wrote the PCIe lines on any model.
 - `setPiPowerOffOnHalt` saves and applies the change when `POWER_OFF_ON_HALT` is 0. Previously it printed the updated config, applied nothing and reported a failure. The temporary config file now has a random name from `mktemp` instead of `/tmp/bootconf.txt`.
+- `setPiPowerOffOnHalt` returns 1 with the error "Failed to read the current EEPROM config." if `rpi-eeprom-config --out` fails, without applying anything. Previously it applied a config holding only `POWER_OFF_ON_HALT=1`. It also returns 1 with "Failed to update POWER_OFF_ON_HALT." if `--apply` fails or the update isn't in the temporary config, and doesn't write the setup config option. Previously it printed success after a failed apply, and returned 0 after its own failure message.
 - `updatePiBootloader` and `updatePiFirmware` return 1 and print an error when `rpi-eeprom-update` or `rpi-update` fails, without writing the setup config option. Previously they always reported success.
 
 ### `linshafun.var`

@@ -12,6 +12,9 @@
 # in "/boot", adjusting "$CMDLINE_PATH" accordingly. If the "cmdline.txt" file
 # does not exist in either location, it prints an error and returns 1.
 #
+# If "cmdline.txt" can't be written, the function prints an error and returns
+# 1, without writing the setup config option.
+#
 # N.B.
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
@@ -27,21 +30,27 @@ addPiCgroupOptionsToCmdline () {
 
   if grep -q "$CGROUP_OPTIONS" "$CMDLINE_PATH"; then
     printComment 'Cgroup memory options are already set in cmdline.txt.' 'warning'
-  else
-    printComment 'Adding cgroup memory options to cmdline.txt file at:' 
-    printComment "$CMDLINE_PATH"
-    
-    sudo sh -c "sed 's/\(.*\)rootwait/\1$CGROUP_OPTIONS rootwait/' \"$CMDLINE_PATH\" > \"$CMDLINE_PATH.tmp\" && mv \"$CMDLINE_PATH.tmp\" \"$CMDLINE_PATH\""
 
-    printSeparator
-    grep "$CGROUP_OPTIONS" "$CMDLINE_PATH"
-    printSeparator
-    printComment 'Cgroup memory options added.'
-    printComment 'A reboot is required for changes to take effect.' 'warning'
-
-    writeSetupConfigOption 'addedPiCgroupOptions' 'true'
-    printSeparator
+    return 0
   fi
+
+  printComment 'Adding cgroup memory options to cmdline.txt file at:'
+  printComment "$CMDLINE_PATH"
+
+  if ! sudo sh -c "sed 's/\(.*\)rootwait/\1$CGROUP_OPTIONS rootwait/' \"$CMDLINE_PATH\" > \"$CMDLINE_PATH.tmp\" && mv \"$CMDLINE_PATH.tmp\" \"$CMDLINE_PATH\""; then
+    printComment 'Failed to add cgroup memory options to cmdline.txt.' 'error'
+
+    return 1
+  fi
+
+  printSeparator
+  grep "$CGROUP_OPTIONS" "$CMDLINE_PATH"
+  printSeparator
+  printComment 'Cgroup memory options added.'
+  printComment 'A reboot is required for changes to take effect.' 'warning'
+
+  writeSetupConfigOption 'addedPiCgroupOptions' 'true'
+  printSeparator
 }
 
 #-------------------------------------------------------------------------------
@@ -51,6 +60,9 @@ addPiCgroupOptionsToCmdline () {
 # The function checks for the cmdline.txt file first in "/boot/firmware", then
 # in "/boot", adjusting "$CMDLINE_PATH" accordingly. If the "cmdline.txt" file
 # does not exist in either location, it prints an error and returns 1.
+#
+# If "cmdline.txt" can't be written, the function prints an error and returns
+# 1, without writing the setup config option.
 #
 # N.B.
 # A reboot is required for changes to take effect.
@@ -67,21 +79,27 @@ addPiVideoModesToCmdline () {
 
   if grep -q "$VIDEO_MODES" "$CMDLINE_PATH"; then
     printComment 'Video modes are already set in cmdline.txt.' 'warning'
-  else
-    printComment 'Adding video modes to cmdline.txt file at:' 
-    printComment "$CMDLINE_PATH"
 
-    sudo sh -c "echo \"$VIDEO_MODES \$(head -n1 $CMDLINE_PATH)\" > $CMDLINE_PATH"
-
-    printSeparator
-    grep "$VIDEO_MODES" "$CMDLINE_PATH"
-    printSeparator
-    printComment 'Video modes added.'
-    printComment 'A reboot is required for changes to take effect.' 'warning'
-
-    writeSetupConfigOption 'addedPiVideoModes' 'true'
-    printSeparator
+    return 0
   fi
+
+  printComment 'Adding video modes to cmdline.txt file at:'
+  printComment "$CMDLINE_PATH"
+
+  if ! sudo sh -c "echo \"$VIDEO_MODES \$(head -n1 $CMDLINE_PATH)\" > $CMDLINE_PATH"; then
+    printComment 'Failed to add video modes to cmdline.txt.' 'error'
+
+    return 1
+  fi
+
+  printSeparator
+  grep "$VIDEO_MODES" "$CMDLINE_PATH"
+  printSeparator
+  printComment 'Video modes added.'
+  printComment 'A reboot is required for changes to take effect.' 'warning'
+
+  writeSetupConfigOption 'addedPiVideoModes' 'true'
+  printSeparator
 }
 
 #-------------------------------------------------------------------------------
@@ -137,6 +155,9 @@ checkPiConfigLocation () {
 # Returns 1 if the host is not a Raspberry Pi 3, 4 or 5, without changing
 # "config.txt" or writing the setup config option.
 #
+# If "config.txt" can't be written, the function prints an error and returns 1,
+# without writing the setup config option.
+#
 # N.B.
 # The function checks for existing entries using "grep -Fxq" to search for a
 # fixed string (-F), not a regex, and an exact match (-x) to avoid duplicates.
@@ -162,6 +183,7 @@ disablePiLedsInConfigTxt () {
   local DISABLE_ETH_LED1='dtparam=eth_led1='
   local DISABLE_ACT_LED='dtparam=act_led_trigger=none'
   local DISABLE_PWR_LED='dtparam=pwr_led_activelow=off'
+  local STATUS=0
 
   if [ -z "$CONFIG_PATH" ]; then
     printComment 'config.txt file not found in /boot/firmware or /boot.' 'error'
@@ -183,11 +205,14 @@ disablePiLedsInConfigTxt () {
 
   if grep -Fxq "$DISABLE_ETH_LED0" "$CONFIG_PATH"; then
     printComment 'LEDs are already disabled in config.txt.' 'warning'
-  else
-    printComment 'Disabling LEDs in config.txt file at:' 
-    printComment "$CONFIG_PATH"
 
-    cat <<EOF >> "$CONFIG_PATH"
+    return 0
+  fi
+
+  printComment 'Disabling LEDs in config.txt file at:'
+  printComment "$CONFIG_PATH"
+
+  cat <<EOF >> "$CONFIG_PATH" || STATUS="$?"
 $COMMENT
 $DISABLE_ETH_LED0
 $DISABLE_ETH_LED1
@@ -195,18 +220,23 @@ $DISABLE_ACT_LED
 $DISABLE_PWR_LED
 EOF
 
-    printSeparator
-    grep "$DISABLE_ETH_LED0" "$CONFIG_PATH"
-    grep "$DISABLE_ETH_LED1" "$CONFIG_PATH"
-    grep "$DISABLE_ACT_LED" "$CONFIG_PATH"
-    grep "$DISABLE_PWR_LED" "$CONFIG_PATH"
-    printSeparator
-    printComment 'LEDs disabled in config.txt file.'
-    printComment 'A reboot is required for changes to take effect.' 'warning'
+  if [ "$STATUS" -ne 0 ]; then
+    printComment 'Failed to disable LEDs in config.txt.' 'error'
 
-    writeSetupConfigOption 'disabledPiLeds' 'true'
-    printSeparator
+    return 1
   fi
+
+  printSeparator
+  grep "$DISABLE_ETH_LED0" "$CONFIG_PATH"
+  grep "$DISABLE_ETH_LED1" "$CONFIG_PATH"
+  grep "$DISABLE_ACT_LED" "$CONFIG_PATH"
+  grep "$DISABLE_PWR_LED" "$CONFIG_PATH"
+  printSeparator
+  printComment 'LEDs disabled in config.txt file.'
+  printComment 'A reboot is required for changes to take effect.' 'warning'
+
+  writeSetupConfigOption 'disabledPiLeds' 'true'
+  printSeparator
 }
 
 #-------------------------------------------------------------------------------
@@ -217,12 +247,16 @@ EOF
 # in "/boot", adjusting "$CONFIG_PATH" accordingly. If the "config.txt" file 
 # does not exist in either location, it prints an error and returns 1.
 #
+# If "config.txt" can't be written, the function prints an error and returns 1,
+# without writing the setup config option.
+#
 # N.B.
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
 disablePiWifiInConfigTxt () {
   local CONFIG_PATH="$(checkPiConfigLocation)"
   local DISABLE_WIFI='dtoverlay=disable-wifi'
+  local STATUS=0
 
   if [ -z "$CONFIG_PATH" ]; then
     printComment 'config.txt file not found in /boot/firmware or /boot.' 'error'
@@ -232,24 +266,32 @@ disablePiWifiInConfigTxt () {
 
   if grep -Fxq "$DISABLE_WIFI" "$CONFIG_PATH"; then
     printComment 'WiFi is already disabled in config.txt.' 'warning'
-  else
-    printComment 'Disabling WiFi in config.txt file at:' 
-    printComment "$CONFIG_PATH"
 
-    cat <<EOF >> "$CONFIG_PATH"
+    return 0
+  fi
+
+  printComment 'Disabling WiFi in config.txt file at:'
+  printComment "$CONFIG_PATH"
+
+  cat <<EOF >> "$CONFIG_PATH" || STATUS="$?"
 # Disable WiFi
 $DISABLE_WIFI
 EOF
 
-    printSeparator
-    grep "$DISABLE_WIFI" "$CONFIG_PATH"
-    printSeparator
-    printComment 'WiFi disabled in config.txt file'
-    printComment 'A reboot is required for changes to take effect.' 'warning'
-  
-    writeSetupConfigOption 'disabledPiWifi' 'true'
-    printSeparator
+  if [ "$STATUS" -ne 0 ]; then
+    printComment 'Failed to disable WiFi in config.txt.' 'error'
+
+    return 1
   fi
+
+  printSeparator
+  grep "$DISABLE_WIFI" "$CONFIG_PATH"
+  printSeparator
+  printComment 'WiFi disabled in config.txt file'
+  printComment 'A reboot is required for changes to take effect.' 'warning'
+
+  writeSetupConfigOption 'disabledPiWifi' 'true'
+  printSeparator
 }
 
 #-------------------------------------------------------------------------------
@@ -266,6 +308,9 @@ EOF
 # Returns 1 if the host is not a Raspberry Pi 5 or newer, without changing
 # "config.txt" or writing the setup config option.
 #
+# If "config.txt" can't be written, the function prints an error and returns 1,
+# without writing the setup config option.
+#
 # N.B.
 # The function checks for existing entries using "grep -Fxq" to search for a
 # fixed string (-F), not a regex, and an exact match (-x) to avoid duplicates.
@@ -278,6 +323,7 @@ enablePiPcieGen3InConfigTxt () {
   local CONFIG_PATH="$(checkPiConfigLocation)"
   local ENABLE_PCIE1='dtparam=pciex1'
   local ENABLE_PCIE1_GEN3='dtparam=pciex1_gen=3'
+  local STATUS=0
 
   if [ -z "$CONFIG_PATH" ]; then
     printComment 'config.txt file not found in /boot/firmware or /boot.' 'error'
@@ -293,25 +339,33 @@ enablePiPcieGen3InConfigTxt () {
 
   if grep -Fxq "$ENABLE_PCIE1_GEN3" "$CONFIG_PATH"; then
     printComment 'PCIe Gen 3 is already enabled in config.txt.' 'warning'
-  else
-    printComment 'Enabling PCIe Gen 3 in config.txt file at:' 
-    printComment "$CONFIG_PATH"
 
-    cat <<EOF >> "$CONFIG_PATH"
+    return 0
+  fi
+
+  printComment 'Enabling PCIe Gen 3 in config.txt file at:'
+  printComment "$CONFIG_PATH"
+
+  cat <<EOF >> "$CONFIG_PATH" || STATUS="$?"
 # Enable PCIe Gen 3
 $ENABLE_PCIE1
 $ENABLE_PCIE1_GEN3
 EOF
 
-    printSeparator
-    grep "$ENABLE_PCIE1_GEN3" "$CONFIG_PATH"
-    printSeparator
-    printComment 'PCIe Gen 3 enabled in config.txt file.'
-    printComment 'A reboot is required for changes to take effect.' 'warning'
+  if [ "$STATUS" -ne 0 ]; then
+    printComment 'Failed to enable PCIe Gen 3 in config.txt.' 'error'
 
-    writeSetupConfigOption 'enabledPiPcieGen3' 'true'
-    printSeparator
+    return 1
   fi
+
+  printSeparator
+  grep "$ENABLE_PCIE1_GEN3" "$CONFIG_PATH"
+  printSeparator
+  printComment 'PCIe Gen 3 enabled in config.txt file.'
+  printComment 'A reboot is required for changes to take effect.' 'warning'
+
+  writeSetupConfigOption 'enabledPiPcieGen3' 'true'
+  printSeparator
 }
 
 #-------------------------------------------------------------------------------
@@ -342,13 +396,28 @@ rebootSystem () {
 # updated temporary config is then applied using the "rpi-eeprom-config --apply"
 # command.
 #
+# If the current config can't be read, the update isn't in the temporary
+# config, or "rpi-eeprom-config --apply" fails, the function prints an error and
+# returns 1, without writing the setup config option. The temporary file is
+# removed either way.
+#
 # N.B.
+# The function stops if "rpi-eeprom-config --out" fails, as the temporary
+# config would otherwise hold only "POWER_OFF_ON_HALT=1", and that file would be
+# applied in place of the current config.
+#
 # A reboot is required for changes to take effect.
 #-------------------------------------------------------------------------------
 setPiPowerOffOnHalt () {
   local TEMP_FILE_PATH="$(mktemp)"
+  local STATUS=0
 
-  rpi-eeprom-config --out "$TEMP_FILE_PATH"
+  if ! rpi-eeprom-config --out "$TEMP_FILE_PATH"; then
+    printComment 'Failed to read the current EEPROM config.' 'error'
+    rm "$TEMP_FILE_PATH"
+
+    return 1
+  fi
 
   if grep -q 'POWER_OFF_ON_HALT=0' "$TEMP_FILE_PATH"; then
     printComment 'Setting POWER_OFF_ON_HALT to 1 in EEPROM config.'
@@ -365,18 +434,25 @@ EOF
   fi
 
   if grep -q 'POWER_OFF_ON_HALT=1' "$TEMP_FILE_PATH"; then
-    rpi-eeprom-config --apply "$TEMP_FILE_PATH"
-    printComment "POWER_OFF_ON_HALT set to 1 in EEPROM config."
-
-    printComment 'A reboot is required for changes to take effect.' 'warning'
-
-    writeSetupConfigOption 'setPiPowerOffOnHalt' 'true'
-    printSeparator
+    rpi-eeprom-config --apply "$TEMP_FILE_PATH" || STATUS="$?"
   else
-    printComment 'Failed to update POWER_OFF_ON_HALT.' 'error'
+    STATUS=1
   fi
 
   rm "$TEMP_FILE_PATH"
+
+  if [ "$STATUS" -ne 0 ]; then
+    printComment 'Failed to update POWER_OFF_ON_HALT.' 'error'
+
+    return 1
+  fi
+
+  printComment "POWER_OFF_ON_HALT set to 1 in EEPROM config."
+
+  printComment 'A reboot is required for changes to take effect.' 'warning'
+
+  writeSetupConfigOption 'setPiPowerOffOnHalt' 'true'
+  printSeparator
 }
 
 #-------------------------------------------------------------------------------
