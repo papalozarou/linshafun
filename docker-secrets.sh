@@ -5,23 +5,6 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Creates a docker secrets directory at "$DKR_SECRETS_DIR_PATH", first checking 
-# to see if it already exists. If it exists, do nothing. If it doesn't create it.
-#-------------------------------------------------------------------------------
-checkForAndCreateDockerSecretsDir () {
-  printComment 'Checking to see if a docker secrets directory exists…'
-
-  if checkForFileOrDirectory "$DKR_SECRETS_DIR_PATH"; then
-    printComment 'The docker secrets directory already exists.' 'warning'
-  else
-    printComment 'Creating a docker secrets directory at:'
-    printComment "$DKR_SECRETS_DIR_PATH"
-    createDirectory "$DKR_SECRETS_DIR_PATH"
-    setPermissions '600' "$DKR_SECRETS_DIR_PATH"
-  fi
-}
-
-#-------------------------------------------------------------------------------
 # Creates a docker secret. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" - the secret file name, either including or excluding the 

@@ -28,48 +28,6 @@ COMMENT_LOG_PATH=
 COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
 
 #-------------------------------------------------------------------------------
-# Creates a user's log directory if it does not exist, then gives it to the
-# user. Takes three arguments, two of which are mandatory:
-#
-# 1. "${1:?}" – the log directory path, i.e. "$USER_LOG_DIR_PATH";
-# 2. "${2:?}" – the owner; and
-# 3. "${3:-$2}" – the group, defaulting to the owner.
-#
-# A script run as root creates directories owned by root. Creating the
-# directory here, and giving it to the user, lets the user read the logs that
-# scripts write inside it.
-#
-# An existing directory is left unchanged, so other logs inside it keep their
-# owner and permissions.
-#
-# The function returns 0 if the directory already exists, otherwise the exit
-# status of "setOwner".
-#
-# N.B.
-# "700" lets only the owner, and root, open the directory.
-#
-# Only the directory at "$1" is given to the user. Any missing parent
-# directories are also created by "mkdir -p", but stay owned by root.
-#
-# The group defaults to the owner name, which only works on systems that
-# create a group for each user. Pass the group on systems that do not, i.e.
-# "users" on Synology DSM.
-#-------------------------------------------------------------------------------
-createUserLogDir () {
-  local LOG_DIR_PATH="${1:?}"
-  local USER="${2:?}"
-  local GROUP="${3:-$USER}"
-
-  if checkForFileOrDirectory "$LOG_DIR_PATH"; then
-    return 0
-  fi
-
-  createDirectory "$LOG_DIR_PATH"
-  setPermissions '700' "$LOG_DIR_PATH"
-  setOwner "$USER" "$LOG_DIR_PATH" "$GROUP"
-}
-
-#-------------------------------------------------------------------------------
 # Initialises comment logging to a file for the current script run. Takes five
 # arguments, three of which are mandatory:
 #
@@ -89,10 +47,11 @@ createUserLogDir () {
 # 5. creates the log file; and
 # 6. sets the permissions and ownership for the log directory and its files.
 #
-# The parent of the log directory is created first as otherwise it would be
-# created as root and the user would not be able to open it. The owner is set
-# last, so the new log and every archived log belong to the user. "700" keeps
-# the logs private, as they list file names and paths.
+# The parent of the log directory is created first, with "700" and the log
+# user as owner, as "createDirectory" doesn't create missing parent
+# directories, and a directory created as root can't be opened by the user.
+# The owner is set last, so the new log and every archived log belong to the
+# user. "700" keeps the logs private, as they list file names and paths.
 #
 # N.B.
 # "COMMENT_LOG_PATH" is set after creating the log directory, as "printLogLine"
@@ -110,11 +69,8 @@ initialiseCommentLogs () {
   local LOG_GROUP="${4:-$LOG_USER}"
   local LOG_MAX_AGE_DAYS="${5:-7}"
 
-  createUserLogDir "$(dirname "$LOG_DIR_PATH")" "$LOG_USER" "$LOG_GROUP"
-
-  if ! checkForFileOrDirectory "$LOG_DIR_PATH"; then
-    createDirectory "$LOG_DIR_PATH"
-  fi
+  createDirectory "$(dirname "$LOG_DIR_PATH")" '700' "$LOG_USER" "$LOG_GROUP"
+  createDirectory "$LOG_DIR_PATH"
 
   COMMENT_LOG_PATH="$LOG_DIR_PATH/$LOG_FILE_NAME"
 

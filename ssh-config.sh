@@ -43,24 +43,6 @@ addHostToSshConfig () {
 }
 
 #-------------------------------------------------------------------------------
-# Checks to see if the "~/.ssh" directory exist and creates it if not.
-#-------------------------------------------------------------------------------
-checkForAndCreateSshDir () {
-  printComment 'Checking to see if an "~/.ssh" directory exists…'
-
-  if checkForFileOrDirectory "$SSH_DIR_PATH"; then
-    printComment 'The "~/.ssh" directory already exists.'
-  else
-    printComment 'Creating an "~/.ssh" directory at:'
-    printComment "$SSH_DIR_PATH"
-    createDirectory "$SSH_DIR_PATH"
-
-    setPermissions 700 "$SSH_DIR_PATH"
-    setOwner "$SUDO_USER" "$SSH_DIR_PATH"
-  fi
-}
-
-#-------------------------------------------------------------------------------
 # Checks to see if the "~/.ssh/config" file exist and creates it if not, adding
 # a basic config to the created file.
 #-------------------------------------------------------------------------------

@@ -4,6 +4,7 @@
 
 ### `comments-logs.sh`
 
+- `createUserLogDir` is removed. `initialiseCommentLogs` creates the log directory's parent with `createDirectory`, with mode "700" and the log user as owner.
 - `initialiseCommentLogs` takes the log user as its mandatory third argument and an optional log group as its fourth. The maximum age moves to the fifth.
 - `printCheckResult` is removed. Callers print "Checking …" with `printComment` and branch with `if checkFoo; then`. Previously it printed "Check returned true." or "Check returned false." and exited the script on any other value.
 - `printComment` prints warnings and errors to stderr, not stdout. Regular comments stay on stdout. This stops them being captured with the output of functions called using "$(…)".
@@ -11,7 +12,8 @@
 
 ### `crontab.sh`
 
-- `addScriptToCron` and `checkForAndCreateUserLogDir` no longer print "Check returned true." or "Check returned false." after "Checking to see if …".
+- `addScriptToCron` no longer prints "Check returned true." or "Check returned false." after "Checking to see if …".
+- `checkForAndCreateUserLogDir` is removed. Use `createDirectory "$USER_LOG_DIR_PATH" '700' "$SUDO_USER"`.
 
 ### `docker-env-variables.sh`
 
@@ -22,7 +24,7 @@
 
 ### `docker-secrets.sh`
 
-- `checkForAndCreateDockerSecretsDir` prints "Creating a docker secrets directory at:" and the path when it creates the directory, instead of "Check returned false.".
+- `checkForAndCreateDockerSecretsDir` is removed. Use `createDirectory "$DKR_SECRETS_DIR_PATH" '600'`.
 - `createDockerSecretFile` replaces an existing secret file instead of appending to it, writes the value with `printf` so values such as `-n` are written as given, lists the directory the file is in, and returns 1 with an error if the write fails. Previously a rerun gave a two-line secret, and a failed write reported success.
 
 ### `files-directories.sh`
@@ -30,6 +32,8 @@
 - `checkAndCreateOrAskToReplaceFileOrDirectory` no longer prints "Check returned true." or "Check returned false.".
 - `checkForFileOrDirectory` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createFiles` and `removeFileOrDirectory` return 1 if any file or directory fails, after carrying on with the rest. The copy and create functions print an error naming the file, and no longer print "File copied …" or "File created." after a failure. Previously all four returned 0.
+- `createDirectories` creates each directory path before its subdirectories.
+- `createDirectory` takes optional permissions, owner and group as its second to fourth arguments, and sets them on the new directory only. If the directory exists, it returns 0 and prints nothing. It no longer creates missing parent directories: it returns 1 with an error if the parent doesn't exist, or if `mkdir`, `chmod` or `chown` fails. Previously it ran `mkdir -p`.
 - `renameFileOrDirectory` prints an error if `mv` fails. It still returns 1.
 
 ### `host-env-variables.sh`
@@ -71,6 +75,7 @@
 ### `setup-config.sh`
 
 - `checkForAndCreateSetupConfigFileAndDir` no longer prints "Check returned …" after each "Checking …" line.
+- `createSetupConfigDirectory` is removed. `checkForAndCreateSetupConfigFileAndDir` calls `createDirectory` with `SUDO_USER` as owner.
 - `readSetupConfigValue` matches the whole key, so `ssh` no longer matches `sshPort`. Values containing spaces or wildcards are returned as written. It no longer runs `set -f` in the calling script.
 - `writeSetupConfigOption` no longer has a "Something went wrong" branch that exited the script. It couldn't be reached, as the key check only ever returned found or not found.
 
@@ -80,7 +85,8 @@
 
 ### `ssh-config.sh`
 
-- `checkForAndCreateSshConfig` and `checkForAndCreateSshDir` no longer print "Check returned true." or "Check returned false.".
+- `checkForAndCreateSshConfig` no longer prints "Check returned true." or "Check returned false.".
+- `checkForAndCreateSshDir` is removed. Use `createDirectory "$SSH_DIR_PATH" '700' "$SUDO_USER"`.
 
 ### `ssh-keys.sh`
 

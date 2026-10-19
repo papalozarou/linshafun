@@ -62,7 +62,7 @@ checkForAndCreateSetupConfigFileAndDir () {
   elif ! checkForFileOrDirectory "$SETUP_CONF_DIR_PATH"; then
     printComment 'The setup config file and directory do not exist.' 'warning'
 
-    createSetupConfigDirectory
+    createDirectory "$SETUP_CONF_DIR_PATH" '' "$SUDO_USER"
     createSetupConfigFile
   else
     printComment 'The setup config file does not exist.' 'warning'
@@ -71,14 +71,6 @@ checkForAndCreateSetupConfigFileAndDir () {
   fi
 
   listDirectories "$SETUP_CONF_DIR_PATH"
-}
-
-#-------------------------------------------------------------------------------
-# Creates the setup config directory and sets the correct ownership.
-#-------------------------------------------------------------------------------
-createSetupConfigDirectory () {
-  createDirectory "$SETUP_CONF_DIR_PATH"
-  setOwner "$SUDO_USER" "$SETUP_CONF_DIR_PATH"
 }
 
 #-------------------------------------------------------------------------------

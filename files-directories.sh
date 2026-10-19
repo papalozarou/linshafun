@@ -155,7 +155,9 @@ copyAndRemovePostfixFromFiles () {
 # 2. "$2" - an optional subdirectory name, or multiple subdirectory names
 #    separated by spaces.
 #
-# All directories, and parent directories if required, are created.
+# Each directory path is created before its subdirectories. Directories above
+# the given directory paths are not created, as "createDirectory" doesn't create
+# missing parent directories.
 # 
 # N.B.
 # "$DIR_PATH(S)" and "$SUB_DIR_NAME(S)" are not quoted as we explicitly want 
@@ -175,6 +177,8 @@ createDirectories () {
   else
     for DIR_PATH in $DIR_PATHS; do
       PARENT_DIR="$DIR_PATH"
+      createDirectory "$PARENT_DIR"
+
       for SUB_DIR_NAME in $SUB_DIR_NAMES; do
         SUB_DIR_PATH="$PARENT_DIR/$SUB_DIR_NAME"
 
@@ -186,17 +190,71 @@ createDirectories () {
 }
 
 #-------------------------------------------------------------------------------
-# Creates a directory. Takes one mandatory argument:
-# 
-# 1. "${1:?}" - the directory to create, including directory path.
-# 
-# Parent directories are created if required.
+# Creates a directory, then sets its permissions and ownership if given. Takes
+# four arguments, one of which is mandatory:
+#
+# 1. "${1:?}" – the directory to create, including directory path;
+# 2. "${2:-}" – the permissions in numeric format, e.g. "700", optional;
+# 3. "${3:-}" – the owner, optional; and
+# 4. "${4:-$3}" – the group, defaulting to the owner.
+#
+# If the directory already exists, the function returns 0, prints nothing and
+# changes nothing, so it can be called on every run. An existing directory with
+# a different owner or permissions is left as it is.
+#
+# If the parent directory doesn't exist, the function prints an error and
+# returns 1. If "mkdir", "chmod" or "chown" fails, the function prints an error
+# and returns 1.
+#
+# N.B.
+# Missing parent directories are never created, i.e. there is no "mkdir -p",
+# so a script run as root can't create a directory owned by root by accident.
+# Create each level in order, parent first, or use "createDirectories".
+#
+# The permissions and owner are set on the new directory only. To set an owner
+# without setting permissions, pass "" as the second argument.
+#
+# The group defaults to the owner name, which only works on systems that
+# create a group for each user. Pass the group on systems that do not, e.g.
+# "users" on Synology DSM.
 #-------------------------------------------------------------------------------
 createDirectory () {
   local DIR_PATH="${1:?}"
+  local MODE="${2:-}"
+  local OWNER="${3:-}"
+  local GROUP="${4:-$3}"
+  local PARENT_DIR_PATH="$(dirname "$DIR_PATH")"
+
+  if [ -d "$DIR_PATH" ]; then
+    return 0
+  fi
+
+  if [ ! -d "$PARENT_DIR_PATH" ]; then
+    printComment "Failed to create the directory at $DIR_PATH, as its parent directory $PARENT_DIR_PATH does not exist." 'error'
+
+    return 1
+  fi
+
   printComment 'Creating directory at:'
   printComment "$DIR_PATH"
-  mkdir -p "$DIR_PATH"
+
+  if ! mkdir "$DIR_PATH"; then
+    printComment "Failed to create the directory at $DIR_PATH." 'error'
+
+    return 1
+  fi
+
+  if [ -n "$MODE" ] && ! chmod "$MODE" "$DIR_PATH"; then
+    printComment "Failed to set permissions of $DIR_PATH to $MODE." 'error'
+
+    return 1
+  fi
+
+  if [ -n "$OWNER" ] && ! chown "$OWNER:$GROUP" "$DIR_PATH"; then
+    printComment "Failed to set ownership of $DIR_PATH to $OWNER:$GROUP." 'error'
+
+    return 1
+  fi
 }
 
 #-------------------------------------------------------------------------------

@@ -62,24 +62,6 @@ addScriptToCron () {
 }
 
 #-------------------------------------------------------------------------------
-# # Checks to see if the "~/log" directory exist and creates it if not.
-#-------------------------------------------------------------------------------
-checkForAndCreateUserLogDir () {
-  printComment 'Checking to see if a "~/log" directory exists…'
-
-  if checkForFileOrDirectory "$USER_LOG_DIR_PATH"; then
-    printComment 'The "~/log" directory already exists.' 'warning'
-  else
-    printComment 'Creating an "~/log" directory at:'
-    printComment "$USER_LOG_DIR_PATH"
-    createDirectory "$USER_LOG_DIR_PATH"
-
-    setPermissions 700 "$USER_LOG_DIR_PATH"
-    setOwner "$SUDO_USER" "$USER_LOG_DIR_PATH"
-  fi
-}
-
-#-------------------------------------------------------------------------------
 # Gets the script filename, then generates the snippet name, for the cronjob. 
 # These are placed in global variables, "$CRON_SCRIPT_NAME",
 # "$CRON_SNIPPET_NAME" and "$CRON_SCRIPT_PATH", for use in other functions.
