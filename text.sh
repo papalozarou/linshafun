@@ -130,10 +130,10 @@ checkStringContainsSubstring () {
 # The function allows for tabs or spaces before the commented out line and
 # preserves indentations.
 # 
-# The "sed" command uses the control character "\001" as its separator, not
-# "/", so partials and comment characters can contain "/" or "|". Regular
-# expression characters, such as "." or "*", are not escaped and keep their
-# regular expression meaning.
+# The "sed" command uses the control character "\001" as its separator.
+# Partials are escaped so that "\", "[", ".", "*", "^" and "$" are matched
+# literally, i.e. "[main]" only matches "[main]", not a line starting with "m",
+# "a", "i" or "n".
 # 
 # N.B.
 # The "if" statements do not use brackets because the exit status of the "grep"
@@ -147,18 +147,19 @@ commentInLine () {
   local PARTIAL="${2:?}"
   local CHAR="${3:-#}"
   local SEPARATOR="$(printf '\001')"
+  local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed 's/[[\.*^$]/\\&/g')"
 
-  if grep -q "^[[:space:]]*${PARTIAL}" "$FILE_PATH"; then
+  if grep -q "^[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment 'The line starting with:'
     printComment "$PARTIAL"
     printComment 'is already uncommented in:'
     printComment "$FILE_PATH."
-  elif grep -q "^[[:space:]]*${CHAR}[[:space:]]*${PARTIAL}" "$FILE_PATH"; then
+  elif grep -q "^[[:space:]]*${CHAR}[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment 'Uncommenting line starting with:'
     printComment "$CHAR $PARTIAL"
     printComment 'in:'
     printComment "$FILE_PATH"
-    sed -i "\\${SEPARATOR}^[[:space:]]*${CHAR}[[:space:]]*${PARTIAL}${SEPARATOR}s${SEPARATOR}^\([[:space:]]*\)${CHAR}[[:space:]]*${SEPARATOR}\1${SEPARATOR}" "$FILE_PATH"
+    sed -i "\\${SEPARATOR}^[[:space:]]*${CHAR}[[:space:]]*${ESCAPED_PARTIAL}${SEPARATOR}s${SEPARATOR}^\([[:space:]]*\)${CHAR}[[:space:]]*${SEPARATOR}\1${SEPARATOR}" "$FILE_PATH"
   else
     printComment 'A line starting with:' 'error'
     printComment "$PARTIAL" 'error'
@@ -181,10 +182,10 @@ commentInLine () {
 # The function allows for tabs or spaces before the line and preserves 
 # indentations.
 # 
-# The "sed" command uses the control character "\001" as its separator, not
-# "/", so partials and comment characters can contain "/" or "|". Regular
-# expression characters, such as "." or "*", are not escaped and keep their
-# regular expression meaning.
+# The "sed" command uses the control character "\001" as its separator.
+# Partials are escaped so that "\", "[", ".", "*", "^" and "$" are matched
+# literally, i.e. "[main]" only matches "[main]", not a line starting with "m",
+# "a", "i" or "n".
 # 
 # N.B.
 # The "if" statements do not use brackets because the exit status of the "grep"
@@ -198,18 +199,19 @@ commentOutLine () {
   local PARTIAL="${2:?}"
   local CHAR="${3:-#}"
   local SEPARATOR="$(printf '\001')"
+  local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed 's/[[\.*^$]/\\&/g')"
 
-  if grep -q "^[[:space:]]*${CHAR}[[:space:]]*${PARTIAL}" "$FILE_PATH"; then
+  if grep -q "^[[:space:]]*${CHAR}[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment 'The line starting with:'
     printComment "$PARTIAL"
     printComment 'is already commented out in:'
     printComment "$FILE_PATH."
-  elif grep -q "^[[:space:]]*${PARTIAL}" "$FILE_PATH"; then
+  elif grep -q "^[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment 'Commenting out line starting with:'
     printComment "$PARTIAL"
     printComment 'in:'
     printComment "$FILE_PATH"
-    sed -i "\\${SEPARATOR}^[[:space:]]*${PARTIAL}${SEPARATOR}s${SEPARATOR}^\([[:space:]]*\)${SEPARATOR}\1${CHAR} ${SEPARATOR}" "$FILE_PATH"
+    sed -i "\\${SEPARATOR}^[[:space:]]*${ESCAPED_PARTIAL}${SEPARATOR}s${SEPARATOR}^\([[:space:]]*\)${SEPARATOR}\1${CHAR} ${SEPARATOR}" "$FILE_PATH"
   else
     printComment 'A line starting with:' 'error'
     printComment "$PARTIAL" 'error'
