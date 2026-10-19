@@ -25,7 +25,7 @@
 
 ### `host-information.sh`
 
-- `checkIfRaspberryPi`, `checkIfRunAsUser`, `checkIfRunWithSudo`, `checkIfSystemRebooted` and `compareOsVersion` return 0 or 1 and print nothing. Previously they printed `true` or `false`, so callers must use `if checkIfRaspberryPi; then` instead of comparing `"$(checkIfRaspberryPi)"`.
+- `checkIfRaspberryPi`, `checkIfRunAsUser`, `checkIfRunWithSudo`, `checkIfSystemRebooted` and `compareOsVersion` return 0 for true and non-zero for false, and print nothing. `checkIfRaspberryPi` returns 2 when `/proc/device-tree/model` doesn't exist and `checkIfSystemRebooted` returns 2 when the timeframe isn't a number; otherwise they return 0 or 1. Previously they printed `true` or `false`, so callers must use `if checkIfRaspberryPi; then` instead of comparing `"$(checkIfRaspberryPi)"`.
 
 ### `host-initialisation.sh`
 

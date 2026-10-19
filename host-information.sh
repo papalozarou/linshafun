@@ -5,22 +5,18 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Checks if the host machine is a Raspberry Pi. Returns 0 if it is, 1 if it is
-# not.
+# Checks if the host machine is a Raspberry Pi. Returns 0 if it is, non-zero if
+# it is not.
 # 
 # N.B.
 # The check is done by looking for "Raspberry Pi" in "/proc/device-tree/model",
 # using "grep -qi" to make the search quiet (q) and case insensitive (i).
 #
 # If the file doesn't exist (e.g. not a Raspberry Pi), any error output is
-# redirected to "/dev/null".
+# redirected to "/dev/null" and the function returns 2.
 #-------------------------------------------------------------------------------
 checkIfRaspberryPi () {
-  if grep -qi 'raspberry pi' /proc/device-tree/model 2>/dev/null; then
-    return 0
-  else
-    return 1
-  fi
+  grep -qi 'raspberry pi' /proc/device-tree/model 2>/dev/null
 }
 
 #-------------------------------------------------------------------------------
@@ -33,11 +29,7 @@ checkIfRaspberryPi () {
 checkIfRunAsUser () {
   local USER_NAME="${1:-root}"
 
-  if [ "$(id -un)" = "$USER_NAME" ]; then
-    return 0
-  else
-    return 1
-  fi
+  [ "$(id -un)" = "$USER_NAME" ]
 }
 
 #-------------------------------------------------------------------------------
@@ -51,11 +43,7 @@ checkIfRunAsUser () {
 # prove the script is running as root.
 #-------------------------------------------------------------------------------
 checkIfRunWithSudo () {
-  if [ "$(id -u)" -eq 0 ] && [ -n "$SUDO_USER" ]; then
-    return 0
-  else
-    return 1
-  fi
+  [ "$(id -u)" -eq 0 ] && [ -n "$SUDO_USER" ]
 }
 
 #-------------------------------------------------------------------------------
@@ -65,7 +53,8 @@ checkIfRunWithSudo () {
 # 1. "${1:?}" – the time in seconds within which a reboot is considered recent, 
 #    defaulting to 60 seconds.
 #
-# Returns 0 if the system was rebooted within the given timeframe and 1 if not.
+# Returns 0 if the system was rebooted within the given timeframe, 1 if not, and
+# 2 if the timeframe is not a number.
 #-------------------------------------------------------------------------------
 checkIfSystemRebooted () {
   local REBOOT_TIMEFRAME="${1:-60}"
@@ -73,11 +62,7 @@ checkIfSystemRebooted () {
   local LAST_BOOT="$(date -d "$(who -b | awk '{print $3" "$4}')" +%s 2>/dev/null)"
   local TIME_DIFF=$((CURRENT_TIME - LAST_BOOT))
 
-  if [ "$TIME_DIFF" -le "$REBOOT_TIMEFRAME" ]; then
-    return 0
-  else
-    return 1
-  fi
+  [ "$TIME_DIFF" -le "$REBOOT_TIMEFRAME" ]
 }
 
 #-------------------------------------------------------------------------------
@@ -94,16 +79,16 @@ checkIfSystemRebooted () {
 # current OS are stripped to their major version number. As per:
 #
 # - https://unix.stackexchange.com/a/569768
+#
+# The test is negated with "!" rather than written as "-le", so a version that
+# is not a number still returns 0, as "-gt" fails with status 2 and "!" turns
+# any failure into 0.
 #-------------------------------------------------------------------------------
 compareOsVersion () {
   local COMPARISON_OS="$(echo "${1:?}" | cut -d'.' -f1)"
   local CURRENT_OS="$(getOsVersion | cut -d'.' -f1)"
 
-  if [ "$CURRENT_OS" -gt "$COMPARISON_OS" ] ; then
-    return 1
-  else
-    return 0
-  fi
+  ! [ "$CURRENT_OS" -gt "$COMPARISON_OS" ]
 }
 
 #-------------------------------------------------------------------------------

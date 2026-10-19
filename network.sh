@@ -23,11 +23,7 @@ checkAgainstExistingPortNumber () {
   local SERVICE="${2:?}Port"
   local EXISTING_PORT="$(readSetupConfigValue "$SERVICE")"
 
-  if [ "$COMPARISON_PORT" = "$EXISTING_PORT" ]; then
-    return 0
-  else 
-    return 1
-  fi
+  [ "$COMPARISON_PORT" = "$EXISTING_PORT" ]
 }
 
 #-------------------------------------------------------------------------------
