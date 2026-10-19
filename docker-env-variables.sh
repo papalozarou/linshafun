@@ -75,9 +75,13 @@ checkAndSetDockerEnvVariables () {
   shift
 
   for ENV_VAR in "$@"; do
-    local ENV_VAR_TF="$(checkIfDockerEnvVariableSet "$ENV_FILE_PATH" "$ENV_VAR")"
+    printComment "Checking to see if $ENV_VAR is set…"
 
-    printCheckResult "to see if $ENV_VAR is set" "$ENV_VAR_TF"
+    if checkIfDockerEnvVariableSet "$ENV_FILE_PATH" "$ENV_VAR"; then
+      printComment "$ENV_VAR is set."
+    else
+      printComment "$ENV_VAR is not set." 'warning'
+    fi
 
     changeDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR"
   done
@@ -91,7 +95,7 @@ checkAndSetDockerEnvVariables () {
 #    defaulting to "$DKR_ENV_FILE_PATH"; and
 # 2. "${2:?}" – the required variable.
 # 
-# Returns true if the variable is set, returns false if it is unset or is set to
+# Returns 0 if the variable is set, returns 1 if it is unset or is set to
 # "${DKR_ENV: $VAR}".
 #-------------------------------------------------------------------------------
 checkIfDockerEnvVariableSet () {
@@ -99,11 +103,7 @@ checkIfDockerEnvVariableSet () {
   local ENV_VAR="${2:?}"
   local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR")"
 
-  if [ -z "$ENV_VALUE" ] || [ "$ENV_VALUE" = "\${DKR_ENV: \$$ENV_VAR}" ]; then
-    echo false
-  else
-    echo true
-  fi
+  [ -n "$ENV_VALUE" ] && [ "$ENV_VALUE" != "\${DKR_ENV: \$$ENV_VAR}" ]
 }
 
 #-------------------------------------------------------------------------------
@@ -139,11 +139,9 @@ compareAndUpdateDockerEnvVariables () {
 
     eval "local ENV_COMPARISON=\${$ENV_VAR}"
 
-    local ENV_NEWER_TF="$(compareDockerEnvVariableWithValue "$ENV_FILE_PATH" "$ENV_VAR" "$ENV_COMPARISON")"
-
     printComment "Comparing the env variable for $ENV_VAR with the comparison value…"
 
-    if [ "$ENV_NEWER_TF" = true ]; then
+    if compareDockerEnvVariableWithValue "$ENV_FILE_PATH" "$ENV_VAR" "$ENV_COMPARISON"; then
       printComment "The current value of $ENV_VAR is the same as the comparison value:"
       printSeparator
       printComment "Environment file value: $ENV_VALUE"
@@ -171,8 +169,7 @@ compareAndUpdateDockerEnvVariables () {
 # 2. "${2:?}" - an environment variable to check; and
 # 3. "${3:?}" - a value to compare against.
 # 
-# Returns true if the variable matches the comparison value, returns false 
-# otherwise.
+# Returns 0 if the variable matches the comparison value, returns 1 otherwise.
 #-------------------------------------------------------------------------------
 compareDockerEnvVariableWithValue () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
@@ -180,11 +177,7 @@ compareDockerEnvVariableWithValue () {
   local ENV_COMPARISON="${3:?}"
   local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2-)"
 
-  if [ "$ENV_VALUE" = "$ENV_COMPARISON" ]; then
-    echo true
-  else
-    echo false
-  fi
+  [ "$ENV_VALUE" = "$ENV_COMPARISON" ]
 }
 
 #-------------------------------------------------------------------------------

@@ -10,7 +10,7 @@
 # 
 # 1. "${1:?}" – the package to be checked. 
 # 
-# Returns false if the package is not installed, returns true if the package is 
+# Returns 1 if the package is not installed, returns 0 if the package is 
 # installed. The check reads the package's status word from "dpkg-query", and
 # only "installed" counts, so a package that was removed but left its config
 # files behind reads as not installed. As per:
@@ -18,8 +18,8 @@
 # - https://man7.org/linux/man-pages/man1/dpkg-query.1.html
 # 
 # N.B.
-# This function explicitly checks a single package to allow for a simple true or 
-# false check.
+# This function explicitly checks a single package to allow for a simple 0 or 1
+# status.
 #
 # The argument must be a package name, not a command name, e.g. "docker-ce", not
 # "docker". A package that "dpkg" doesn't know about reads as not installed.
@@ -28,11 +28,7 @@ checkForPackage () {
   local PACKAGE="${1:?}"
   local STATUS="$(dpkg-query -W -f='${db:Status-Status}' "$PACKAGE" 2>/dev/null)"
 
-  if [ "$STATUS" != 'installed' ]; then
-    echo false
-  else
-    echo true   
-  fi
+  [ "$STATUS" = 'installed' ]
 }
 
 #-------------------------------------------------------------------------------
@@ -46,13 +42,11 @@ checkForPackagesAndInstall () {
   printComment "$@"
 
   for PACKAGE in "$@"; do
-    local PACKAGE_TF="$(checkForPackage "$PACKAGE")"
+    printComment "Checking to see if $PACKAGE is installed…"
 
-    printCheckResult "to see if $PACKAGE is installed" "$PACKAGE_TF"
-
-    if [ "$PACKAGE_TF" = true ]; then
+    if checkForPackage "$PACKAGE"; then
       printComment "You have already installed $PACKAGE."
-    elif [ "$PACKAGE_TF" = false ]; then
+    else
       printComment "You need to install $PACKAGE." 'warning'
       installRemovePackages "install" "$PACKAGE"
     fi
@@ -70,14 +64,12 @@ checkForPackagesAndRemove () {
   printComment "$@"
 
   for PACKAGE in "$@"; do
-    local PACKAGE_TF="$(checkForPackage "$PACKAGE")"
+    printComment "Checking to see if $PACKAGE is installed…"
 
-    printCheckResult "to see if $PACKAGE is installed" "$PACKAGE_TF"
-
-    if [ "$PACKAGE_TF" = true ]; then
+    if checkForPackage "$PACKAGE"; then
       printComment "You need to remove $PACKAGE." 'warning'
       installRemovePackages "remove" "$PACKAGE"
-    elif [ "$PACKAGE_TF" = false ]; then
+    else
       printComment "You have already removed $PACKAGE."
     fi
   done

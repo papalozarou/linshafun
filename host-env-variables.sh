@@ -50,20 +50,19 @@ addHostEnvVariableToSudoersConf () {
 }
 
 #-------------------------------------------------------------------------------
-# Checks for a given environment variable in "$PROFILE_PATH". Returns true if 
-# the variable is present, returns false if not. Takes one mandatory argument:
+# Checks for a given environment variable in "$PROFILE_PATH". Returns 0 if the
+# variable is present, returns 1 if not. Takes one mandatory argument:
 # 
 # 1. "{1:?}" - the name of the environment variable.
+#
+# N.B.
+# The function returns the status of "grep -q", so it returns 2 if
+# "$PROFILE_PATH" can't be read. Callers using "if" treat that as not present.
 #-------------------------------------------------------------------------------
 checkForHostEnvVariable () {
   local ENV_VAR="${1:?}"
-  local ENV_TF="$(grep "$ENV_VAR" "$PROFILE_PATH")"
 
-  if [ -z "$ENV_TF" ]; then
-    echo false
-  else
-    echo true
-  fi
+  grep -q "$ENV_VAR" "$PROFILE_PATH"
 }
 
 #-------------------------------------------------------------------------------
@@ -86,12 +85,11 @@ checkForHostEnvVariable () {
 setHostEnvVariable () {
   local ENV_VAR="${1:?}"
   local ENV_VALUE="${2:?}"
-  local ENV_TF="$(checkForHostEnvVariable "$ENV_VAR")"
   local EXPORT="export $ENV_VAR=$ENV_VALUE"
 
-  if [ "$ENV_TF" = true ]; then
+  if checkForHostEnvVariable "$ENV_VAR"; then
     printComment "Already added $ENV_VAR. No changes made."
-  elif [ "$ENV_TF" = false ]; then
+  else
     printComment "Adding $ENV_VAR=$ENV_VALUE to:"
     printComment "$PROFILE_PATH"
     echo "$EXPORT" >> "$PROFILE_PATH"
