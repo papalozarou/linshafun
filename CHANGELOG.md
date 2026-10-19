@@ -80,11 +80,13 @@
 - `checkForAndCreateSetupConfigFileAndDir` no longer prints "Check returned …" after each "Checking …" line.
 - `createSetupConfigDirectory` is removed. `checkForAndCreateSetupConfigFileAndDir` calls `createDirectory` with `SUDO_USER` as owner.
 - `readSetupConfigValue` matches the whole key, so `ssh` no longer matches `sshPort`. Values containing spaces or wildcards are returned as written. It no longer runs `set -f` in the calling script.
+- `removeSetupConfigOption` and `writeSetupConfigOption` match the whole key, so `ssh` no longer matches `sshPort`. Previously `writeSetupConfigOption ssh on` overwrote the `sshPort` line, and `removeSetupConfigOption ssh` deleted it.
 - `writeSetupConfigOption` no longer has a "Something went wrong" branch that exited the script. It couldn't be reached, as the key check only ever returned found or not found.
 
 ### `setup.sh`
 
 - `initialiseScript` prints "Checking the setup config to see if this step has already been performed…" whether or not the setup config file exists, and no longer prints "Check returned …". Its "Something went wrong" branch, which couldn't be reached, is removed.
+- `initialiseScript` matches the whole key, so `ssh` no longer matches `sshPort`. Previously a step whose key was part of a longer key, e.g. `ssh` and `sshPort`, was treated as already performed.
 
 ### `ssh-config.sh`
 

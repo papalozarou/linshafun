@@ -77,6 +77,10 @@ changeCase () {
 #
 # The function returns 0 if the string is found in the file, 1 if it is not, and
 # 2 if the file can't be read, as it returns the status of "grep -q".
+#
+# N.B.
+# The string is passed to "grep" as a regular expression, so a caller can
+# anchor it, e.g. "^sshPort " matches only a line starting with "sshPort ".
 # ------------------------------------------------------------------------------
 checkFileContainsString () {
   local FILE_PATH="${1:?}"

@@ -172,8 +172,8 @@ removeSetupConfigOption () {
   printComment "Removing $CONF_KEY from:"
   printComment "$SETUP_CONF_PATH"
 
-  if checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY"; then
-    sed -i '/^'"$CONF_KEY"'/d' "$SETUP_CONF_PATH"
+  if checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY "; then
+    sed -i '/^'"$CONF_KEY"' /d' "$SETUP_CONF_PATH"
 
     printComment "$CONF_KEY removed."
   else
@@ -242,7 +242,7 @@ writeSetupConfigOption () {
   local CONF_VALUE="${2:?}"
   local CONF_OPTION_STATUS=0
 
-  checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY" || CONF_OPTION_STATUS="$?"
+  checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY " || CONF_OPTION_STATUS="$?"
 
   printComment "Writing $CONF_KEY with value $CONF_VALUE to:"
   printComment "$SETUP_CONF_PATH"
@@ -258,7 +258,7 @@ writeSetupConfigOption () {
   elif [ "$CONF_OPTION_STATUS" -eq 0 ]; then
     printComment "Overwriting existing value with $CONF_VALUE." 'warning'
 
-    sed -i '/^'"$CONF_KEY"'/c\'"$CONF_KEY $CONF_VALUE" "$SETUP_CONF_PATH"
+    sed -i '/^'"$CONF_KEY"' /c\'"$CONF_KEY $CONF_VALUE" "$SETUP_CONF_PATH"
 
     printComment 'Config written.'
 

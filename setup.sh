@@ -42,7 +42,7 @@ initialiseScript () {
 
   printComment 'Checking the setup config to see if this step has already been performed…'
 
-  if checkForFileOrDirectory "$SETUP_CONF_PATH" && checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY"; then
+  if checkForFileOrDirectory "$SETUP_CONF_PATH" && checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY "; then
     printComment 'You have already performed this step.' 'warning'
     printScriptExiting
 
