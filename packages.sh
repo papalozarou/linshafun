@@ -90,9 +90,13 @@ checkForPackagesAndRemove () {
 #
 # If the first argument isn't "install" or "remove", the function prints an
 # error and returns 1.
+#
+# If "apt" fails for a package, the function prints an error, carries on with
+# the remaining packages, and returns 1.
 #-------------------------------------------------------------------------------
 installRemovePackages () {
   local ACTION="${1:?}"
+  local STATUS=0
 
   if [ "$ACTION" != 'install' ] && [ "$ACTION" != 'remove' ]; then
     printComment "Unknown action \"$ACTION\". Use \"install\" or \"remove\"." 'error'
@@ -105,28 +109,51 @@ installRemovePackages () {
   for i; do
     printComment "Performing $ACTION for $i."
     printSeparator
-    apt "$ACTION" "$i" -y
+
+    if ! apt "$ACTION" "$i" -y; then
+      printSeparator
+      printComment "Failed to $ACTION $i." 'error'
+      STATUS=1
+
+      continue
+    fi
+
     printSeparator
     printComment "Completed $ACTION for $i"
   done
+
+  return "$STATUS"
 }
 
 #-------------------------------------------------------------------------------
 # Updates and upgrades installed packages.
+#
+# If "apt update" or "apt upgrade" fails, the function prints an error and
+# returns 1. "apt upgrade" isn't run if "apt update" fails.
 #-------------------------------------------------------------------------------
 updateUpgrade () {
   local PKGCACHE_PATH='/var/cache/apt/pkgcache.bin'
   local CURRENT_TIME="$(date +%s)"
   local LAST_UPDATE="$(stat -c %Y "$PKGCACHE_PATH" 2>/dev/null || echo 0)"
   local TIME_DIFF=$((CURRENT_TIME - LAST_UPDATE))
+  local STATUS=0
 
   if [ "$TIME_DIFF" -ge 86400 ] || [ "$LAST_UPDATE" -eq 0 ]; then
     printComment 'Updating and upgrading packages…'
     printSeparator
-    apt update && apt upgrade -y
+    { apt update && apt upgrade -y; } || STATUS="$?"
     printSeparator
-    printComment 'Packages updated and upgraded.'
   else
     printComment 'Packages were updated less than 24 hours ago. Skipping update and upgrade.'
+
+    return 0
   fi
+
+  if [ "$STATUS" -ne 0 ]; then
+    printComment 'Failed to update and upgrade packages.' 'error'
+
+    return 1
+  fi
+
+  printComment 'Packages updated and upgraded.'
 }

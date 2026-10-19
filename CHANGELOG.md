@@ -38,6 +38,10 @@
 - `createDirectory` takes optional permissions, owner and group as its second to fourth arguments, and sets them on the new directory only. If the directory exists, it returns 0 and prints nothing. It no longer creates missing parent directories: it returns 1 with an error if the parent doesn't exist, or if `mkdir`, `chmod` or `chown` fails. Previously it ran `mkdir -p`.
 - `renameFileOrDirectory` prints an error if `mv` fails. It still returns 1.
 
+### `firewall.sh`
+
+- `addRuleToUfw` returns 1 with the error "Failed to add rule allow 22 to UFW." if `ufw` fails. Previously it printed "Rule added." and returned 0.
+
 ### `host-env-variables.sh`
 
 - `addHostEnvVariableToSudoersConf` writes to `SUDOERS_DEFAULT_CONF_PATH`, skips a line that's already there, checks the new line with `visudo` before adding it, sets the file's mode to 440, and returns 1 with an error on failure. Previously it wrote to the unset `SUDOERS_DEFAULT_CONF`, so it always failed.
@@ -75,6 +79,12 @@
 - `checkForPackage` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `checkForPackagesAndInstall` and `checkForPackagesAndRemove` no longer print "Check returned true." or "Check returned false." after "Checking to see if … is installed…".
 - `installRemovePackages` returns 1 with the error "Unknown action "update". Use "install" or "remove"." if the first argument isn't "install" or "remove". Previously it printed "Exiting script with no changes." and exited the script.
+- `installRemovePackages` prints the error "Failed to install foo." if `apt` fails for a package, carries on with the rest, and returns 1. Previously it printed "Completed install for foo" and returned 0.
+- `updateUpgrade` returns 1 with the error "Failed to update and upgrade packages." if `apt update` or `apt upgrade` fails. Previously it printed "Packages updated and upgraded." and returned 0.
+
+### `services.sh`
+
+- `controlService` returns 1 with an error, e.g. "Restart failed for sshd.", if `systemctl` or `ufw` fails. Previously it printed "Restart performed for sshd." and returned 0. A "status" action on a stopped service now reports a failure, as `systemctl status` returns 3.
 
 ### `setup-config.sh`
 
