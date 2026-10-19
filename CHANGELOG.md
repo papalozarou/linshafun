@@ -27,6 +27,10 @@
 - `setPiPowerOffOnHalt` saves and applies the change when `POWER_OFF_ON_HALT` is 0. Previously it printed the updated config, applied nothing and reported a failure. The temporary config file now has a random name from `mktemp` instead of `/tmp/bootconf.txt`.
 - `updatePiBootloader` and `updatePiFirmware` return 1 and print an error when `rpi-eeprom-update` or `rpi-update` fails, without writing the setup config option. Previously they always reported success.
 
+### `linshafun.var`
+
+- `PROFILE_PATH` holds one path: `~/.bashrc`, or `~/.bash_profile` if only that exists. Previously it held every `.bashrc` and `.bash_profile` anywhere under the home directory, so with more than one, `setHostEnvVariable` wrote nothing but reported success. With neither file, `~/.bashrc` is now created instead of the script exiting.
+
 ### `network.sh`
 
 - `generateAndCheckPort` passes the service when it re-runs after a port clash. Previously the re-run failed and the calling script exited.
