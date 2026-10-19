@@ -16,6 +16,8 @@
 # The group defaults to the owner name, which only works on systems that
 # create a group for each user. Pass the group on systems that do not, i.e.
 # "users" on Synology DSM.
+#
+# If the ownership can't be set, the function prints an error and returns 1.
 #-------------------------------------------------------------------------------
 setOwner () {
   local USER="${1:?}"
@@ -25,7 +27,12 @@ setOwner () {
   printComment "Setting ownership of:"
   printComment "$FILE_DIR_PATH"
   printComment "to $USER:$GROUP."
-  chown -R "$USER:$GROUP" "$FILE_DIR_PATH"
+
+  if ! chown -R "$USER:$GROUP" "$FILE_DIR_PATH"; then
+    printComment "Failed to set ownership of $FILE_DIR_PATH to $USER:$GROUP." 'error'
+
+    return 1
+  fi
 }
 
 #-------------------------------------------------------------------------------
@@ -33,6 +40,8 @@ setOwner () {
 # 
 # 1. "${1:?}" – the permissions in numeric format, i.e. "600"; and
 # 2. "${2:?}" – the path of the file or directory.
+#
+# If the permissions can't be set, the function prints an error and returns 1.
 #-------------------------------------------------------------------------------
 setPermissions () {
   local PERMISSIONS="${1:?}"
@@ -41,5 +50,10 @@ setPermissions () {
   printComment "Setting permissions of:"
   printComment "$FILE_DIR_PATH"
   printComment "to $PERMISSIONS."
-  chmod -R "$PERMISSIONS" "$FILE_DIR_PATH"
+
+  if ! chmod -R "$PERMISSIONS" "$FILE_DIR_PATH"; then
+    printComment "Failed to set permissions of $FILE_DIR_PATH to $PERMISSIONS." 'error'
+
+    return 1
+  fi
 }

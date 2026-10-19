@@ -30,6 +30,7 @@
 - `checkAndCreateOrAskToReplaceFileOrDirectory` no longer prints "Check returned true." or "Check returned false.".
 - `checkForFileOrDirectory` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createFiles` and `removeFileOrDirectory` return 1 if any file or directory fails, after carrying on with the rest. The copy and create functions print an error naming the file, and no longer print "File copied …" or "File created." after a failure. Previously all four returned 0.
+- `renameFileOrDirectory` prints an error if `mv` fails. It still returns 1.
 
 ### `host-env-variables.sh`
 
@@ -56,6 +57,10 @@
 - `checkAgainstExistingPortNumber` returns 0 if the port matches the service's existing port and 1 if not, and prints nothing. Previously it printed `true` or `false`.
 - `generateAndCheckPort` passes the service when it re-runs after a port clash. Previously the re-run failed and the calling script exited.
 - `generateAndCheckPort` warns "Port 1234 is already used by rtt. Re-running to generate another port number." when it re-runs, instead of "Port check returned true. …".
+
+### `ownership-permissions.sh`
+
+- `setOwner` and `setPermissions` print an error if `chown` or `chmod` fails. They still return 1.
 
 ### `packages.sh`
 

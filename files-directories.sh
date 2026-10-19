@@ -332,11 +332,18 @@ removeFileOrDirectory () {
 #    current directory, ".";
 # 2. "${2:?}" - the current file or directory name; and
 # 3. "${3:?}" - the new file or directory name.
+#
+# If the file or directory can't be renamed, the function prints an error and
+# returns 1.
 #-------------------------------------------------------------------------------
 renameFileOrDirectory () {
 	local DIR_PATH="${1:-"."}"
 	local CURRENT_NAME="${2:?}"
 	local NEW_NAME="${3:?}"
 
-	mv "$DIR_PATH/$CURRENT_NAME" "$DIR_PATH/$NEW_NAME"
+	if ! mv "$DIR_PATH/$CURRENT_NAME" "$DIR_PATH/$NEW_NAME"; then
+		printComment "Failed to rename $DIR_PATH/$CURRENT_NAME to $NEW_NAME." 'error'
+
+		return 1
+	fi
 }
