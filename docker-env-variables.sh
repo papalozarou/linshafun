@@ -221,6 +221,9 @@ readDockerEnvVariable () {
 # The "sed" delimiter is "|" in this instance as both "/" and "@" will be
 # returned as part of string hashing or present in email addresses.
 # 
+# If "sed" fails, e.g. the file doesn't exist, the function prints an error and
+# returns 1.
+#
 # N.B.
 # This only replaces the above string, and is used on configuration files, not 
 # ".env" files.
@@ -236,7 +239,11 @@ replaceDockerEnvPlaceholderVariable () {
   grep "$ENV_VAR" "$ENV_FILE_PATH"
   printSeparator
 
-  sed -i 's|'"$ENV_VAR"'|'"$ENV_VALUE"'|g' "$ENV_FILE_PATH"
+  if ! sed -i 's|'"$ENV_VAR"'|'"$ENV_VALUE"'|g' "$ENV_FILE_PATH"; then
+    printComment "Failed to replace $ENV_VAR in $ENV_FILE_PATH." 'error'
+
+    return 1
+  fi
 
   printComment 'Checking variables have been replaced…'
   printSeparator
@@ -259,9 +266,15 @@ replaceDockerEnvPlaceholderVariable () {
 # 
 # - https://stackoverflow.com/a/11245501
 # 
+# If no line starts with "$ENV_VAR=", or "sed" fails, the function prints an
+# error and returns 1. The variable is never added, only changed.
+#
 # N.B.
 # It's necessary to use single and double quotes, as well as escaped characters, 
 # to enable "sed" to parse the variables where required.
+#
+# The variable is checked for before "sed" runs, as "sed" succeeds without
+# changing anything when no line matches.
 #-------------------------------------------------------------------------------
 setDockerEnvVariable () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
@@ -270,7 +283,19 @@ setDockerEnvVariable () {
 
   printComment "Setting $ENV_VAR to $ENV_VALUE in:"
   printComment "$ENV_FILE_PATH"
-  sed -i '/^'"$ENV_VAR"='/c\\'"$ENV_VAR=$ENV_VALUE" "$ENV_FILE_PATH"
+
+  if ! grep -q "^$ENV_VAR=" "$ENV_FILE_PATH"; then
+    printComment "Failed to set $ENV_VAR, as it was not found in $ENV_FILE_PATH." 'error'
+
+    return 1
+  fi
+
+  if ! sed -i '/^'"$ENV_VAR"='/c\\'"$ENV_VAR=$ENV_VALUE" "$ENV_FILE_PATH"; then
+    printComment "Failed to set $ENV_VAR in $ENV_FILE_PATH." 'error'
+
+    return 1
+  fi
+
   printSeparator
   grep "$ENV_VALUE" "$ENV_FILE_PATH"
   printSeparator

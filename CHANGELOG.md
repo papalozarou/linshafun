@@ -23,6 +23,8 @@
 - `checkIfDockerEnvVariableSet` and `compareDockerEnvVariableWithValue` return 0 or 1 and print nothing. Previously they printed `true` or `false`.
 - `compareDockerEnvVariableWithValue` and `readDockerEnvVariable` return the whole value when it contains `=`, e.g. a base64 string ending in `==`. Previously the value was cut off at the second `=`.
 - `compareDockerEnvVariableWithValue`, `readDockerEnvVariable` and `setDockerEnvVariable` only match a line that starts with the variable name, so `H_IP` no longer matches `C_PIH_IP=` or a commented-out `# H_IP=`. Previously the first line containing `H_IP=` was read, and `setDockerEnvVariable` overwrote every such line. A line starting with `export` or a space is no longer matched.
+- `replaceDockerEnvPlaceholderVariable` returns 1 with the error "Failed to replace ${DKR_ENV: H_A} in …" if `sed` fails, e.g. the file doesn't exist. Previously it printed "Placeholder variable replaced." and returned 0.
+- `setDockerEnvVariable` returns 1 with the error "Failed to set H_A, as it was not found in …" if no line starts with `H_A=`, or "Failed to set H_A in …" if `sed` fails. Previously it printed "Variable updated." and returned 0 without writing anything. It still never adds a missing variable.
 
 ### `docker-secrets.sh`
 
@@ -47,6 +49,7 @@
 - `addHostEnvVariableToSudoersConf` writes to `SUDOERS_DEFAULT_CONF_PATH`, skips a line that's already there, checks the new line with `visudo` before adding it, sets the file's mode to 440, and returns 1 with an error on failure. Previously it wrote to the unset `SUDOERS_DEFAULT_CONF`, so it always failed.
 - `checkForHostEnvVariable` returns 0 if the variable is present, 1 if not, or 2 if `PROFILE_PATH` can't be read, and prints nothing. Previously it printed `true` or `false`.
 - `checkForHostEnvVariable` only matches a line starting with `export NAME=`, so `HOST_DOMAIN` no longer matches `HOST_DOMAIN_OLD`, `MY_HOST_DOMAIN` or a comment, and `setHostEnvVariable` adds the variable instead of reporting it as already added. A variable set any other way, e.g. `HOST_DOMAIN=x` then `export HOST_DOMAIN`, is no longer found, so `setHostEnvVariable` appends an `export` line.
+- `setHostEnvVariable` returns 1 with the error "Failed to add H_A to …" if the `export` line can't be written. Previously it printed "H_A added." and returned 0.
 
 ### `host-information.sh`
 

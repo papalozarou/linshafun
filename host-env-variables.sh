@@ -80,6 +80,8 @@ checkForHostEnvVariable () {
 # 
 # - https://askubuntu.com/a/211718
 # 
+# If the variable can't be written, the function prints an error and returns 1.
+#
 # N.B.
 # For the shell to pick this up it requires the user to log out and back in.
 #-------------------------------------------------------------------------------
@@ -90,18 +92,25 @@ setHostEnvVariable () {
 
   if checkForHostEnvVariable "$ENV_VAR"; then
     printComment "Already added $ENV_VAR. No changes made."
-  else
-    printComment "Adding $ENV_VAR=$ENV_VALUE to:"
-    printComment "$PROFILE_PATH"
-    echo "$EXPORT" >> "$PROFILE_PATH"
 
-    printComment 'Checking value added…'
-    printSeparator
-    grep "$ENV_VAR" "$PROFILE_PATH"
-    printSeparator
-    printComment "$ENV_VAR added."
-
-    printSeparator
-    printComment 'This variable will not be recognised until you log out and back in.' 'warning'
+    return 0
   fi
+
+  printComment "Adding $ENV_VAR=$ENV_VALUE to:"
+  printComment "$PROFILE_PATH"
+
+  if ! echo "$EXPORT" >> "$PROFILE_PATH"; then
+    printComment "Failed to add $ENV_VAR to $PROFILE_PATH." 'error'
+
+    return 1
+  fi
+
+  printComment 'Checking value added…'
+  printSeparator
+  grep "$ENV_VAR" "$PROFILE_PATH"
+  printSeparator
+  printComment "$ENV_VAR added."
+
+  printSeparator
+  printComment 'This variable will not be recognised until you log out and back in.' 'warning'
 }
