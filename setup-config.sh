@@ -36,7 +36,7 @@ EOF
 
 	printSeparator
 	
-	if [ "$STATUS" -eq 0 ] && grep "$VAR_NAME" "$VAR_FILE_PATH"; then
+	if [ "$STATUS" -eq 0 ] && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
 		printSeparator
 		printComment '$'"$VAR_NAME variable added."
 	else
@@ -209,9 +209,9 @@ replaceSetupVar () {
   printComment 'Replacing $'"$VAR_NAME"' in:'
   printComment "$VAR_FILE_PATH"
 
-  sed -i '/^'"$VAR_NAME"'/c\'"$VAR_NAME=\"$VAR_VALUE\"" "$VAR_FILE_PATH" || STATUS="$?"
+  sed -i '/^'"$VAR_NAME"'=/c\'"$VAR_NAME=\"$VAR_VALUE\"" "$VAR_FILE_PATH" || STATUS="$?"
 
-	if [ "$STATUS" -eq 0 ] && grep "$VAR_NAME" "$VAR_FILE_PATH"; then
+	if [ "$STATUS" -eq 0 ] && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
 		printSeparator
 		printComment '$'"$VAR_NAME variable added."
 	else
