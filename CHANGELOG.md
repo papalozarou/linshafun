@@ -42,6 +42,7 @@
 ### `ssh-keys.sh`
 
 - `addSshKeytoAgent` is removed. It passed the public key to `ssh-add`, so the key was never added. The agent it started was the calling script's own agent, so it couldn't be reached once the script exited. Point `IdentityFile` at the key in `~/.ssh/config` instead, e.g. with `addHostToSshConfig`.
+- `checkPrivateSshKeyCopied` no longer sets `KEY_COPIED_YN` in the calling script.
 
 ### `text.sh`
 

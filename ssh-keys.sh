@@ -51,7 +51,7 @@ checkPrivateSshKeyCopied () {
   local KEY_PATH="${1:?}"
 
   promptForUserInput "Have you copied the private key to your local ssh directory (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
-  KEY_COPIED_YN="$(getUserInputYN)"
+  local KEY_COPIED_YN="$(getUserInputYN)"
 
   if [ "$KEY_COPIED_YN" = true ]; then
     removePrivateSshKey "$KEY_PATH"

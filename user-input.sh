@@ -8,6 +8,8 @@
 # Gets user input and returns it.
 #-------------------------------------------------------------------------------
 getUserInput () {
+  local USER_INPUT=
+
   read -r USER_INPUT
 
   printf "%s\n" "$USER_INPUT"
