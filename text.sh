@@ -75,18 +75,14 @@ changeCase () {
 # 1. "${1:?}" – the file, including directory path; and
 # 2. "${2:?}" – the string to look for.
 #
-# The function returns true if the string is found in the file, and false if it
-# is not.
+# The function returns 0 if the string is found in the file, 1 if it is not, and
+# 2 if the file can't be read, as it returns the status of "grep -q".
 # ------------------------------------------------------------------------------
 checkFileContainsString () {
   local FILE_PATH="${1:?}"
   local STRING="${2:?}"
 
-  if grep -q "$STRING" "$FILE_PATH"; then
-    echo true
-  else
-    echo false
-  fi
+  grep -q "$STRING" "$FILE_PATH"
 }
 
 #-------------------------------------------------------------------------------
@@ -99,9 +95,9 @@ checkFileContainsString () {
 # then a check is performed to see if the result matches the originally passed 
 # in string.
 #
-# The function returns true if the result of the parameter expansion doesn't 
+# The function returns 0 if the result of the parameter expansion doesn't 
 # match the original string, i.e. the substring has been removed during the
-# parameter expansion, and false if the result matches, i.e. the substring has 
+# parameter expansion, and 1 if the result matches, i.e. the substring has 
 # not been removed. As per:
 #
 # - https://stackoverflow.com/a/8811800
@@ -110,11 +106,7 @@ checkStringContainsSubstring () {
   local STRING="${1:?}"
   local SUBSTRING="${2:?}"
 
-  if [ "${STRING#*"$SUBSTRING"}" != "$STRING" ]; then
-    echo true
-  else
-    echo false
-  fi
+  [ "${STRING#*"$SUBSTRING"}" != "$STRING" ]
 }
 
 # ------------------------------------------------------------------------------

@@ -92,12 +92,9 @@ checkPiCmdlineLocation () {
   local CMDLINE_PATH='/boot/firmware/cmdline.txt'
   local CMDLINE_ALT_PATH='/boot/cmdline.txt'
 
-  local CMDLINE_PATH_TF="$(checkForFileOrDirectory "$CMDLINE_PATH")"
-  local CMDLINE_ALT_PATH_TF="$(checkForFileOrDirectory "$CMDLINE_ALT_PATH")"
-
-  if [ "$CMDLINE_PATH_TF" = true ]; then
+  if checkForFileOrDirectory "$CMDLINE_PATH"; then
     echo "$CMDLINE_PATH"
-  elif [ "$CMDLINE_PATH_TF" = false ] && [ "$CMDLINE_ALT_PATH_TF" = true ]; then
+  elif checkForFileOrDirectory "$CMDLINE_ALT_PATH"; then
     echo "$CMDLINE_ALT_PATH"
   else
     echo ""
@@ -112,12 +109,9 @@ checkPiConfigLocation () {
   local CONFIG_PATH='/boot/firmware/config.txt'
   local CONFIG_ALT_PATH='/boot/config.txt'
 
-  local CONFIG_PATH_TF="$(checkForFileOrDirectory "$CONFIG_PATH")"
-  local CONFIG_ALT_PATH_TF="$(checkForFileOrDirectory "$CONFIG_ALT_PATH")"
-
-  if [ "$CONFIG_PATH_TF" = true ]; then
+  if checkForFileOrDirectory "$CONFIG_PATH"; then
     echo "$CONFIG_PATH"
-  elif [ "$CONFIG_PATH_TF" = false ] && [ "$CONFIG_ALT_PATH_TF" = true ]; then
+  elif checkForFileOrDirectory "$CONFIG_ALT_PATH"; then
     echo "$CONFIG_ALT_PATH"
   else
     echo ""

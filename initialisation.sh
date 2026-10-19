@@ -35,9 +35,7 @@ checkAndCreateServiceFiles () {
 # here to avoid duplicating removing and adding the postfix.
 #-------------------------------------------------------------------------------
 createServiceFile () {
-  local FILE_TF="$(checkForFileOrDirectory "$FILE_NO_POSTFIX")"
-
-  if [ "$FILE_TF" = true ]; then
+  if checkForFileOrDirectory "$FILE_NO_POSTFIX"; then
     copyAndAddPostfixToFiles "$FILE_NO_POSTFIX"
   fi
 

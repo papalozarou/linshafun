@@ -59,9 +59,8 @@ createUserLogDir () {
   local LOG_DIR_PATH="${1:?}"
   local USER="${2:?}"
   local GROUP="${3:-$USER}"
-  local LOG_DIR_TF="$(checkForFileOrDirectory "$LOG_DIR_PATH")"
 
-  if [ "$LOG_DIR_TF" = true ]; then
+  if checkForFileOrDirectory "$LOG_DIR_PATH"; then
     return 0
   fi
 
@@ -110,11 +109,10 @@ initialiseCommentLogs () {
   local LOG_USER="${3:?}"
   local LOG_GROUP="${4:-$LOG_USER}"
   local LOG_MAX_AGE_DAYS="${5:-7}"
-  local LOG_DIR_TF="$(checkForFileOrDirectory "$LOG_DIR_PATH")"
 
   createUserLogDir "$(dirname "$LOG_DIR_PATH")" "$LOG_USER" "$LOG_GROUP"
 
-  if [ "$LOG_DIR_TF" = false ]; then
+  if ! checkForFileOrDirectory "$LOG_DIR_PATH"; then
     createDirectory "$LOG_DIR_PATH"
   fi
 
@@ -126,33 +124,6 @@ initialiseCommentLogs () {
 
   setOwner "$LOG_USER" "$LOG_DIR_PATH" "$LOG_GROUP"
   setPermissions '700' "$LOG_DIR_PATH"
-}
-
-#-------------------------------------------------------------------------------
-# Prints consistent output for an item check. Takes two mandatory arguments:
-# 
-# 1. "${1:?}" – the item being checked including a prefix and postfix if 
-#    required, i.e. "to see if the file exists" or "the snippet is set";
-# 2. "${2:?}" – the result of a "checkFor…" function.
-# 
-# N.B.
-# The function exits with status 1 if the check result is not "true" or "false".
-#-------------------------------------------------------------------------------
-printCheckResult () {
-  local ITEM="${1:?}"
-  local ITEM_TF="${2:?}"
-
-  printComment "Checking $ITEM…"
-
-  if [ "$ITEM_TF" = true ]; then
-    printComment "Check returned $ITEM_TF."
-  elif [ "$ITEM_TF" = false ]; then
-    printComment "Check returned $ITEM_TF." 'warning'
-  else
-    printComment "An error occurred." 'error'
-
-    exit 1
-  fi
 }
 
 #-------------------------------------------------------------------------------

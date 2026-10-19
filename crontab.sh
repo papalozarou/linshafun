@@ -46,12 +46,9 @@ addScriptToCron () {
     echo "$SCHEDULE $USER $CMD_OR_SCRIPT_PATH" > "$SNIPPET_PATH"
   fi
 
+  printComment 'Checking to see if the snippet was created…'
 
-  local SNIPPET_TF="$(checkForFileOrDirectory "$SNIPPET_PATH")"
-
-  printCheckResult 'to see if the snippet was created' "$SNIPPET_TF"
-
-  if [ "$SNIPPET_TF" = true ]; then
+  if checkForFileOrDirectory "$SNIPPET_PATH"; then
     printComment 'Checking contents of snippet…'
     printSeparator
     cat "$SNIPPET_PATH"
@@ -68,13 +65,11 @@ addScriptToCron () {
 # # Checks to see if the "~/log" directory exist and creates it if not.
 #-------------------------------------------------------------------------------
 checkForAndCreateUserLogDir () {
-  local USER_LOG_DIR_TF="$(checkForFileOrDirectory "$USER_LOG_DIR_PATH")"
+  printComment 'Checking to see if a "~/log" directory exists…'
 
-  printCheckResult 'to see if a "~/log" directory exists' "$USER_LOG_DIR_TF"
-
-  if [ "$USER_LOG_DIR_TF" = true ]; then
+  if checkForFileOrDirectory "$USER_LOG_DIR_PATH"; then
     printComment 'The "~/log" directory already exists.' 'warning'
-  elif [ "$USER_LOG_DIR_TF" = false ]; then
+  else
     printComment 'Creating an "~/log" directory at:'
     printComment "$USER_LOG_DIR_PATH"
     createDirectory "$USER_LOG_DIR_PATH"

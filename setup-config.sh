@@ -54,20 +54,17 @@ EOF
 # 3. the setup config directory exists and the file doesn't.
 #-------------------------------------------------------------------------------
 checkForAndCreateSetupConfigFileAndDir () {
-  local SETUP_CONF_TF="$(checkForFileOrDirectory "$SETUP_CONF_PATH")"
-  local SETUP_CONF_DIR_TF="$(checkForFileOrDirectory "$SETUP_CONF_DIR_PATH")"
+  printComment 'Checking to see if a "~/.config" directory exists…'
+  printComment 'Checking to see if a setup config file exists…'
 
-  printCheckResult 'to see if a "~/.config" directory exists' "$SETUP_CONF_DIR_TF"
-  printCheckResult 'to see if a setup config file exists' "$SETUP_CONF_TF"
-
-  if [ "$SETUP_CONF_TF" = true ]; then
+  if checkForFileOrDirectory "$SETUP_CONF_PATH"; then
     printComment 'The setup config file and directory exist.'
-  elif [ "$SETUP_CONF_DIR_TF" = false ]; then
+  elif ! checkForFileOrDirectory "$SETUP_CONF_DIR_PATH"; then
     printComment 'The setup config file and directory do not exist.' 'warning'
 
     createSetupConfigDirectory
     createSetupConfigFile
-  elif [ "$SETUP_CONF_TF" = false ]; then
+  else
     printComment 'The setup config file does not exist.' 'warning'
 
     createSetupConfigFile
@@ -175,12 +172,11 @@ reloadVarFile () {
 #-------------------------------------------------------------------------------
 removeSetupConfigOption () {
   local CONF_KEY="${1:?}"
-  local CONF_OPTION_TF="$(checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY")"
 
   printComment "Removing $CONF_KEY from:"
   printComment "$SETUP_CONF_PATH"
 
-  if [ "$CONF_OPTION_TF" = true ]; then  
+  if checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY"; then
     sed -i '/^'"$CONF_KEY"'/d' "$SETUP_CONF_PATH"
 
     printComment "$CONF_KEY removed."
@@ -243,20 +239,22 @@ replaceSetupVar () {
 writeSetupConfigOption () {
   local CONF_KEY="${1:?}"
   local CONF_VALUE="${2:?}"
-  local CONF_OPTION_TF="$(checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY")"
+  local CONF_OPTION_STATUS=0
+
+  checkFileContainsString "$SETUP_CONF_PATH" "$CONF_KEY" || CONF_OPTION_STATUS="$?"
 
   printComment "Writing $CONF_KEY with value $CONF_VALUE to:"
   printComment "$SETUP_CONF_PATH"
 
-  if [ "$CONF_OPTION_TF" = true ]; then
+  if [ "$CONF_OPTION_STATUS" -eq 0 ]; then
     local EXISTING_CONF_VALUE="$(readSetupConfigValue "$CONF_KEY")"
 
     printComment "$CONF_KEY already exists with value $EXISTING_CONF_VALUE." 'warning'
   fi
 
-  if [ "$CONF_OPTION_TF" = true ] && [ "$EXISTING_CONF_VALUE" = "$CONF_VALUE" ]; then
+  if [ "$CONF_OPTION_STATUS" -eq 0 ] && [ "$EXISTING_CONF_VALUE" = "$CONF_VALUE" ]; then
     printComment 'No changes made.'
-  elif [ "$CONF_OPTION_TF" = true ] && [ "$EXISTING_CONF_VALUE" != "$CONF_VALUE" ]; then
+  elif [ "$CONF_OPTION_STATUS" -eq 0 ]; then
     printComment "Overwriting existing value with $CONF_VALUE." 'warning'
 
     sed -i '/^'"$CONF_KEY"'/c\'"$CONF_KEY $CONF_VALUE" "$SETUP_CONF_PATH"
@@ -264,21 +262,12 @@ writeSetupConfigOption () {
     printComment 'Config written.'
 
     setOwner "$SUDO_USER" "$SETUP_CONF_PATH"
-  elif [ "$CONF_OPTION_TF" = false ]; then
+  else
     echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF_PATH"
 
     printComment 'Config written.'
 
     setOwner "$SUDO_USER" "$SETUP_CONF_PATH"
-  else
-    printComment 'Something went wrong. Please check your setup config at:' 'error'
-    printComment "$SETUP_CONF_PATH." 'error'
-    printComment 'You may need to manually add the following to the setup config:' 'error'
-    printComment "$CONF_KEY $CONF_VALUE" 'error'
-
-    printScriptExiting true
-
-    exit 1
   fi
 
   listSetupConfig

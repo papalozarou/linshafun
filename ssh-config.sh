@@ -46,13 +46,11 @@ addHostToSshConfig () {
 # Checks to see if the "~/.ssh" directory exist and creates it if not.
 #-------------------------------------------------------------------------------
 checkForAndCreateSshDir () {
-  local SSH_DIR_TF="$(checkForFileOrDirectory "$SSH_DIR_PATH")"
+  printComment 'Checking to see if an "~/.ssh" directory exists…'
 
-  printCheckResult 'to see if an "~/.ssh" directory exists' "$SSH_DIR_TF"
-
-  if [ "$SSH_DIR_TF" = true ]; then
+  if checkForFileOrDirectory "$SSH_DIR_PATH"; then
     printComment 'The "~/.ssh" directory already exists.'
-  elif [ "$SSH_DIR_TF" = false ]; then
+  else
     printComment 'Creating an "~/.ssh" directory at:'
     printComment "$SSH_DIR_PATH"
     createDirectory "$SSH_DIR_PATH"
@@ -67,13 +65,11 @@ checkForAndCreateSshDir () {
 # a basic config to the created file.
 #-------------------------------------------------------------------------------
 checkForAndCreateSshConfig () {
-  local SSH_CONF_TF="$(checkForFileOrDirectory "$SSH_CONF_PATH")"
+  printComment 'Checking to see if an "~/.ssh/config" file exists…'
 
-  printCheckResult 'to see if an "~/.ssh/config" file exists' "$SSH_CONF_TF"
-
-  if [ "$SSH_CONF_TF" = true ]; then
+  if checkForFileOrDirectory "$SSH_CONF_PATH"; then
     printComment 'The ssh config file already exists.'
-  elif [ "$SSH_CONF_TF" = false ]; then
+  else
     printComment 'Creating an ssh config file at:'
     printComment "$SSH_CONF_PATH"
     createFiles "$SSH_CONF_PATH"

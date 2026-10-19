@@ -23,13 +23,11 @@ addKeyToAuthorizedKeys () {
 # Checks to see if the "~/.ssh/authorized_keys" file exist and creates it if not.
 #-------------------------------------------------------------------------------
 checkForAndCreateAuthorizedKeys () {
-  local SSH_AUTH_KEYS_TF="$(checkForFileOrDirectory "$SSH_AUTH_KEYS_PATH")"
+  printComment 'Checking to see if an "~/.ssh/authorized_keys" file exists…'
 
-  printCheckResult 'to see if an "~/.ssh/authorized_keys" file exists' "$SSH_AUTH_KEYS_TF"
-
-  if [ "$SSH_AUTH_KEYS_TF" = true ]; then
+  if checkForFileOrDirectory "$SSH_AUTH_KEYS_PATH"; then
     printComment 'The authorized keys file already exists.' 'warning'
-  elif [ "$SSH_AUTH_KEYS_TF" = false ]; then
+  else
     printComment 'Creating an authorized_keys file at:'
     printComment "$SSH_AUTH_KEYS_PATH"
     createFiles "$SSH_AUTH_KEYS_PATH"
@@ -51,9 +49,8 @@ checkPrivateSshKeyCopied () {
   local KEY_PATH="${1:?}"
 
   promptForUserInput "Have you copied the private key to your local ssh directory (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
-  local KEY_COPIED_YN="$(getUserInputYN)"
 
-  if [ "$KEY_COPIED_YN" = true ]; then
+  if getUserInputYN; then
     removePrivateSshKey "$KEY_PATH"
   else
     printComment 'You must copy the private key below to your local ssh directory.' 'error'
@@ -76,9 +73,8 @@ checkPublicSshKeyCopied () {
   local KEY_PATH="${1:?}"
 
   promptForUserInput "Have you copied the public key to your remote server's authorized_keys file (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
-  local KEY_COPIED_YN="$(getUserInputYN)"
 
-  if [ "$KEY_COPIED_YN" != true ]; then
+  if ! getUserInputYN; then
     printComment "You must copy the public key below to your remote server's authorized_keys file." 'error'
     printComment "$KEY_PATH" 'error'
 

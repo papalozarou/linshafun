@@ -17,15 +17,19 @@ getUserInput () {
 
 #-------------------------------------------------------------------------------
 # Specifically gets "y/Y" or "n/N" input, forcing the user to choose one. 
-# Returns true for "y/Y" and false for "n/N".
+# Returns 0 for "y/Y" and 1 for "n/N".
+#
+# N.B.
+# Any other input prints an error and asks again. The function then returns the
+# status of that repeated call.
 #-------------------------------------------------------------------------------
 getUserInputYN () {
   local INPUT_YN="$(getUserInput)"
 
   if [ "$INPUT_YN" = "y" ] || [ "$INPUT_YN" = "Y" ]; then
-    echo true
+    return 0
   elif [ "$INPUT_YN" = "n" ] || [ "$INPUT_YN" = "N" ]; then
-    echo false
+    return 1
   else
     printComment 'You must respond y/Y or n/N to proceed.' 'error'
     getUserInputYN

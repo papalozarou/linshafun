@@ -5,18 +5,30 @@
 ### `comments-logs.sh`
 
 - `initialiseCommentLogs` takes the log user as its mandatory third argument and an optional log group as its fourth. The maximum age moves to the fifth.
+- `printCheckResult` is removed. Callers print "Checking …" with `printComment` and branch with `if checkFoo; then`. Previously it printed "Check returned true." or "Check returned false." and exited the script on any other value.
 - `printComment` prints warnings and errors to stderr, not stdout. Regular comments stay on stdout. This stops them being captured with the output of functions called using "$(…)".
 - `printComment` prints wildcards in a comment as written, e.g. `*.log`, instead of replacing them with matching file names. It no longer sets `CURRENT_LINE` and `WORD` in the calling script.
 
+### `crontab.sh`
+
+- `addScriptToCron` and `checkForAndCreateUserLogDir` no longer print "Check returned true." or "Check returned false." after "Checking to see if …".
+
 ### `docker-env-variables.sh`
 
+- `changeDockerEnvVariable` no longer sets `ENV_VAR_SET_YN` in the calling script.
 - `checkAndSetDockerEnvVariables` prints "H_A is set." or the warning "H_A is not set." instead of "Check returned true." or "Check returned false.".
 - `checkIfDockerEnvVariableSet` and `compareDockerEnvVariableWithValue` return 0 or 1 and print nothing. Previously they printed `true` or `false`.
 - `compareDockerEnvVariableWithValue` and `readDockerEnvVariable` return the whole value when it contains `=`, e.g. a base64 string ending in `==`. Previously the value was cut off at the second `=`.
 
 ### `docker-secrets.sh`
 
+- `checkForAndCreateDockerSecretsDir` prints "Creating a docker secrets directory at:" and the path when it creates the directory, instead of "Check returned false.".
 - `createDockerSecretFile` replaces an existing secret file instead of appending to it, writes the value with `printf` so values such as `-n` are written as given, lists the directory the file is in, and returns 1 with an error if the write fails. Previously a rerun gave a two-line secret, and a failed write reported success.
+
+### `files-directories.sh`
+
+- `checkAndCreateOrAskToReplaceFileOrDirectory` no longer prints "Check returned true." or "Check returned false.".
+- `checkForFileOrDirectory` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 
 ### `host-env-variables.sh`
 
@@ -52,18 +64,34 @@
 
 ### `setup-config.sh`
 
+- `checkForAndCreateSetupConfigFileAndDir` no longer prints "Check returned …" after each "Checking …" line.
 - `readSetupConfigValue` matches the whole key, so `ssh` no longer matches `sshPort`. Values containing spaces or wildcards are returned as written. It no longer runs `set -f` in the calling script.
+- `writeSetupConfigOption` no longer has a "Something went wrong" branch that exited the script. It couldn't be reached, as the key check only ever returned found or not found.
+
+### `setup.sh`
+
+- `initialiseScript` prints "Checking the setup config to see if this step has already been performed…" whether or not the setup config file exists, and no longer prints "Check returned …". Its "Something went wrong" branch, which couldn't be reached, is removed.
+
+### `ssh-config.sh`
+
+- `checkForAndCreateSshConfig` and `checkForAndCreateSshDir` no longer print "Check returned true." or "Check returned false.".
 
 ### `ssh-keys.sh`
 
 - `addSshKeytoAgent` is removed. It passed the public key to `ssh-add`, so the key was never added. The agent it started was the calling script's own agent, so it couldn't be reached once the script exited. Point `IdentityFile` at the key in `~/.ssh/config` instead, e.g. with `addHostToSshConfig`.
+- `checkForAndCreateAuthorizedKeys` no longer prints "Check returned true." or "Check returned false.".
 - `checkPrivateSshKeyCopied` no longer sets `KEY_COPIED_YN` in the calling script.
 
 ### `text.sh`
 
+- `checkFileContainsString` returns 0 if the string is found, 1 if not, or 2 if the file can't be read, and `checkStringContainsSubstring` returns 0 or 1. Both print nothing. Previously they printed `true` or `false`.
 - `commentInLine` uncomments lines that use a comment character other than `#`, e.g. `;`. Previously it found the line, left it commented and reported success.
 - `commentInLine` and `commentOutLine` accept `/` and `|` in the partial and the comment character. Previously `/` as the comment character made `sed` fail.
 - `commentInLine` and `commentOutLine` match partials literally, so `\`, `[`, `.`, `*`, `^` and `$` are no longer treated as regular expression characters. Previously `[main]` matched any line starting with `m`, `a`, `i` or `n`.
+
+### `user-input.sh`
+
+- `getUserInputYN` returns 0 for y/Y and 1 for n/N, and prints nothing. Previously it printed `true` or `false`.
 
 ### `variables.sh`
 

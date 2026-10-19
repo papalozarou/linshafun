@@ -17,50 +17,49 @@
 #    'replace'; and
 # 4. "$4" - an optional warning to be displayed if the file is to be replaced or 
 #    recreated.
+#
+# "REPLACE_STATUS" stays 0 when the file or directory doesn't exist, so the
+# function runs. It is only non-zero when the file or directory exists and the
+# user answers n/N.
 #-------------------------------------------------------------------------------
 checkAndCreateOrAskToReplaceFileOrDirectory () {
   local FILE_OR_DIR_PATH="${1:?}"
   local FUNCTION="${2:?}"
   local ACTION="${3:-"recreate"}"
   local WARNING="$4"
+  local REPLACE_STATUS=0
 
-  local FILE_OR_DIR_TF="$(checkForFileOrDirectory "$FILE_OR_DIR_PATH")"
   printComment 'Checking for file or directory at:'
   printComment "$FILE_OR_DIR_PATH"
-  printComment "Check returned $FILE_OR_DIR_TF."
 
-  if [ "$FILE_OR_DIR_TF" = true ]; then
+  if checkForFileOrDirectory "$FILE_OR_DIR_PATH"; then
     promptForUserInput "The file or directory exists. Do you want to $ACTION it (y/n)?" 'This cannot be undone if you answer y/Y.'
-    local REPLACE_YN="$(getUserInputYN)"
-  elif [ "$FILE_OR_DIR_TF" = false ]; then
+    getUserInputYN || REPLACE_STATUS="$?"
+  else
     printComment "The file or directory does not exist."
   fi
 
-  if [ "$REPLACE_YN" = true ] || [ "$FILE_OR_DIR_TF" = false ] && [ -n "$WARNING" ]; then
-    ("$FUNCTION" "$FILE_OR_DIR_PATH" "$WARNING")
-  elif [ "$REPLACE_YN" = true ] || [ "$FILE_OR_DIR_TF" = false ] && [ -z "$WARNING" ]; then
-    ("$FUNCTION" "$FILE_OR_DIR_PATH")
-  else
+  if [ "$REPLACE_STATUS" -ne 0 ]; then
     printComment 'No changes were made.'
+  elif [ -n "$WARNING" ]; then
+    ("$FUNCTION" "$FILE_OR_DIR_PATH" "$WARNING")
+  else
+    ("$FUNCTION" "$FILE_OR_DIR_PATH")
   fi
 
   listDirectories "$FILE_OR_DIR_PATH"
 }
 
 #-------------------------------------------------------------------------------
-# Checks for a file or directory. Returns true of it is present, false if it 
-# not. Takes one mandatory argument.
+# Checks for a file or directory. Returns 0 if it is present, 1 if it is not.
+# Takes one mandatory argument.
 # 
 # 1. "{1:?}" - the file or directory to check for, including directory path.
 #-------------------------------------------------------------------------------
 checkForFileOrDirectory () {
   local FILE_OR_DIR_PATH="${1:?}"
 
-  if [ -f "$FILE_OR_DIR_PATH" ] || [ -d "$FILE_OR_DIR_PATH" ]; then
-    echo true
-  else
-    echo false
-  fi
+  [ -f "$FILE_OR_DIR_PATH" ] || [ -d "$FILE_OR_DIR_PATH" ]
 }
 
 #-------------------------------------------------------------------------------

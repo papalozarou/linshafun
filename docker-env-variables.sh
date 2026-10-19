@@ -39,20 +39,21 @@ changeDockerEnvVariable () {
   printSeparator
 
   promptForUserInput "Do you want to set a new value for $ENV_VAR (y/n)?" 'This may break existing setups if running these scripts again.'
-  ENV_VAR_SET_YN="$(getUserInputYN)"
 
-  if [ "$ENV_VAR_SET_YN" = true ] && [ "$ENV_VAR" = "H_RTT_PORT" ]; then
+  if ! getUserInputYN; then
+    printComment "No changes to $ENV_VAR made."
+
+    return 0
+  fi
+
+  if [ "$ENV_VAR" = "H_RTT_PORT" ]; then
     ENV_VALUE="$(generateAndCheckPort "ssh")"
-  elif [ "$ENV_VAR_SET_YN" = true ]; then
+  else
     promptForUserInput "What value do you require for $ENV_VAR?"
     ENV_VALUE="$(getUserInput)"
   fi
 
-  if [ "$ENV_VAR_SET_YN" = true ]; then
-    setDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR" "$ENV_VALUE"
-  else
-    printComment "No changes to $ENV_VAR made."
-  fi
+  setDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR" "$ENV_VALUE"
 }
 
 #-------------------------------------------------------------------------------

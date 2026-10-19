@@ -173,9 +173,8 @@ controlRelatedDockerServices () {
 getDockerComposeFilePath () {
   local STACK_DIR_PATH="${1:?}"
   local COMPOSE_FILE_PATH="$STACK_DIR_PATH/compose.yml"
-  local COMPOSE_FILE_TF="$(checkForFileOrDirectory "$COMPOSE_FILE_PATH")"
 
-  if [ "$COMPOSE_FILE_TF" = false ]; then
+  if ! checkForFileOrDirectory "$COMPOSE_FILE_PATH"; then
     COMPOSE_FILE_PATH="$STACK_DIR_PATH/docker-compose.yml"
   fi
 
