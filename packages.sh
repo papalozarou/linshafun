@@ -11,18 +11,24 @@
 # 1. "${1:?}" – the package to be checked. 
 # 
 # Returns false if the package is not installed, returns true if the package is 
-# installed. As per:
+# installed. The check reads the package's status word from "dpkg-query", and
+# only "installed" counts, so a package that was removed but left its config
+# files behind reads as not installed. As per:
 #
-# - https://stackoverflow.com/a/7522866
+# - https://man7.org/linux/man-pages/man1/dpkg-query.1.html
 # 
 # N.B.
 # This function explicitly checks a single package to allow for a simple true or 
 # false check.
+#
+# The argument must be a package name, not a command name, e.g. "docker-ce", not
+# "docker". A package that "dpkg" doesn't know about reads as not installed.
 #-------------------------------------------------------------------------------
 checkForPackage () {
   local PACKAGE="${1:?}"
+  local STATUS="$(dpkg-query -W -f='${db:Status-Status}' "$PACKAGE" 2>/dev/null)"
 
-  if ! type "$PACKAGE" > /dev/null; then
+  if [ "$STATUS" != 'installed' ]; then
     echo false
   else
     echo true   
