@@ -178,7 +178,7 @@ compareDockerEnvVariableWithValue () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
   local ENV_COMPARISON="${3:?}"
-  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2)"
+  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2-)"
 
   if [ "$ENV_VALUE" = "$ENV_COMPARISON" ]; then
     echo true
@@ -196,7 +196,8 @@ compareDockerEnvVariableWithValue () {
 # 
 # The variable and value are read from the file with "grep" as a single string, 
 # then piped to "cut", which uses the equals sign as a field delimter to return 
-# the second field, i.e. the value. As per:
+# the second field onwards, i.e. the whole value, including any equals signs
+# within it. As per:
 # 
 # - https://unix.stackexchange.com/a/312281
 # 
@@ -209,7 +210,7 @@ compareDockerEnvVariableWithValue () {
 readDockerEnvVariable () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
-  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2)"
+  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2-)"
 
   echo "$ENV_VALUE"
 }
