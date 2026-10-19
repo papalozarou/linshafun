@@ -29,6 +29,7 @@
 
 - `checkAndCreateOrAskToReplaceFileOrDirectory` no longer prints "Check returned true." or "Check returned false.".
 - `checkForFileOrDirectory` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
+- `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createFiles` and `removeFileOrDirectory` return 1 if any file or directory fails, after carrying on with the rest. The copy and create functions print an error naming the file, and no longer print "File copied …" or "File created." after a failure. Previously all four returned 0.
 
 ### `host-env-variables.sh`
 

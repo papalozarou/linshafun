@@ -74,10 +74,14 @@ checkForFileOrDirectory () {
 #
 # If adding a file extension, the "." must be included at the start of the 
 # second argument.
+#
+# If a file can't be copied, the function prints an error, carries on with the
+# remaining files, and returns 1.
 #-------------------------------------------------------------------------------
 copyAndAddPostfixToFiles () {
   local FILE_PATHS="${1:?}"
   local POSTFIX="${2:-".backup"}"
+  local STATUS=0
 
   for FILE_PATH in $FILE_PATHS; do
     printComment "Copying and adding $POSTFIX to the file:"
@@ -87,10 +91,17 @@ copyAndAddPostfixToFiles () {
 
     local FILE_COPY="$(addPostfix "$FILE_PATH" "$POSTFIX")"
 
-    cp -p "$FILE_PATH" "$FILE_COPY"
+    if ! cp -p "$FILE_PATH" "$FILE_COPY"; then
+      printComment "Failed to copy $FILE_PATH to $FILE_COPY." 'error'
+      STATUS=1
+
+      continue
+    fi
 
     printComment 'File copied and postfix added.'
   done
+
+  return "$STATUS"
 }
 
 #-------------------------------------------------------------------------------
@@ -105,10 +116,14 @@ copyAndAddPostfixToFiles () {
 #
 # If removing a file extension, the "." must be included at the start of the 
 # second argument.
+#
+# If a file can't be copied, the function prints an error, carries on with the
+# remaining files, and returns 1.
 #-------------------------------------------------------------------------------
 copyAndRemovePostfixFromFiles () {
   local FILE_PATHS="${1:?}"
   local POSTFIX="${2:-".example"}"
+  local STATUS=0
 
   for FILE_PATH in $FILE_PATHS; do
     printComment "Copying and removing $POSTFIX from the file:"
@@ -118,10 +133,17 @@ copyAndRemovePostfixFromFiles () {
 
     local FILE_COPY="$(removePostfix "$FILE_PATH" "$POSTFIX")"
 
-    cp -p "$FILE_PATH" "$FILE_COPY"
+    if ! cp -p "$FILE_PATH" "$FILE_COPY"; then
+      printComment "Failed to copy $FILE_PATH to $FILE_COPY." 'error'
+      STATUS=1
+
+      continue
+    fi
 
     printComment 'File copied and postfix removed.'
   done
+
+  return "$STATUS"
 }
 
 #-------------------------------------------------------------------------------
@@ -182,18 +204,30 @@ createDirectory () {
 # 
 # 1. "$@" - one or more files to be created, including directory paths.
 # 
-# The function loops through each passed argument and creates the file.
+# The function loops through each passed argument and creates the file. If a
+# file can't be created, the function prints an error, carries on with the
+# remaining files, and returns 1.
 #-------------------------------------------------------------------------------
 createFiles () {
+  local STATUS=0
+
   for FILE_PATH in "$@"; do
     printComment 'Creating file at:'
     printComment "$FILE_PATH"
-    touch "$FILE_PATH"
+
+    if ! touch "$FILE_PATH"; then
+      printComment "Failed to create the file at $FILE_PATH." 'error'
+      STATUS=1
+
+      continue
+    fi
 
     printSeparator
     listDirectories "$FILE_PATH"
     printComment 'File created.'
   done
+
+  return "$STATUS"
 }
 
 #-------------------------------------------------------------------------------
@@ -270,9 +304,12 @@ listDirectories () {
 #    paths.
 # 
 # The function loops through each passed argument and removes the file or 
-# directory.
+# directory. If a file or directory can't be removed, the function prints an
+# error, carries on with the remaining files or directories, and returns 1.
 #-------------------------------------------------------------------------------
 removeFileOrDirectory () {
+  local STATUS=0
+
   for FILE_OR_DIR_PATH in "$@"; do
     printComment 'Removing file or directory at:'
     printComment "$FILE_OR_DIR_PATH"
@@ -281,8 +318,11 @@ removeFileOrDirectory () {
       printComment 'File or directory removed.'
     else
       printComment 'File or directory could not be removed. Please check it exists and that you have permission to remove it.' 'error'
+      STATUS=1
     fi
   done
+
+  return "$STATUS"
 }
 
 #-------------------------------------------------------------------------------
