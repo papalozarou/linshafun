@@ -176,7 +176,7 @@ compareDockerEnvVariableWithValue () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
   local ENV_COMPARISON="${3:?}"
-  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2-)"
+  local ENV_VALUE="$(grep -m 1 "^$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2-)"
 
   [ "$ENV_VALUE" = "$ENV_COMPARISON" ]
 }
@@ -204,7 +204,7 @@ compareDockerEnvVariableWithValue () {
 readDockerEnvVariable () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
-  local ENV_VALUE="$(grep -m 1 "$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2-)"
+  local ENV_VALUE="$(grep -m 1 "^$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2-)"
 
   echo "$ENV_VALUE"
 }
@@ -270,7 +270,7 @@ setDockerEnvVariable () {
 
   printComment "Setting $ENV_VAR to $ENV_VALUE in:"
   printComment "$ENV_FILE_PATH"
-  sed -i '/'"$ENV_VAR"='/c\\'"$ENV_VAR=$ENV_VALUE" "$ENV_FILE_PATH"
+  sed -i '/^'"$ENV_VAR"='/c\\'"$ENV_VAR=$ENV_VALUE" "$ENV_FILE_PATH"
   printSeparator
   grep "$ENV_VALUE" "$ENV_FILE_PATH"
   printSeparator
