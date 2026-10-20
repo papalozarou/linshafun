@@ -79,7 +79,7 @@ checkForPackagesAndRemove () {
 # Installs or removes a given package. Takes at least two or more arguments:
 # 
 # 1. "${1:?}" - the action to be taken, either "install" or "remove"
-# 2. "$i" – one or more packages to be installed.
+# 2. "$@" – one or more packages to install or remove.
 # 
 # The function tests to see if the an accepted value has been passed as the
 # first argument then stores it as the action to be taken. It then shifts the 

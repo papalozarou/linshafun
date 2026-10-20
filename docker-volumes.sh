@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Lists the contents of docker volumes. Takes one or more arguments
+# Lists the contents of docker volumes. Takes two or more arguments:
 # 
 # 1. "${1:?}" – the voolume prefix, usually the compose "name" attribute; and
 # 2. "$@" – one or more volumes to be listed, excluding prefix.
@@ -30,11 +30,11 @@ listDockerVolumeContents () {
 }
 
 #-------------------------------------------------------------------------------
-# Manages docker volumes. Takes at least two mandatory arguments:
+# Manages docker volumes. Takes at least three mandatory arguments:
 #
 # 1. "${1:?}" – the action to perform; 
 # 2. "${2:?}" – the prefix for the volumes; and
-# 2. "$@" – one ore more volumes, excluding prefix.
+# 3. "$@" – one ore more volumes, excluding prefix.
 #
 # N.B.
 # The prefix is converted to lower case and an underscore is added to the end to

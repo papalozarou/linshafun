@@ -212,7 +212,7 @@ printLogLine () {
 #-------------------------------------------------------------------------------
 # Tells the user that the script is exiting. Takes one optional argument:
 #
-# 1. $1 - flag for if exiting with changes.
+# 1. "$1" - flag for if exiting with changes.
 # 
 # If the flag is "true" the function will print the additional "changes were
 # made" output.
@@ -247,7 +247,7 @@ printSeparator () {
 
 #-------------------------------------------------------------------------------
 # Tells the user an action is taking place and a wait is needed. Takes three
-# mandatory arguments:
+# arguments, two of which are mandatory:
 # 
 # 1. "${1:?}" - the service the action is being performed on;
 # 2. "${2:?}" - the action being performed; and

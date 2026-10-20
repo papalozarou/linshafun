@@ -6,17 +6,18 @@
 
 #-------------------------------------------------------------------------------
 # Adds a script, on a schedule, to a given user's crontab, via a snipper in 
-# "/etc/cron.d". Takes four mandatory arguments:
+# "/etc/cron.d". Takes five arguments:
 #
-# 1. "${1:?}" – a username, defaulting to "root";
-# 2. "${2:?}" – the command to run or the file path, including directory path, 
-#    defaulting to the global variable "$CRON_SCRIPT_NAME";
-# 3. "${3:?}" – the cron schedule, in "* * * * *" format, defaulting to the 
-#    global variable "$CRON_SCHEDULE";
-# 4. "${4:?}" – the snippet name to be placed in "/etc/cron.d", defaulting to 
-#    the global variable "$CRON_SNIPPET_NAME"; and
-# 5. "${5:?}" – an optional flag to enable log output to a file in the user's 
-#    home directory, defaulting to "true".
+# 1. "${1:-"root"}" – a username, defaulting to "root";
+# 2. "${2:-"$CRON_SCRIPT_PATH"}" – the command to run or the file path, 
+#    including directory path, defaulting to the global variable
+#    "$CRON_SCRIPT_PATH";
+# 3. "${3:-"$CRON_SCHEDULE"}" – the cron schedule, in "* * * * *" format, 
+#    defaulting to the global variable "$CRON_SCHEDULE";
+# 4. "${4:-"$CRON_SNIPPET_NAME"}" – the snippet name to be placed in 
+#    "/etc/cron.d", defaulting to the global variable "$CRON_SNIPPET_NAME"; and
+# 5. "${5:-true}" – an optional flag to enable log output to a file in the 
+#    user's home directory, defaulting to "true".
 # 
 # N.B.
 # If using the global variables they must be assigned first using their 

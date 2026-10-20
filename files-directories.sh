@@ -7,14 +7,14 @@
 #-------------------------------------------------------------------------------
 # Checks to see if a file or directory exists. If the file or directory doesn't 
 # exist, or it does exist and the user wants to replace it, (re)create it. Takes 
-# four arguments:
+# four arguments, two of which are mandatory:
 # 
 # 1. "${1:?}" - the file or directory to check for and create or replace, 
 #    including directory path;
 # 2. "${2:?}" - the function to execute if the file or directory doesn't exist, 
 #    or the user chooses to replace it; 
-# 3. "${3:?" - the action being performed, all lowercase, defaulting to 
-#    'replace'; and
+# 3. "${3:-"recreate"}" - the action being performed, all lowercase, 
+#    defaulting to "recreate"; and
 # 4. "$4" - an optional warning to be displayed if the file is to be replaced or 
 #    recreated.
 #
@@ -52,9 +52,9 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
 
 #-------------------------------------------------------------------------------
 # Checks for a file or directory. Returns 0 if it is present, 1 if it is not.
-# Takes one mandatory argument.
+# Takes one mandatory argument:
 # 
-# 1. "{1:?}" - the file or directory to check for, including directory path.
+# 1. "${1:?}" - the file or directory to check for, including directory path.
 #-------------------------------------------------------------------------------
 checkForFileOrDirectory () {
   local FILE_OR_DIR_PATH="${1:?}"
@@ -63,10 +63,11 @@ checkForFileOrDirectory () {
 }
 
 #-------------------------------------------------------------------------------
-# Copies file(s) and adds a given postfix. Takes two mandatory arguments:
+# Copies file(s) and adds a given postfix. Takes two arguments, one of which is
+# mandatory:
 #
 # 1. "${1:?}" – the file or files, including directory path; and
-# 2. "${2:?}" – the postfix to add, defaulting to ".backup".
+# 2. "${2:-".backup"}" – the postfix to add, defaulting to ".backup".
 # 
 # N.B.
 # In the "for" loop, "$FILES" is not quoted as we explicitly want word 
@@ -105,10 +106,11 @@ copyAndAddPostfixToFiles () {
 }
 
 #-------------------------------------------------------------------------------
-# Copies file(s) and removes a given postfix. Takes two mandatory arguments:
+# Copies file(s) and removes a given postfix. Takes two arguments, one of
+# which is mandatory:
 #
 # 1. "${1:?}" – the file or files, including directory path; and
-# 2. "${2:?}" – the postfix to remove, defaulting to ".example".
+# 2. "${2:-".example"}" – the postfix to remove, defaulting to ".example".
 # 
 # N.B.
 # In the "for" loop, "$FILES" is not quoted as we explicitly want word 
@@ -289,11 +291,12 @@ createFiles () {
 }
 
 #-------------------------------------------------------------------------------
-# Gets a list of files with a given prefix. Takes two mandatory arguments:
+# Gets a list of files with a given prefix. Takes two arguments, one of which
+# is mandatory:
 # 
 # 1. "${1:?}" – the prefix to search for, excluding wildcard; and
-# 2. "${2:?}" – the directory that contains the files, including the directory 
-#    path and defaulting to the users home directory.
+# 2. "${2:-"$USER_DIR_PATH"}" – the directory that contains the files, 
+#    including the directory path and defaulting to the users home directory.
 # 
 # N.B.
 # The returned "$FILE_PATHS" variable will:
@@ -312,12 +315,12 @@ getListOfFilesByPrefix () {
 }
 
 #-------------------------------------------------------------------------------
-# Gets a list of files with a given postfix. Takes two mandatory arguments:
+# Gets a list of files with a given postfix. Takes two arguments:
 # 
-# 1. "${1:?}" – the postfix to search for, excluding wildcard, defaulting to 
-#    ".example"; and
-# 2. "${2:?}" – the directory that contains the files, including the directory 
-#    path and defaulting to the users home directory.
+# 1. "${1:-".example"}" – the postfix to search for, excluding wildcard, 
+#    defaulting to ".example"; and
+# 2. "${2:-"$USER_DIR_PATH"}" – the directory that contains the files, 
+#    including the directory path and defaulting to the users home directory.
 # 
 # N.B.
 # The returned "$FILE_PATHS" variable will:
@@ -406,8 +409,8 @@ removeFileOrDirectory () {
 #-------------------------------------------------------------------------------
 # Renames a file or directory. Takes three arguments, two of which are mandatory:
 #
-# 1. "${1:?}" - the directory path to the file or directory, defaulting to the
-#    current directory, ".";
+# 1. "${1:-"."}" - the directory path to the file or directory, defaulting to
+#    the current directory, ".";
 # 2. "${2:?}" - the current file or directory name; and
 # 3. "${3:?}" - the new file or directory name.
 #

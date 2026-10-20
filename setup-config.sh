@@ -152,10 +152,10 @@ readSetupConfigValue () {
 
 #-------------------------------------------------------------------------------
 # Reloads a variable file that has been added to as part of a script. Takes one
-# mandatory argument:
+# argument:
 #
-# 1. "${1:?}" – the variable file to reload, including directory path and
-#    defaulting to "$SETUP_VAR_PATH"
+# 1. "${1:-"$SETUP_VAR_PATH"}" – the variable file to reload, including
+#    directory path and defaulting to "$SETUP_VAR_PATH".
 #-------------------------------------------------------------------------------
 reloadVarFile () {
 	local VAR_FILE_PATH="${1:-"$SETUP_VAR_PATH"}"

@@ -5,10 +5,11 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Controls a docker service, via docker compose. Takes four arguments:
+# Controls a docker service, via docker compose. Takes four arguments, two of
+# which are mandatory:
 #
-# 1. "${1:?}" – the compose file, including directory path and defaulting to
-#    "$DKR_COMPOSE_FILE_PATH";
+# 1. "${1:-$DKR_COMPOSE_FILE_PATH}" – the compose file, including directory
+#    path and defaulting to "$DKR_COMPOSE_FILE_PATH";
 # 2. "${2:?}" – the action to perform;
 # 3. "${3:?}" – the service to perform the action on; and
 # 4. "$4" - any optional flags.
@@ -49,10 +50,11 @@ controlDockerService () {
 }
 
 #-------------------------------------------------------------------------------
-# Controls every service in a docker compose stack. Takes three arguments:
+# Controls every service in a docker compose stack. Takes three arguments, one
+# of which is mandatory:
 #
-# 1. "${1:?}" – the compose file, including directory path and defaulting to
-#    "$DKR_COMPOSE_FILE_PATH";
+# 1. "${1:-$DKR_COMPOSE_FILE_PATH}" – the compose file, including directory
+#    path and defaulting to "$DKR_COMPOSE_FILE_PATH";
 # 2. "${2:?}" – the action to perform; and
 # 3. "$3" – any optional flags.
 #

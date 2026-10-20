@@ -48,10 +48,10 @@ checkIfRunWithSudo () {
 
 #-------------------------------------------------------------------------------
 # Checks if the system was rebooted by parsing the output of "who -b" into 
-# seconds, and comparing against the current time. Takes argument:
+# seconds, and comparing against the current time. Takes one argument:
 # 
-# 1. "${1:?}" – the time in seconds within which a reboot is considered recent, 
-#    defaulting to 60 seconds.
+# 1. "${1:-60}" – the time in seconds within which a reboot is considered 
+#    recent, defaulting to 60 seconds.
 #
 # Returns 0 if the system was rebooted within the given timeframe, 1 if not, and
 # 2 if the timeframe is not a number.
