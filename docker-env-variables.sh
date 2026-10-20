@@ -14,6 +14,8 @@
 # 
 # If a user choses "y/Y" the variable is set via "setEnvVariable".
 # 
+# If the value is blank or missing, "(not set)" is shown as the current value.
+# 
 # If "$ENV_VALUE" names a host env variable, e.g. "$HOST_SUBDOMAIN", "eval" is
 # used to indirectly reference the host env variable, using "case", as per:
 # 
@@ -41,7 +43,7 @@ changeDockerEnvVariable () {
 
   printComment "The current value of $ENV_VAR is:"
   printSeparator
-  printComment "$ENV_VALUE"
+  printComment "${ENV_VALUE:-(not set)}"
   printSeparator
 
   promptForUserInput "Do you want to set a new value for $ENV_VAR (y/n)?" 'This may break existing setups if running these scripts again.'

@@ -21,6 +21,7 @@
 
 - `changeDockerEnvVariable` no longer sets `ENV_VAR_SET_YN` in the calling script.
 - `changeDockerEnvVariable` only looks up a value that is `$` followed by a valid variable name, e.g. `$HOST_DOMAIN`. Any other value starting with `$HOST` is shown as written. Previously the whole value was passed to `eval`, so `$HOST_X; cmd` ran `cmd`.
+- `changeDockerEnvVariable` shows "(not set)" as the current value when the variable is blank, missing or names an unset host variable. Previously the script exited with status 2.
 - `checkAndSetDockerEnvVariables` prints "H_A is set." or the warning "H_A is not set." instead of "Check returned true." or "Check returned false.".
 - `checkIfDockerEnvVariableSet` and `compareDockerEnvVariableWithValue` return 0 or 1 and print nothing. Previously they printed `true` or `false`.
 - `compareAndUpdateDockerEnvVariables` prints the error "H-A is not a valid variable name." for an invalid name, skips it and carries on. It returns 1 if any name was invalid or any change failed. Previously the name was passed to `eval` unchecked, so `H-A` was compared against `A`, and it returned the status of whatever ran last.
