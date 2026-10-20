@@ -16,19 +16,24 @@
 # the arguments. As per:
 # 
 # - https://unix.stackexchange.com/a/225951
+#
+# If an image fails to build, "controlDockerService" prints the error. The
+# function carries on with the remaining images, and returns 1.
 #-------------------------------------------------------------------------------
 buildDockerImages () {
   local COMPOSE_FILE_PATH="${1:-"$DKR_COMPOSE_FILE_PATH"}"
+  local STATUS=0
 
   shift
 
   for IMAGE in "$@"; do
     printComment "Building $IMAGE."
     printSeparator
-    controlDockerService "$COMPOSE_FILE_PATH" "build" "$IMAGE" "--no-cache"
+    controlDockerService "$COMPOSE_FILE_PATH" "build" "$IMAGE" "--no-cache" || STATUS=1
     printSeparator
-    printComment 'Assuming there are no errors above, the image was built.' 'warning'
   done
+
+  return "$STATUS"
 }
 
 #-------------------------------------------------------------------------------

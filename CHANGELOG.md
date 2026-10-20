@@ -6,6 +6,7 @@
 
 - `createUserLogDir` is removed. `initialiseCommentLogs` creates the log directory's parent with `createDirectory`, with mode "700" and the log user as owner.
 - `initialiseCommentLogs` takes the log user as its mandatory third argument and an optional log group as its fourth. The maximum age moves to the fifth.
+- `initialiseCommentLogs` returns 1 with the error "Failed to create the log file at …. Logging is off for this run." if the log file can't be created. It clears `COMMENT_LOG_PATH`, so later comments print to the terminal only, and doesn't set the log directory's owner or permissions. Previously `COMMENT_LOG_PATH` stayed set, so every later comment also printed "cannot create … Directory nonexistent".
 - `printCheckResult` is removed. Callers print "Checking …" with `printComment` and branch with `if checkFoo; then`. Previously it printed "Check returned true." or "Check returned false." and exited the script on any other value.
 - `printComment` prints warnings and errors to stderr, not stdout. Regular comments stay on stdout. This stops them being captured with the output of functions called using "$(…)".
 - `printComment` prints wildcards in a comment as written, e.g. `*.log`, instead of replacing them with matching file names. It no longer sets `CURRENT_LINE` and `WORD` in the calling script.
@@ -25,6 +26,10 @@
 - `compareDockerEnvVariableWithValue`, `readDockerEnvVariable` and `setDockerEnvVariable` only match a line that starts with the variable name, so `H_IP` no longer matches `C_PIH_IP=` or a commented-out `# H_IP=`. Previously the first line containing `H_IP=` was read, and `setDockerEnvVariable` overwrote every such line. A line starting with `export` or a space is no longer matched.
 - `replaceDockerEnvPlaceholderVariable` returns 1 with the error "Failed to replace ${DKR_ENV: H_A} in …" if `sed` fails, e.g. the file doesn't exist. Previously it printed "Placeholder variable replaced." and returned 0.
 - `setDockerEnvVariable` returns 1 with the error "Failed to set H_A, as it was not found in …" if no line starts with `H_A=`, or "Failed to set H_A in …" if `sed` fails. Previously it printed "Variable updated." and returned 0 without writing anything. It still never adds a missing variable.
+
+### `docker-images.sh`
+
+- `buildDockerImages` returns 1 if any image fails to build, after carrying on with the rest, and no longer prints "Assuming there are no errors above, the image was built.". `controlDockerService` reports each build's result. Previously it always returned 0.
 
 ### `docker-secrets.sh`
 

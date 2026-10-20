@@ -61,6 +61,12 @@ COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
 # to the new log, as the current log is renamed first. Nothing must be printed
 # between setting it and renaming the current log, or it is written to the
 # current log instead.
+#
+# If the log file can't be created, "COMMENT_LOG_PATH" is cleared before the
+# error is printed, so the script carries on printing to the terminal only.
+# Without this, every later comment would also print an error, as it fails to
+# write to the missing log. The function then returns 1, without setting the
+# owner or permissions of the log directory.
 #-------------------------------------------------------------------------------
 initialiseCommentLogs () {
   local LOG_DIR_PATH="${1:?}"
@@ -76,7 +82,12 @@ initialiseCommentLogs () {
 
   rotateCommentLog "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$LOG_MAX_AGE_DAYS"
 
-  touch "$COMMENT_LOG_PATH"
+  if ! touch "$COMMENT_LOG_PATH"; then
+    COMMENT_LOG_PATH=
+    printComment "Failed to create the log file at $LOG_DIR_PATH/$LOG_FILE_NAME. Logging is off for this run." 'error'
+
+    return 1
+  fi
 
   setOwner "$LOG_USER" "$LOG_DIR_PATH" "$LOG_GROUP"
   setPermissions '700' "$LOG_DIR_PATH"
