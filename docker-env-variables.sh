@@ -14,22 +14,28 @@
 # 
 # If a user choses "y/Y" the variable is set via "setEnvVariable".
 # 
-# If "$ENV_VALUE" is "$HOST_SUBDOMAIN", "eval" is used to indirectly reference 
-# the host env variable stored in "$HOST_SUBDOMAIN", using "case", as per:
+# If "$ENV_VALUE" names a host env variable, e.g. "$HOST_SUBDOMAIN", "eval" is
+# used to indirectly reference the host env variable, using "case", as per:
 # 
 # - https://unix.stackexchange.com/a/41418
 # - https://stackoverflow.com/a/229585
 # - https://stackoverflow.com/a/19897118
 # - https://www.shellscript.sh/case.html?cmdf=how+to+use+case+statement+sh
+#
+# N.B.
+# The name after "$" is checked with "checkIfValidVariableName" before it is
+# passed to "eval", so a value such as "$HOST_X; rm -rf ~" is shown as written
+# rather than run.
 #-------------------------------------------------------------------------------
 changeDockerEnvVariable () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
   local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR")"
+  local HOST_VAR_NAME="${ENV_VALUE#\$}"
 
   case "$ENV_VALUE" in
       '$HOST'*)
-        eval "ENV_VALUE=$ENV_VALUE"
+        checkIfValidVariableName "$HOST_VAR_NAME" && eval "ENV_VALUE=\${$HOST_VAR_NAME}"
         ;;
   esac
 
@@ -126,16 +132,32 @@ checkIfDockerEnvVariableSet () {
 # 
 # - https://unix.stackexchange.com/a/41418
 # 
+# If a name isn't a valid variable name, the function prints an error and
+# carries on with the rest. It returns 1 if any name was invalid or any change
+# failed.
+#
 # N.B.
 # This comparison function expects the indirect referenced variable to already 
 # have been set in the global scope of the script that calls this function.
+#
+# Each name is checked with "checkIfValidVariableName" before it is passed to
+# "eval", so shell syntax cannot be accidentally passed and run by "eval".
 #-------------------------------------------------------------------------------
 compareAndUpdateDockerEnvVariables () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
+  local STATUS=0
 
   shift
 
   for ENV_VAR in "$@"; do
+    if ! checkIfValidVariableName "$ENV_VAR"; then
+      printComment "$ENV_VAR is not a valid variable name." 'error'
+
+      STATUS=1
+
+      continue
+    fi
+
     local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR")"
 
     eval "local ENV_COMPARISON=\${$ENV_VAR}"
@@ -156,9 +178,11 @@ compareAndUpdateDockerEnvVariables () {
       printComment "Comparison value:       $ENV_COMPARISON" 'warning'
       printSeparator
 
-      changeDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR"
+      changeDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR" || STATUS=1
     fi
   done
+
+  return "$STATUS"
 }
 
 #-------------------------------------------------------------------------------

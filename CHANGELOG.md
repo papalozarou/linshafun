@@ -20,8 +20,10 @@
 ### `docker-env-variables.sh`
 
 - `changeDockerEnvVariable` no longer sets `ENV_VAR_SET_YN` in the calling script.
+- `changeDockerEnvVariable` only looks up a value that is `$` followed by a valid variable name, e.g. `$HOST_DOMAIN`. Any other value starting with `$HOST` is shown as written. Previously the whole value was passed to `eval`, so `$HOST_X; cmd` ran `cmd`.
 - `checkAndSetDockerEnvVariables` prints "H_A is set." or the warning "H_A is not set." instead of "Check returned true." or "Check returned false.".
 - `checkIfDockerEnvVariableSet` and `compareDockerEnvVariableWithValue` return 0 or 1 and print nothing. Previously they printed `true` or `false`.
+- `compareAndUpdateDockerEnvVariables` prints the error "H-A is not a valid variable name." for an invalid name, skips it and carries on. It returns 1 if any name was invalid or any change failed. Previously the name was passed to `eval` unchecked, so `H-A` was compared against `A`, and it returned the status of whatever ran last.
 - `compareDockerEnvVariableWithValue` and `readDockerEnvVariable` return the whole value when it contains `=`, e.g. a base64 string ending in `==`. Previously the value was cut off at the second `=`.
 - `compareDockerEnvVariableWithValue`, `readDockerEnvVariable` and `setDockerEnvVariable` only match a line that starts with the variable name, so `H_IP` no longer matches `C_PIH_IP=` or a commented-out `# H_IP=`. Previously the first line containing `H_IP=` was read, and `setDockerEnvVariable` overwrote every such line. A line starting with `export` or a space is no longer matched.
 - `replaceDockerEnvPlaceholderVariable` returns 1 with the error "Failed to replace ${DKR_ENV: H_A} in …" if `sed` fails, e.g. the file doesn't exist. Previously it printed "Placeholder variable replaced." and returned 0.
