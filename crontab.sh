@@ -30,13 +30,13 @@
 # error and returns 1.
 # ------------------------------------------------------------------------------
 addScriptToCron () {
-  local USER="${1:-"root"}"
+  local CRON_USER="${1:-"root"}"
   local CMD_OR_SCRIPT_PATH="${2:-"$CRON_SCRIPT_PATH"}"
   local SCHEDULE="${3:-"$CRON_SCHEDULE"}"
   local SNIPPET_NAME="${4:-"$CRON_SNIPPET_NAME"}"
   local LOG_TF="${5:-true}"
   local SNIPPET_PATH="/etc/cron.d/$SNIPPET_NAME"
-  local CRON_LINE="$SCHEDULE $USER $CMD_OR_SCRIPT_PATH"
+  local CRON_LINE="$SCHEDULE $CRON_USER $CMD_OR_SCRIPT_PATH"
 
   printComment 'Adding to the system crontab, as a snippet in "/etc/cron.d".'
 

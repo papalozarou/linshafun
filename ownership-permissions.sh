@@ -20,16 +20,16 @@
 # If the ownership can't be set, the function prints an error and returns 1.
 # ------------------------------------------------------------------------------
 setOwner () {
-  local USER="${1:?}"
+  local OWNER="${1:?}"
   local FILE_DIR_PATH="${2:?}"
-  local GROUP="${3:-$USER}"
+  local GROUP="${3:-$OWNER}"
 
   printComment "Setting ownership of:"
   printComment "$FILE_DIR_PATH"
-  printComment "to $USER:$GROUP."
+  printComment "to $OWNER:$GROUP."
 
-  if ! chown -R "$USER:$GROUP" "$FILE_DIR_PATH"; then
-    printComment "Failed to set ownership of $FILE_DIR_PATH to $USER:$GROUP." 'error'
+  if ! chown -R "$OWNER:$GROUP" "$FILE_DIR_PATH"; then
+    printComment "Failed to set ownership of $FILE_DIR_PATH to $OWNER:$GROUP." 'error'
 
     return 1
   fi
