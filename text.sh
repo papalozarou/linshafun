@@ -119,7 +119,7 @@ checkStringContainsSubstring () {
 # 1. "${1:?}" – the file containing the line to uncomment, including directory 
 #    path;
 # 2. "${2:?}" – the partial that the line starts with, without the comment
-#    character, but including any delimiter, i.e. "=" or ":"; and
+#    character, but including any delimiter, e.g. "=" or ":"; and
 # 3. "${3:-#}" – an optional character used to comment out lines, defaulting to 
 #    hash.
 #
@@ -128,7 +128,7 @@ checkStringContainsSubstring () {
 # 
 # The "sed" command uses the control character "\001" as its separator.
 # Partials are escaped so that "\", "[", ".", "*", "^" and "$" are matched
-# literally, i.e. "[main]" only matches "[main]", not a line starting with "m",
+# literally, e.g. "[main]" only matches "[main]", not a line starting with "m",
 # "a", "i" or "n".
 # 
 # N.B.
@@ -171,7 +171,7 @@ commentInLine () {
 # 1. "${1:?}" – the file containing the line to comment out, including directory
 #    path;
 # 2. "${2:?}" – the partial that the line starts with, without the comment
-#    character, but including any delimiter, i.e. "=" or ":"; and
+#    character, but including any delimiter, e.g. "=" or ":"; and
 # 3. "${3:-#}" – an optional character used to comment out lines, defaulting to
 #    hash.
 # 
@@ -180,7 +180,7 @@ commentInLine () {
 # 
 # The "sed" command uses the control character "\001" as its separator.
 # Partials are escaped so that "\", "[", ".", "*", "^" and "$" are matched
-# literally, i.e. "[main]" only matches "[main]", not a line starting with "m",
+# literally, e.g. "[main]" only matches "[main]", not a line starting with "m",
 # "a", "i" or "n".
 # 
 # N.B.

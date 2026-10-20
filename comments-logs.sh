@@ -183,7 +183,7 @@ printLine () {
 #    "warning", or an "error", defaulting to "regular".
 #
 # Each line is prefixed with the date and time in the format set by
-# "COMMENT_LOG_TIMESTAMP_FORMAT", i.e.:
+# "COMMENT_LOG_TIMESTAMP_FORMAT", e.g.:
 #
 # 2026-10-10 05:00:03 SETUP SCRIPT: Stopping stacks.
 #
@@ -285,7 +285,7 @@ printServiceWait () {
 # "$ARCHIVED_LOG_FILE_PATHS" is not quoted when passed to
 # "removeFileOrDirectory", to allow for word splitting, so the log directory
 # path must not contain spaces. A path with spaces is split into separate paths,
-# and any of those that exist are removed, i.e. "/volume1/my logs" removes the
+# and any of those that exist are removed, e.g. "/volume1/my logs" removes the
 # "/volume1/my" directory if it exists.
 #-------------------------------------------------------------------------------
 removeArchivedCommentLogs () {
@@ -301,9 +301,9 @@ removeArchivedCommentLogs () {
 # Removes the ANSI colour codes from comment output if it is not going to a
 # terminal. Takes no arguments.
 #
-# Call it at the start of a script that runs on a schedule, i.e. from DSM
+# Call it at the start of a script that runs on a schedule, e.g. from DSM
 # Task Scheduler or cron. Their output is saved to a file or sent by email,
-# where the colour codes would show as raw characters, i.e. "^[[32m". When the
+# where the colour codes would show as raw characters, e.g. "^[[32m". When the
 # same script is run by hand, its output keeps its colours.
 #
 # N.B.
@@ -330,14 +330,14 @@ removeCommentColoursIfNotTerminal () {
 # The function:
 #
 # 1. renames the current log file to "<log file name>.<date and time>", if it
-#    exists and is not empty, i.e. "docker-backup.log.2026-10-10-05-00-03"; and
+#    exists and is not empty, e.g. "docker-backup.log.2026-10-10-05-00-03"; and
 # 2. removes archived logs older than the maximum age, via
 #    "removeArchivedCommentLogs".
 #
 # The date and time are read from the timestamp at the start of the log's first
 # line, so the archive is named after when the log was started. If the first
 # line does not start with a timestamp, the current date and time are used with
-# an "-untimestamped" suffix, i.e.
+# an "-untimestamped" suffix, e.g.
 # "docker-backup.log.2026-10-10-05-00-03-untimestamped".
 #
 # The suffix stops the archive having the same name as the next archive, as the

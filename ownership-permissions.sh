@@ -14,7 +14,7 @@
 #
 # N.B.
 # The group defaults to the owner name, which only works on systems that
-# create a group for each user. Pass the group on systems that do not, i.e.
+# create a group for each user. Pass the group on systems that do not, e.g.
 # "users" on Synology DSM.
 #
 # If the ownership can't be set, the function prints an error and returns 1.
@@ -38,7 +38,7 @@ setOwner () {
 #-------------------------------------------------------------------------------
 # Sets permissions of a file or directory. Takes two mandatory arguments:
 # 
-# 1. "${1:?}" – the permissions in numeric format, i.e. "600"; and
+# 1. "${1:?}" – the permissions in numeric format, e.g. "600"; and
 # 2. "${2:?}" – the path of the file or directory.
 #
 # If the permissions can't be set, the function prints an error and returns 1.

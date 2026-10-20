@@ -55,6 +55,8 @@ This file defines various coding standards for agents to adhere to.
 - MUST: Include concrete examples for schedule or time-based behaviour
 - MUST: For command documentation, include exact accepted input formats and exact output text where relevant
 - MUST: Use one term consistently for the same concept across related documentation
+- MUST: In documentation and comments, use "e.g." to introduce examples and "i.e." to restate the same thing in other words
+- MUST NOT: Add "etc." after a list introduced by "e.g."
 - MUST: Keep headings action-oriented and predictable where practical (for example `Quick start`, `Configuration`, `Operations`)
 - MUST: Keep bullet grammar consistent within each section
 - SHOULD: Use `N.B.` blocks for non-obvious caveats and gotchas

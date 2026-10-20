@@ -17,7 +17,7 @@
 # The optional flags, "$4", are not quoted as we explicitly want word splitting.
 #
 # Returns the exit status of "docker compose", so callers can stop if an action
-# failed, i.e. not archiving a database whose service failed to stop.
+# failed, e.g. not archiving a database whose service failed to stop.
 #-------------------------------------------------------------------------------
 controlDockerService () {
   local COMPOSE_FILE_PATH="${1:-$DKR_COMPOSE_FILE_PATH}"
@@ -95,7 +95,7 @@ controlDockerStack () {
 # arguments:
 #
 # 1. "${1:?}" – the action to perform, such as "up", "stop" or "pull"; and
-# 2. "$@" – one or more stack directory paths, i.e.
+# 2. "$@" – one or more stack directory paths, e.g.
 #    "/volume1/docker/stack-one".
 #
 # Each stack's compose file is found with "getDockerComposeFilePath", then
@@ -154,7 +154,7 @@ controlRelatedDockerServices () {
 # Gets the compose file path for a docker compose stack. Takes one mandatory
 # argument:
 #
-# 1. "${1:?}" – the stack directory path, i.e. "/volume1/docker/stack-one".
+# 1. "${1:?}" – the stack directory path, e.g. "/volume1/docker/stack-one".
 #
 # Echoes "<stack directory path>/compose.yml" if it exists, otherwise
 # "<stack directory path>/docker-compose.yml".

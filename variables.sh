@@ -9,10 +9,10 @@
 # letters, digits and underscores, and doesn't start with a digit, returns 1
 # otherwise. Takes one argument:
 #
-# 1. "$1" – the variable name, not its value, i.e. "DOCKER_DIR_PATH".
+# 1. "$1" – the variable name, not its value, e.g. "DOCKER_DIR_PATH".
 #
 # Functions that pass a variable name to "eval" run it as part of a command, so 
-# a name containing shell syntax, i.e. "X}; rm -rf ~", would be run. This check
+# a name containing shell syntax, e.g. "X}; rm -rf ~", would be run. This check
 # prevents that.
 #
 # N.B.
@@ -39,7 +39,7 @@ checkIfValidVariableName () {
 #
 # The function prints an error for variables that are unset or empty, then 
 # returns 1 if any were so the calling script can stop before changing anything,
-# i.e.:
+# e.g.:
 #
 # verifyVariablesSet 'DOCKER_DIR_PATH' 'BACKUP_DIR_PATH' || exit 1
 #

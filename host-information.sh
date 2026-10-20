@@ -37,7 +37,7 @@ checkIfRunAsUser () {
 # not.
 #
 # N.B.
-# Both checks are needed. A script run as root without "sudo", i.e. from a root
+# Both checks are needed. A script run as root without "sudo", e.g. from a root
 # login, has no "$SUDO_USER", which setup scripts need for ownership and paths.
 # "$SUDO_USER" is an ordinary variable that anyone can set, so it alone does not
 # prove the script is running as root.
@@ -92,7 +92,7 @@ compareOsVersion () {
 }
 
 #-------------------------------------------------------------------------------
-# Gets the host machine architecture, e.g. amd64, arm64, etc.
+# Gets the host machine architecture, e.g. amd64 or arm64.
 #-------------------------------------------------------------------------------
 getHostArchitecture () {
   local HOST_ARCHITECTURE="$(dpkg --print-architecture)"
@@ -111,7 +111,7 @@ getKernalVersion () {
 
 #-------------------------------------------------------------------------------
 # Gets the Linux distribution codename the host machine is running, e.g. 
-# bookworm, focal, jammy, etc.
+# bookworm, focal or jammy.
 #-------------------------------------------------------------------------------
 getOsCodename () {
   local OS_CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
@@ -120,8 +120,8 @@ getOsCodename () {
 }
 
 #-------------------------------------------------------------------------------
-# Gets the Linux distribution the host machine is running, e.g. ubuntu, debian,
-# etc.
+# Gets the Linux distribution the host machine is running, e.g. ubuntu or
+# debian.
 #-------------------------------------------------------------------------------
 getOsDistribution () {
   local OS_DISTRIBUTION="$(. /etc/os-release && echo "$ID")"
