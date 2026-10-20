@@ -83,6 +83,7 @@
 
 - `addPiCgroupOptionsToCmdline`, `addPiVideoModesToCmdline`, `disablePiLedsInConfigTxt`, `disablePiWifiInConfigTxt` and `enablePiPcieGen3InConfigTxt` return 1 with an error, e.g. "Failed to disable WiFi in config.txt.", if `cmdline.txt` or `config.txt` can't be written, and don't write the setup config option. Previously they reported success and wrote the option as `true`, so a rerun skipped the step.
 - `addPiCgroupOptionsToCmdline` and `addPiVideoModesToCmdline` edit `cmdline.txt` with `sed -i`. Previously they ran the edit through `sudo`, so they failed where `sudo` isn't installed.
+- `checkPiCmdlineLocation` and `checkPiConfigLocation` are renamed to `getPiCmdlinePath` and `getPiConfigPath`, as they return a path.
 - `disablePiLedsInConfigTxt` gets the Pi model itself instead of relying on the caller's `MODEL`. It supports models 3, 4 and 5, using `14` for models 3 and 4, and returns 1 with an error on any other model. Previously an unset `MODEL` or an unsupported model wrote `dtparam=eth_led0=` and `dtparam=eth_led1=` with no value and reported success.
 - `enablePiPcieGen3InConfigTxt` returns 1 with an error below a Raspberry Pi 5. Previously it wrote the PCIe lines on any model.
 - `setPiPowerOffOnHalt` saves and applies the change when `POWER_OFF_ON_HALT` is 0. Previously it printed the updated config, applied nothing and reported a failure. The temporary config file now has a random name from `mktemp` instead of `/tmp/bootconf.txt`.
@@ -153,8 +154,9 @@
 - `addKeyToAuthorizedKeys` returns 1 with the error "Failed to add the public key at …" if the public key can't be read or added. Previously it printed "Key added." and returned 0.
 - `addSshKeytoAgent` is removed. It passed the public key to `ssh-add`, so the key was never added. The agent it started was the calling script's own agent, so it couldn't be reached once the script exited. Point `IdentityFile` at the key in `~/.ssh/config` instead, e.g. with `addHostToSshConfig`.
 - `checkForAndCreateAuthorizedKeys` no longer prints "Check returned true." or "Check returned false.".
-- `checkPrivateSshKeyCopied` no longer sets `KEY_COPIED_YN` in the calling script.
-- `checkPrivateSshKeyCopied` removes the key with `removeFileOrDirectory`, so it prints "Removing file or directory at:" and "File or directory removed.", and returns 1 with an error if the key can't be removed. Previously it printed "Private key removed." even when `rm` failed.
+- `checkPrivateSshKeyCopied` and `checkPublicSshKeyCopied` are renamed to `confirmPrivateSshKeyCopied` and `confirmPublicSshKeyCopied`, as they ask the user to confirm instead of returning a status.
+- `confirmPrivateSshKeyCopied` no longer sets `KEY_COPIED_YN` in the calling script.
+- `confirmPrivateSshKeyCopied` removes the key with `removeFileOrDirectory`, so it prints "Removing file or directory at:" and "File or directory removed.", and returns 1 with an error if the key can't be removed. Previously it printed "Private key removed." even when `rm` failed.
 - `generateSshKey` returns 1 with the error "Failed to generate an ssh key at …" if `ssh-keygen` fails, e.g. when the overwrite prompt is answered "n", and doesn't set the key files' permissions or owner. Previously it printed "Key generated." and returned 0.
 - `removePrivateSshKey` and `removePublicSshKey` are removed. Use `removeFileOrDirectory`, e.g. `removeFileOrDirectory "$KEY_PATH" "$KEY_PATH.pub"`.
 

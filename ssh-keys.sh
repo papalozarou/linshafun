@@ -51,14 +51,15 @@ checkForAndCreateAuthorizedKeys () {
 }
 
 # ------------------------------------------------------------------------------
-# Checks that a user has copied a private key. Takes one mandatory argument:
+# Asks the user to confirm they have copied a private key. Takes one mandatory
+# argument:
 # 
 # 1. "${1:?}" – the key file, including directory path.
 # 
 # If "yes", removes the key, if "no' or other input the function directs the 
 # user to copy the key and runs this function again.
 # ------------------------------------------------------------------------------
-checkPrivateSshKeyCopied () {
+confirmPrivateSshKeyCopied () {
   local KEY_PATH="${1:?}"
 
   promptForUserInput "Have you copied the private key to your local ssh directory (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
@@ -69,12 +70,12 @@ checkPrivateSshKeyCopied () {
     printComment 'You must copy the private key below to your local ssh directory.' 'error'
     printComment "$KEY_PATH" 'error'
 
-    checkPrivateSshKeyCopied "$KEY_PATH"
+    confirmPrivateSshKeyCopied "$KEY_PATH"
   fi
 }
 
 # ------------------------------------------------------------------------------
-# Checks that a user has copied a public key to a remote servers 
+# Asks the user to confirm they have copied a public key to a remote servers 
 # "~/.ssh/authorized_keys" file. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the key file, including directory path.
@@ -82,7 +83,7 @@ checkPrivateSshKeyCopied () {
 # If no or other input the function directs the user to copy the key and runs 
 # this function again.
 # ------------------------------------------------------------------------------
-checkPublicSshKeyCopied () {
+confirmPublicSshKeyCopied () {
   local KEY_PATH="${1:?}"
 
   promptForUserInput "Have you copied the public key to your remote server's authorized_keys file (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
@@ -91,7 +92,7 @@ checkPublicSshKeyCopied () {
     printComment "You must copy the public key below to your remote server's authorized_keys file." 'error'
     printComment "$KEY_PATH" 'error'
 
-    checkPublicSshKeyCopied "$KEY_PATH"
+    confirmPublicSshKeyCopied "$KEY_PATH"
   fi
 }
 

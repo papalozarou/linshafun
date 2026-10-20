@@ -19,7 +19,7 @@
 # A reboot is required for changes to take effect.
 # ------------------------------------------------------------------------------
 addPiCgroupOptionsToCmdline () {
-  local CMDLINE_PATH="$(checkPiCmdlineLocation)"
+  local CMDLINE_PATH="$(getPiCmdlinePath)"
   local CGROUP_OPTIONS='cgroup_memory=1 cgroup_enable=memory'
 
   if [ -z "$CMDLINE_PATH" ]; then
@@ -68,7 +68,7 @@ addPiCgroupOptionsToCmdline () {
 # A reboot is required for changes to take effect.
 # ------------------------------------------------------------------------------
 addPiVideoModesToCmdline () {
-  local CMDLINE_PATH="$(checkPiCmdlineLocation)"
+  local CMDLINE_PATH="$(getPiCmdlinePath)"
   local VIDEO_MODES='video=HDMI-A-1:1920x1080M@60 video=HDMI-A-2:1920x1080M@60'
 
   if [ -z "$CMDLINE_PATH" ]; then
@@ -103,10 +103,10 @@ addPiVideoModesToCmdline () {
 }
 
 # ------------------------------------------------------------------------------
-# Checks for the location of the "cmdline.txt" file on a Raspberry Pi. Returns 
+# Gets the path of the "cmdline.txt" file on a Raspberry Pi. Returns 
 # the path if found, or an empty string if not found. Takes no arguments.
 # ------------------------------------------------------------------------------
-checkPiCmdlineLocation () {
+getPiCmdlinePath () {
   local CMDLINE_PATH='/boot/firmware/cmdline.txt'
   local CMDLINE_ALT_PATH='/boot/cmdline.txt'
 
@@ -120,10 +120,10 @@ checkPiCmdlineLocation () {
 }
 
 # ------------------------------------------------------------------------------
-# Checks for the location of the "config.txt" file on a Raspberry Pi. Returns 
+# Gets the path of the "config.txt" file on a Raspberry Pi. Returns 
 # the path if found, or an empty string if not found. Takes no arguments.
 # ------------------------------------------------------------------------------
-checkPiConfigLocation () {
+getPiConfigPath () {
   local CONFIG_PATH='/boot/firmware/config.txt'
   local CONFIG_ALT_PATH='/boot/config.txt'
 
@@ -177,7 +177,7 @@ checkPiConfigLocation () {
 # ------------------------------------------------------------------------------
 disablePiLedsInConfigTxt () {
   local MODEL="$(getRaspberryPiModel)"
-  local CONFIG_PATH="$(checkPiConfigLocation)"
+  local CONFIG_PATH="$(getPiConfigPath)"
 
   local COMMENT='# Disable LEDs'
   local DISABLE_ETH_LED0='dtparam=eth_led0='
@@ -255,7 +255,7 @@ EOF
 # A reboot is required for changes to take effect.
 # ------------------------------------------------------------------------------
 disablePiWifiInConfigTxt () {
-  local CONFIG_PATH="$(checkPiConfigLocation)"
+  local CONFIG_PATH="$(getPiConfigPath)"
   local DISABLE_WIFI='dtoverlay=disable-wifi'
   local STATUS=0
 
@@ -322,7 +322,7 @@ EOF
 # ------------------------------------------------------------------------------
 enablePiPcieGen3InConfigTxt () {
   local MODEL="$(getRaspberryPiModel)"
-  local CONFIG_PATH="$(checkPiConfigLocation)"
+  local CONFIG_PATH="$(getPiConfigPath)"
   local ENABLE_PCIE1='dtparam=pciex1'
   local ENABLE_PCIE1_GEN3='dtparam=pciex1_gen=3'
   local STATUS=0
