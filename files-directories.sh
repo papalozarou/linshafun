@@ -418,13 +418,13 @@ removeFileOrDirectory () {
 # returns 1.
 # ------------------------------------------------------------------------------
 renameFileOrDirectory () {
-	local DIR_PATH="${1:-"."}"
-	local CURRENT_NAME="${2:?}"
-	local NEW_NAME="${3:?}"
+  local DIR_PATH="${1:-"."}"
+  local CURRENT_NAME="${2:?}"
+  local NEW_NAME="${3:?}"
 
-	if ! mv "$DIR_PATH/$CURRENT_NAME" "$DIR_PATH/$NEW_NAME"; then
-		printComment "Failed to rename $DIR_PATH/$CURRENT_NAME to $NEW_NAME." 'error'
+  if ! mv "$DIR_PATH/$CURRENT_NAME" "$DIR_PATH/$NEW_NAME"; then
+    printComment "Failed to rename $DIR_PATH/$CURRENT_NAME to $NEW_NAME." 'error'
 
-		return 1
-	fi
+    return 1
+  fi
 }

@@ -25,9 +25,9 @@
 # - https://stackoverflow.com/a/50098414
 # ------------------------------------------------------------------------------
 addSetupVar () {
-	local VAR_FILE_NAME="${1:?}"
-	local VAR_NAME="${2:?}"
-	local VAR_VALUE="${3:?}"
+  local VAR_FILE_NAME="${1:?}"
+  local VAR_NAME="${2:?}"
+  local VAR_VALUE="${3:?}"
   local VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
   local STATUS=0
 
@@ -37,26 +37,26 @@ addSetupVar () {
     return 1
   fi
 
-	printComment 'Adding $'"$VAR_NAME variable to:"
-	printComment "$VAR_FILE_PATH"
-	
+  printComment 'Adding $'"$VAR_NAME variable to:"
+  printComment "$VAR_FILE_PATH"
+
   cat <<EOF >> "$VAR_FILE_PATH" || STATUS="$?"
 $VAR_NAME="$VAR_VALUE"
 EOF
 
-	printSeparator
-	
-	if [ "$STATUS" -eq 0 ] && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
-		printSeparator
-		printComment '$'"$VAR_NAME variable added."
-	else
+  printSeparator
+
+  if [ "$STATUS" -eq 0 ] && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
+    printSeparator
+    printComment '$'"$VAR_NAME variable added."
+  else
     printComment 'There was a problem adding the $'"$VAR_NAME variable. Please check the variable file at:" 'error'
     printComment "$VAR_FILE_PATH" 'error'
 
-		return 1
-	fi
-	
-	reloadVarFile "$VAR_FILE_PATH"
+    return 1
+  fi
+
+  reloadVarFile "$VAR_FILE_PATH"
 }
 
 # ------------------------------------------------------------------------------
@@ -160,12 +160,12 @@ readSetupConfigValue () {
 #    directory path and defaulting to "$SETUP_VAR_PATH".
 # ------------------------------------------------------------------------------
 reloadVarFile () {
-	local VAR_FILE_PATH="${1:-"$SETUP_VAR_PATH"}"
+  local VAR_FILE_PATH="${1:-"$SETUP_VAR_PATH"}"
 
-	printComment 'Reloading setup variable file at:'
-	printComment "$VAR_FILE_PATH"
-	
-	. "$VAR_FILE_PATH"
+  printComment 'Reloading setup variable file at:'
+  printComment "$VAR_FILE_PATH"
+
+  . "$VAR_FILE_PATH"
 }
 
 # ------------------------------------------------------------------------------
@@ -242,17 +242,17 @@ replaceSetupVar () {
 
   sed -i '/^'"$VAR_NAME"'=/c\'"$VAR_NAME=\"$ESCAPED_VALUE\"" "$VAR_FILE_PATH" || STATUS="$?"
 
-	if [ "$STATUS" -eq 0 ] && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
-		printSeparator
-		printComment '$'"$VAR_NAME variable added."
-	else
+  if [ "$STATUS" -eq 0 ] && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
+    printSeparator
+    printComment '$'"$VAR_NAME variable added."
+  else
     printComment 'There was a problem replacing the $'"$VAR_NAME variable. Please check the variable file at:" 'error'
     printComment "$VAR_FILE_PATH" 'error'
 
-		return 1
-	fi
-	
-	reloadVarFile "$VAR_FILE_PATH"
+    return 1
+  fi
+
+  reloadVarFile "$VAR_FILE_PATH"
 }
 
 # ------------------------------------------------------------------------------
