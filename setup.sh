@@ -29,9 +29,7 @@ finaliseScript () {
 #
 # 1. "${1:?}" – the config option key to be used.
 #
-# If the script has been run before, the script exits with status 0, as there
-# is nothing to do. If not it will run.
-# A missing setup config file counts as not run before.
+# The script exits with status 0 if it has been run before.
 # 
 # N.B.
 # The config key must be formatted exactly as in the config option file, i.e. 
