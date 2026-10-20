@@ -193,8 +193,8 @@ compareAndUpdateDockerEnvVariables () {
 # 
 # 1. "${1:-"$DKR_ENV_FILE_PATH"}" – the environment file, including the
 #    directory path and defaulting to "$DKR_ENV_FILE_PATH";
-# 2. "${2:?}" - an environment variable to check; and
-# 3. "${3:?}" - a value to compare against.
+# 2. "${2:?}" – an environment variable to check; and
+# 3. "${3:?}" – a value to compare against.
 # 
 # Returns 0 if the variable matches the comparison value, returns 1 otherwise.
 #-------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ compareDockerEnvVariableWithValue () {
 # 
 # 1. "${1:-"$DKR_ENV_FILE_PATH"}" – the environment file, including the
 #    directory path and defaulting to "$DKR_ENV_FILE_PATH"; and
-# 2. "${2:?}" - an environment variable to check.
+# 2. "${2:?}" – an environment variable to check.
 # 
 # The variable and value are read from the file with "grep" as a single string, 
 # then piped to "cut", which uses the equals sign as a field delimter to return 
@@ -240,10 +240,10 @@ readDockerEnvVariable () {
 # Substitutes instances of "${DKR_ENV: $ENV_VAR}" with correct values. 
 # Takes three mandatory arguments:
 # 
-# 1. "${1:?}" - the file containing the environment variable, including the 
+# 1. "${1:?}" – the file containing the environment variable, including the 
 #    directory path;
-# 2. "${2:?}" - an environment variable to replace; and
-# 3. "${3:?}" - the value of the variable.
+# 2. "${2:?}" – an environment variable to replace; and
+# 3. "${3:?}" – the value of the variable.
 # 
 # The "sed" delimiter is "|" in this instance as both "/" and "@" will be
 # returned as part of string hashing or present in email addresses.
@@ -289,8 +289,8 @@ replaceDockerEnvPlaceholderVariable () {
 #
 # 1. "${1:-"$DKR_ENV_FILE_PATH"}" – the environment file, including the
 #    directory path and defaulting to "$DKR_ENV_FILE_PATH";
-# 2. "${2:?}" - the variable name; and
-# 3. "${3:?}" - the variable value.
+# 2. "${2:?}" – the variable name; and
+# 3. "${3:?}" – the variable value.
 # 
 # The function uses "sed" to replace the variable with the value in the 
 # specified document. As per:

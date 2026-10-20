@@ -159,7 +159,7 @@ getSshKeyDetails () {
 # Tell the user to copy the private key to their local machine. Takes one 
 # mandatory argument:
 #
-# 1. "${1:?}" - the name of the ssh key file, excluding directory path.
+# 1. "${1:?}" – the name of the ssh key file, excluding directory path.
 #-------------------------------------------------------------------------------
 printPrivateKeyUsage () {
   local KEY_NAME="${1:?}"
@@ -171,7 +171,7 @@ printPrivateKeyUsage () {
 # Tell the user to copy the private key to their local machine. Takes one 
 # mandatory argument:
 # 
-# 1. "${1:?}" - the name of the ssh key file, excluding directory path.
+# 1. "${1:?}" – the name of the ssh key file, excluding directory path.
 #-------------------------------------------------------------------------------
 printPublicKeyUsage () {
   local KEY_NAME="${1:?}"

@@ -39,7 +39,7 @@ getUserInputYN () {
 #-------------------------------------------------------------------------------
 # Prompts for user input for consistency. Takes two arguments:
 # 
-# 1. "${1:?}" - the question to ask the user; and
+# 1. "${1:?}" – the question to ask the user; and
 # 2. "$2" – an optional warning message.
 # 
 # The function takes the first argument as the question, then shifts the

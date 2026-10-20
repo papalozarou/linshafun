@@ -7,10 +7,10 @@
 #-------------------------------------------------------------------------------
 # Adds a host to "~/.ssh/config". Takes four arguments:
 # 
-# 1. "${1:?}" - the name of the host;
-# 2. "$2" - the address of the host, either an IP address or a hostname;
-# 3. "$3" - the ssh port for the host; and
-# 4. "$4" - the user used to login to the host.
+# 1. "${1:?}" – the name of the host;
+# 2. "$2" – the address of the host, either an IP address or a hostname;
+# 3. "$3" – the ssh port for the host; and
+# 4. "$4" – the user used to login to the host.
 #
 # The function tests the three non-mandatory arguments to see if they are set,
 # and if so adds them to the host config.
@@ -84,7 +84,7 @@ getSshHostDetails () {
 # Displays the values a user needs to add to their local ssh config file. Takes
 # one mandatory argument:
 # 
-# 1. "${1:?}" - the ssh port number.
+# 1. "${1:?}" – the ssh port number.
 # 
 # N.B.
 # "printf" is used direcrtly to allow the user to copy directly from the 

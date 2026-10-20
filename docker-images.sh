@@ -7,7 +7,7 @@
 #-------------------------------------------------------------------------------
 # Creates one or more images. Takes at least two or more arguments:
 # 
-# 1. "${1:-"$DKR_COMPOSE_FILE_PATH"}" - the compose file, including directory 
+# 1. "${1:-"$DKR_COMPOSE_FILE_PATH"}" – the compose file, including directory 
 #    path and defaulting to "$DKR_COMPOSE_FILE_PATH"; and
 # 2. "$@" – one or more images to be built.
 # 
@@ -39,7 +39,7 @@ buildDockerImages () {
 #-------------------------------------------------------------------------------
 # Lists images. Takes one argument:
 #
-# 1. "${1:-"$DKR_COMPOSE_FILE_PATH"}" - the compose file, including directory 
+# 1. "${1:-"$DKR_COMPOSE_FILE_PATH"}" – the compose file, including directory 
 #    path and defaulting to "$DKR_COMPOSE_FILE_PATH".
 #-------------------------------------------------------------------------------
 listDockerImages () {
@@ -54,7 +54,7 @@ listDockerImages () {
 #-------------------------------------------------------------------------------
 # Removes one or more images. Takes at least one or more arguments:
 # 
-# 1. "$@" - one or more images to be removed.
+# 1. "$@" – one or more images to be removed.
 #-------------------------------------------------------------------------------
 removeDockerImages () {
   for IMAGE in "$@"; do

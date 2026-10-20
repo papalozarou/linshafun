@@ -7,9 +7,9 @@
 #-------------------------------------------------------------------------------
 # Creates a docker secret. Takes two mandatory arguments:
 # 
-# 1. "${1:?}" - the secret file name, either including or excluding the 
+# 1. "${1:?}" – the secret file name, either including or excluding the 
 #    directory path; and
-# 2. "${2:?}" - the secret value.
+# 2. "${2:?}" – the secret value.
 # 
 # The function uses case to check if "$SECRET_FILE" contains "/" and sets
 # "$SECRET_FILE_PATH" accordingly. An existing file at "$SECRET_FILE_PATH" is
@@ -50,8 +50,8 @@ createDockerSecretFile () {
 #-------------------------------------------------------------------------------
 # Creates a docker secret by asking for user input. Takes two arguments: 
 # 
-# 1. "${1:?}" - the secret file name, excluding directory path; and
-# 2. "$2" - an optional warning to be displayed.
+# 1. "${1:?}" – the secret file name, excluding directory path; and
+# 2. "$2" – an optional warning to be displayed.
 #-------------------------------------------------------------------------------
 getAndSetDockerSecret () {
   local SECRET_FILE_NAME="${1:?}"
@@ -66,7 +66,7 @@ getAndSetDockerSecret () {
 #-------------------------------------------------------------------------------
 # Reads the value of a secret file. Takes one mandatory argument:
 # 
-# 1. "${1:?}" - the secret file name, excluding directory path.
+# 1. "${1:?}" – the secret file name, excluding directory path.
 #-------------------------------------------------------------------------------
 readDockerSecretFile () {
   local SECRET_FILE_NAME="${1:?}"
@@ -78,7 +78,7 @@ readDockerSecretFile () {
 #-------------------------------------------------------------------------------
 # Removes a secret file. Takes one mandatory argument:
 # 
-# 1. "${1:?}" - the secret file name, excluding directory path.
+# 1. "${1:?}" – the secret file name, excluding directory path.
 #-------------------------------------------------------------------------------
 removeDockerSecretFile () {
   local SECRET_FILE_NAME="${1:?}"

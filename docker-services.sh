@@ -12,7 +12,7 @@
 #    path and defaulting to "$DKR_COMPOSE_FILE_PATH";
 # 2. "${2:?}" – the action to perform;
 # 3. "${3:?}" – the service to perform the action on; and
-# 4. "$4" - any optional flags.
+# 4. "$4" – any optional flags.
 # 
 # N.B.
 # The optional flags, "$4", are not quoted as we explicitly want word splitting.

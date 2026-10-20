@@ -373,7 +373,7 @@ EOF
 #-------------------------------------------------------------------------------
 # Reboots the system. Takes one mandatory argument:
 # 
-# 1. "${1:?}" - the time to wait before rebooting, in seconds.
+# 1. "${1:?}" – the time to wait before rebooting, in seconds.
 # 
 # N.B.
 # The function exits with "exit 0" to ensure the calling script stops executing

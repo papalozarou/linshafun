@@ -9,13 +9,13 @@
 # exist, or it does exist and the user wants to replace it, (re)create it. Takes 
 # four arguments, two of which are mandatory:
 # 
-# 1. "${1:?}" - the file or directory to check for and create or replace, 
+# 1. "${1:?}" – the file or directory to check for and create or replace, 
 #    including directory path;
-# 2. "${2:?}" - the function to execute if the file or directory doesn't exist, 
+# 2. "${2:?}" – the function to execute if the file or directory doesn't exist, 
 #    or the user chooses to replace it; 
-# 3. "${3:-"recreate"}" - the action being performed, all lowercase, 
+# 3. "${3:-"recreate"}" – the action being performed, all lowercase, 
 #    defaulting to "recreate"; and
-# 4. "$4" - an optional warning to be displayed if the file is to be replaced or 
+# 4. "$4" – an optional warning to be displayed if the file is to be replaced or 
 #    recreated.
 #
 # "REPLACE_STATUS" stays 0 when the file or directory doesn't exist, so the
@@ -54,7 +54,7 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
 # Checks for a file or directory. Returns 0 if it is present, 1 if it is not.
 # Takes one mandatory argument:
 # 
-# 1. "${1:?}" - the file or directory to check for, including directory path.
+# 1. "${1:?}" – the file or directory to check for, including directory path.
 #-------------------------------------------------------------------------------
 checkForFileOrDirectory () {
   local FILE_OR_DIR_PATH="${1:?}"
@@ -152,9 +152,9 @@ copyAndRemovePostfixFromFiles () {
 # Creates directories and subdirectories, using "createDirectory". Takes two 
 # arguments:
 # 
-# 1. "${1:?}" - a mandatory single directory path, or multiple directory paths 
+# 1. "${1:?}" – a mandatory single directory path, or multiple directory paths 
 #    separated by spaces; and
-# 2. "$2" - an optional subdirectory name, or multiple subdirectory names
+# 2. "$2" – an optional subdirectory name, or multiple subdirectory names
 #    separated by spaces.
 #
 # Each directory path is created before its subdirectories. Directories above
@@ -262,7 +262,7 @@ createDirectory () {
 #-------------------------------------------------------------------------------
 # Creates one or more files. Takes one or more arguments:
 # 
-# 1. "$@" - one or more files to be created, including directory paths.
+# 1. "$@" – one or more files to be created, including directory paths.
 # 
 # The function loops through each passed argument and creates the file. If a
 # file can't be created, the function prints an error, carries on with the
@@ -341,7 +341,7 @@ getListOfFilesByPostfix () {
 #-------------------------------------------------------------------------------
 # Lists one or more directories. Takes one mandatory argument:
 # 
-# 1. "${1:?}" - a single directory path, or a list of multiple directory paths
+# 1. "${1:?}" – a single directory path, or a list of multiple directory paths
 #    separated by spaces.
 # 
 # N.B.
@@ -363,7 +363,7 @@ listDirectories () {
 # 
 # 1. "--recursive" – an optional flag, passed first, to also remove directories
 #    and everything in them; and
-# 2. "$@" - one or more files or directories to be removed, including directory 
+# 2. "$@" – one or more files or directories to be removed, including directory 
 #    paths.
 # 
 # The function loops through each passed argument and removes the file or 
@@ -409,10 +409,10 @@ removeFileOrDirectory () {
 #-------------------------------------------------------------------------------
 # Renames a file or directory. Takes three arguments, two of which are mandatory:
 #
-# 1. "${1:-"."}" - the directory path to the file or directory, defaulting to
+# 1. "${1:-"."}" – the directory path to the file or directory, defaulting to
 #    the current directory, ".";
-# 2. "${2:?}" - the current file or directory name; and
-# 3. "${3:?}" - the new file or directory name.
+# 2. "${2:?}" – the current file or directory name; and
+# 3. "${3:?}" – the new file or directory name.
 #
 # If the file or directory can't be renamed, the function prints an error and
 # returns 1.
