@@ -110,6 +110,7 @@
 
 - `addSetupVar` and `replaceSetupVar` return 1 instead of exiting the script when the variable can't be written or isn't found afterwards. They also check the status of the write, so a failed write is reported even when the variable is already in the file.
 - `addSetupVar` and `replaceSetupVar` match the whole variable name, so `SETUP_CONF` no longer matches `SETUP_CONF_PATH`. `replaceSetupVar` returns 1 with an error if the variable isn't in the file. Previously it replaced every line starting with the name, e.g. `SETUP_CONF_PATH_OLD`, and reported success if any other line contained the name.
+- `addSetupVar` and `replaceSetupVar` return 1 with the error "SETUP-CONF-PATH is not a valid variable name." if the name isn't a valid variable name, without writing anything. Previously the name was written to the file, and sourcing it ran the name as a command, while the function reported the variable as added.
 - `checkForAndCreateSetupConfigFileAndDir` no longer prints "Check returned …" after each "Checking …" line.
 - `createSetupConfigDirectory` is removed. `checkForAndCreateSetupConfigFileAndDir` calls `createDirectory` with `SUDO_USER` as owner.
 - `readSetupConfigValue` matches the whole key, so `ssh` no longer matches `sshPort`. Values containing spaces or wildcards are returned as written. It no longer runs `set -f` in the calling script.

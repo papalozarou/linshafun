@@ -16,6 +16,10 @@
 # If the variable can't be written, or isn't in the file afterwards, the
 # function prints an error and returns 1.
 #
+# If the variable name isn't valid, the function prints an error and returns 1
+# without writing anything. The file is sourced, so an invalid name would be
+# run as shell code.
+#
 # Appending to a file using "cat" as per:
 # 
 # - https://stackoverflow.com/a/50098414
@@ -26,6 +30,12 @@ addSetupVar () {
 	local VAR_VALUE="${3:?}"
   local VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
   local STATUS=0
+
+  if ! checkIfValidVariableName "$VAR_NAME"; then
+    printComment "$VAR_NAME is not a valid variable name." 'error'
+
+    return 1
+  fi
 
 	printComment 'Adding $'"$VAR_NAME variable to:"
 	printComment "$VAR_FILE_PATH"
@@ -204,6 +214,10 @@ removeSetupConfigOption () {
 # prints an error and returns 1. "sed" succeeds even when no line matches, so
 # the file is still checked for the variable.
 #
+# If the variable name isn't valid, the function prints an error and returns 1
+# without writing anything. The file is sourced, so an invalid name would be
+# run as shell code.
+#
 # "\" is escaped in the value, as "sed" removes it from the replacement line,
 # e.g. "a\b" would be written as "ab".
 #-------------------------------------------------------------------------------
@@ -214,6 +228,12 @@ replaceSetupVar () {
   VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
   local STATUS=0
   local ESCAPED_VALUE="$(printf '%s\n' "$VAR_VALUE" | sed 's/\\/\\\\/g')"
+
+  if ! checkIfValidVariableName "$VAR_NAME"; then
+    printComment "$VAR_NAME is not a valid variable name." 'error'
+
+    return 1
+  fi
 
   printComment 'Replacing $'"$VAR_NAME"' in:'
   printComment "$VAR_FILE_PATH"
