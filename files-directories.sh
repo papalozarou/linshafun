@@ -358,21 +358,41 @@ listDirectories () {
 #-------------------------------------------------------------------------------
 # Removes files or directories. Takes one or more arguments:
 # 
-# 1. "$@" - one or more files or directories to be removed, including directory 
+# 1. "--recursive" – an optional flag, passed first, to also remove directories
+#    and everything in them; and
+# 2. "$@" - one or more files or directories to be removed, including directory 
 #    paths.
 # 
 # The function loops through each passed argument and removes the file or 
 # directory. If a file or directory can't be removed, the function prints an
 # error, carries on with the remaining files or directories, and returns 1.
+#
+# Without "--recursive" only files are removed, matching "rm". A directory is
+# left in place and counts as a failure, so a wrong path can't remove a whole
+# directory.
+#
+# N.B.
+# "RM_OPTION" is only set when "--recursive" is passed. "${RM_OPTION:+…}"
+# passes "-R" when it is set and nothing when it is empty, as a quoted empty
+# variable would be passed to "rm" as an empty path, which fails. See "Use
+# Alternative Value" in "Parameter Expansion", as per:
+#
+# - https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html
 #-------------------------------------------------------------------------------
 removeFileOrDirectory () {
+  local RM_OPTION=
   local STATUS=0
+
+  if [ "$1" = '--recursive' ]; then
+    RM_OPTION='-R'
+    shift
+  fi
 
   for FILE_OR_DIR_PATH in "$@"; do
     printComment 'Removing file or directory at:'
     printComment "$FILE_OR_DIR_PATH"
 
-    if rm -R "$FILE_OR_DIR_PATH"; then
+    if rm ${RM_OPTION:+"$RM_OPTION"} "$FILE_OR_DIR_PATH"; then
       printComment 'File or directory removed.'
     else
       printComment 'File or directory could not be removed. Please check it exists and that you have permission to remove it.' 'error'

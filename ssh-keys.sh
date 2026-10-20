@@ -9,13 +9,25 @@
 # 
 # 1. "${1:?}" – the key file, including directory path.
 # 
+# If the public key can't be read or added, the function prints an error and
+# returns 1.
+#
+# N.B.
+# "authorized_keys" is created by the redirect even when the public key can't
+# be read.
 #-------------------------------------------------------------------------------
 addKeyToAuthorizedKeys () {
   local KEY_PATH="${1:?}.pub"
 
   printComment 'Adding public key to:'
   printComment "$SSH_AUTH_KEYS_PATH"
-  cat "$KEY_PATH" >> "$SSH_AUTH_KEYS_PATH"
+
+  if ! cat "$KEY_PATH" >> "$SSH_AUTH_KEYS_PATH"; then
+    printComment "Failed to add the public key at $KEY_PATH." 'error'
+
+    return 1
+  fi
+
   printComment 'Key added.'
 }
 
@@ -51,7 +63,7 @@ checkPrivateSshKeyCopied () {
   promptForUserInput "Have you copied the private key to your local ssh directory (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
 
   if getUserInputYN; then
-    removePrivateSshKey "$KEY_PATH"
+    removeFileOrDirectory "$KEY_PATH"
   else
     printComment 'You must copy the private key below to your local ssh directory.' 'error'
     printComment "$KEY_PATH" 'error'
@@ -87,22 +99,37 @@ checkPublicSshKeyCopied () {
 #
 # 1. "${1:?}" – the key file, including directory path; and
 # 2. "$2" – an optional email address for the key.
+#
+# If "ssh-keygen" fails, the function prints an error and returns 1, without
+# setting the permissions or owner of the key files.
+#
+# N.B.
+# "ssh-keygen" asks before overwriting an existing key, and exits with 1 if the
+# answer is "n".
 #-------------------------------------------------------------------------------
 generateSshKey () {
   local KEY_PATH="${1:?}"
   local KEY_EMAIL="$2"
+  local STATUS=0
 
   printComment 'Generating an ssh key at:' 
   printComment "$KEY_PATH."
   printSeparator
 
   if [ -z "$KEY_EMAIL" ]; then
-    ssh-keygen -t ed25519 -f "$KEY_PATH"
+    ssh-keygen -t ed25519 -f "$KEY_PATH" || STATUS="$?"
   else
-    ssh-keygen -t ed25519 -f "$KEY_PATH" -C "$KEY_EMAIL"
+    ssh-keygen -t ed25519 -f "$KEY_PATH" -C "$KEY_EMAIL" || STATUS="$?"
   fi
 
   printSeparator
+
+  if [ "$STATUS" -ne 0 ]; then
+    printComment "Failed to generate an ssh key at $KEY_PATH." 'error'
+
+    return 1
+  fi
+
   printComment 'Key generated.'
   setPermissions 600 "$KEY_PATH"
   setOwner "$SUDO_USER" "$KEY_PATH"
@@ -148,32 +175,4 @@ printPublicKeyUsage () {
   local KEY_NAME="${1:?}"
 
   printComment "Please copy the public key, $KEY_NAME, to your remote ssh host's "'"~/.ssh/authorized_keys" file.'
-}
-
-#-------------------------------------------------------------------------------
-# Removes a private key. Takes one mandatory argument:
-# 
-# 1. "${1:?}" - the ssh key file, including directory path.
-#-------------------------------------------------------------------------------
-removePrivateSshKey () {
-  local KEY_PATH="${1:?}"
-
-  printComment 'Removing the private key at:'
-  printComment "$KEY_PATH"
-  rm "$KEY_PATH"
-  printComment "Private key removed."
-}
-
-#-------------------------------------------------------------------------------
-# Removes a public key. Takes one mandatory argument:
-# 
-# 1. "${1:?}" - the ssh key file, including directory path.
-#-------------------------------------------------------------------------------
-removePublicSshKey () {
-  local KEY_PATH="${1:?}"
-
-  printComment 'Removing the public key at:'
-  printComment "$KEY_PATH"
-  rm "$KEY_PATH.pub"
-  printComment "Public key removed."
 }

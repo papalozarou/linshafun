@@ -38,6 +38,7 @@
 - `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createFiles` and `removeFileOrDirectory` return 1 if any file or directory fails, after carrying on with the rest. The copy and create functions print an error naming the file, and no longer print "File copied …" or "File created." after a failure. Previously all four returned 0.
 - `createDirectories` creates each directory path before its subdirectories.
 - `createDirectory` takes optional permissions, owner and group as its second to fourth arguments, and sets them on the new directory only. If the directory exists, it returns 0 and prints nothing. It no longer creates missing parent directories: it returns 1 with an error if the parent doesn't exist, or if `mkdir`, `chmod` or `chown` fails. Previously it ran `mkdir -p`.
+- `removeFileOrDirectory` removes files only, unless `--recursive` is passed first, e.g. `removeFileOrDirectory --recursive "$DIR_PATH"`. Without it, a directory is left in place, the function prints an error and returns 1. Previously it always ran `rm -R`, so any directory was removed with its contents. Callers that remove directories must add `--recursive`.
 - `renameFileOrDirectory` prints an error if `mv` fails. It still returns 1.
 
 ### `firewall.sh`
@@ -113,9 +114,13 @@
 
 ### `ssh-keys.sh`
 
+- `addKeyToAuthorizedKeys` returns 1 with the error "Failed to add the public key at …" if the public key can't be read or added. Previously it printed "Key added." and returned 0.
 - `addSshKeytoAgent` is removed. It passed the public key to `ssh-add`, so the key was never added. The agent it started was the calling script's own agent, so it couldn't be reached once the script exited. Point `IdentityFile` at the key in `~/.ssh/config` instead, e.g. with `addHostToSshConfig`.
 - `checkForAndCreateAuthorizedKeys` no longer prints "Check returned true." or "Check returned false.".
 - `checkPrivateSshKeyCopied` no longer sets `KEY_COPIED_YN` in the calling script.
+- `checkPrivateSshKeyCopied` removes the key with `removeFileOrDirectory`, so it prints "Removing file or directory at:" and "File or directory removed.", and returns 1 with an error if the key can't be removed. Previously it printed "Private key removed." even when `rm` failed.
+- `generateSshKey` returns 1 with the error "Failed to generate an ssh key at …" if `ssh-keygen` fails, e.g. when the overwrite prompt is answered "n", and doesn't set the key files' permissions or owner. Previously it printed "Key generated." and returned 0.
+- `removePrivateSshKey` and `removePublicSshKey` are removed. Use `removeFileOrDirectory`, e.g. `removeFileOrDirectory "$KEY_PATH" "$KEY_PATH.pub"`.
 
 ### `text.sh`
 
