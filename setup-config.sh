@@ -203,6 +203,9 @@ removeSetupConfigOption () {
 # If "sed" fails, or the variable isn't in the file afterwards, the function
 # prints an error and returns 1. "sed" succeeds even when no line matches, so
 # the file is still checked for the variable.
+#
+# "\" is escaped in the value, as "sed" removes it from the replacement line,
+# e.g. "a\b" would be written as "ab".
 #-------------------------------------------------------------------------------
 replaceSetupVar () {
   VAR_FILE_NAME="${1:?}"
@@ -210,11 +213,12 @@ replaceSetupVar () {
   VAR_VALUE="${3:?}"
   VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
   local STATUS=0
+  local ESCAPED_VALUE="$(printf '%s\n' "$VAR_VALUE" | sed 's/\\/\\\\/g')"
 
   printComment 'Replacing $'"$VAR_NAME"' in:'
   printComment "$VAR_FILE_PATH"
 
-  sed -i '/^'"$VAR_NAME"'=/c\'"$VAR_NAME=\"$VAR_VALUE\"" "$VAR_FILE_PATH" || STATUS="$?"
+  sed -i '/^'"$VAR_NAME"'=/c\'"$VAR_NAME=\"$ESCAPED_VALUE\"" "$VAR_FILE_PATH" || STATUS="$?"
 
 	if [ "$STATUS" -eq 0 ] && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
 		printSeparator
@@ -240,6 +244,9 @@ replaceSetupVar () {
 # If the config option can't be written, the function prints an error and
 # returns 1, without setting the owner or listing the setup config.
 #
+# "\" is escaped in the value when an existing option is overwritten, as "sed"
+# removes it from the replacement line, e.g. "a\b" would be written as "ab".
+#
 # N.B.
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
@@ -250,6 +257,7 @@ writeSetupConfigOption () {
   local CONF_VALUE="${2:?}"
   local CONF_OPTION_STATUS=0
   local WRITE_STATUS=0
+  local ESCAPED_VALUE="$(printf '%s\n' "$CONF_VALUE" | sed 's/\\/\\\\/g')"
 
   checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY " || CONF_OPTION_STATUS="$?"
 
@@ -272,7 +280,7 @@ writeSetupConfigOption () {
   if [ "$CONF_OPTION_STATUS" -eq 0 ]; then
     printComment "Overwriting existing value with $CONF_VALUE." 'warning'
 
-    sed -i '/^'"$CONF_KEY"' /c\'"$CONF_KEY $CONF_VALUE" "$SETUP_CONF_PATH" || WRITE_STATUS=1
+    sed -i '/^'"$CONF_KEY"' /c\'"$CONF_KEY $ESCAPED_VALUE" "$SETUP_CONF_PATH" || WRITE_STATUS=1
   else
     echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF_PATH" || WRITE_STATUS=1
   fi

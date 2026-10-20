@@ -27,7 +27,9 @@
 - `compareDockerEnvVariableWithValue` and `readDockerEnvVariable` return the whole value when it contains `=`, e.g. a base64 string ending in `==`. Previously the value was cut off at the second `=`.
 - `compareDockerEnvVariableWithValue`, `readDockerEnvVariable` and `setDockerEnvVariable` only match a line that starts with the variable name, so `H_IP` no longer matches `C_PIH_IP=` or a commented-out `# H_IP=`. Previously the first line containing `H_IP=` was read, and `setDockerEnvVariable` overwrote every such line. A line starting with `export` or a space is no longer matched.
 - `replaceDockerEnvPlaceholderVariable` returns 1 with the error "Failed to replace ${DKR_ENV: H_A} in …" if `sed` fails, e.g. the file doesn't exist. Previously it printed "Placeholder variable replaced." and returned 0.
+- `replaceDockerEnvPlaceholderVariable` writes `&`, `|` and `\` in the value as given. Previously `&` was replaced with the placeholder, `|` made `sed` fail, and `\` was removed, so `a\b` was written as `ab`.
 - `setDockerEnvVariable` returns 1 with the error "Failed to set H_A, as it was not found in …" if no line starts with `H_A=`, or "Failed to set H_A in …" if `sed` fails. Previously it printed "Variable updated." and returned 0 without writing anything. It still never adds a missing variable.
+- `setDockerEnvVariable` writes `\` in the value as given. Previously it was removed, so `a\b` was written as `ab`, and `a\nb` was written as two lines.
 
 ### `docker-images.sh`
 
@@ -113,8 +115,10 @@
 - `readSetupConfigValue` matches the whole key, so `ssh` no longer matches `sshPort`. Values containing spaces or wildcards are returned as written. It no longer runs `set -f` in the calling script.
 - `removeSetupConfigOption` and `writeSetupConfigOption` match the whole key, so `ssh` no longer matches `sshPort`. Previously `writeSetupConfigOption ssh on` overwrote the `sshPort` line, and `removeSetupConfigOption ssh` deleted it.
 - `removeSetupConfigOption` returns 1 with the error "Failed to remove ssh from …" if `sed` fails. Previously it printed "ssh removed." and returned 0.
+- `replaceSetupVar` writes `\` in the value as given. Previously it was removed, so `a\b` was written as `ab`.
 - `writeSetupConfigOption` no longer has a "Something went wrong" branch that exited the script. It couldn't be reached, as the key check only ever returned found or not found.
 - `writeSetupConfigOption` returns 1 with the error "Failed to write ssh to …" if the option can't be written, and doesn't set the owner or list the setup config. Previously it printed "Config written." and returned 0.
+- `writeSetupConfigOption` writes `\` in the value as given when it overwrites an existing option. Previously it was removed, so `a\b` was written as `ab`. A new option is still written with `echo`, and dash's `echo` changes sequences such as `\n` into the characters they stand for.
 
 ### `setup.sh`
 

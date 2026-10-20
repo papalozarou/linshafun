@@ -244,6 +244,9 @@ readDockerEnvVariable () {
 # 
 # The "sed" delimiter is "|" in this instance as both "/" and "@" will be
 # returned as part of string hashing or present in email addresses.
+#
+# "\", "&" and "|" are escaped in the value, as "sed" treats them as special
+# characters in the replacement, e.g. "&" inserts the matched placeholder.
 # 
 # If "sed" fails, e.g. the file doesn't exist, the function prints an error and
 # returns 1.
@@ -256,6 +259,7 @@ replaceDockerEnvPlaceholderVariable () {
   local ENV_FILE_PATH="${1:?}"
   local ENV_VAR='${DKR_ENV: '"${2:?}"'}'
   local ENV_VALUE="${3:?}"
+  local ESCAPED_VALUE="$(printf '%s\n' "$ENV_VALUE" | sed 's/[\\&|]/\\&/g')"
 
   printComment "Replacing placholder $ENV_VAR with value $ENV_VALUE, in:"
   printComment "$ENV_FILE_PATH"
@@ -263,7 +267,7 @@ replaceDockerEnvPlaceholderVariable () {
   grep "$ENV_VAR" "$ENV_FILE_PATH"
   printSeparator
 
-  if ! sed -i 's|'"$ENV_VAR"'|'"$ENV_VALUE"'|g' "$ENV_FILE_PATH"; then
+  if ! sed -i 's|'"$ENV_VAR"'|'"$ESCAPED_VALUE"'|g' "$ENV_FILE_PATH"; then
     printComment "Failed to replace $ENV_VAR in $ENV_FILE_PATH." 'error'
 
     return 1
@@ -297,6 +301,9 @@ replaceDockerEnvPlaceholderVariable () {
 # It's necessary to use single and double quotes, as well as escaped characters, 
 # to enable "sed" to parse the variables where required.
 #
+# "\" is escaped in the value, as "sed" removes it from the replacement line,
+# e.g. "a\b" would be written as "ab".
+#
 # The variable is checked for before "sed" runs, as "sed" succeeds without
 # changing anything when no line matches.
 #-------------------------------------------------------------------------------
@@ -304,6 +311,7 @@ setDockerEnvVariable () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
   local ENV_VALUE="${3:?}"
+  local ESCAPED_VALUE="$(printf '%s\n' "$ENV_VALUE" | sed 's/\\/\\\\/g')"
 
   printComment "Setting $ENV_VAR to $ENV_VALUE in:"
   printComment "$ENV_FILE_PATH"
@@ -314,7 +322,7 @@ setDockerEnvVariable () {
     return 1
   fi
 
-  if ! sed -i '/^'"$ENV_VAR"='/c\\'"$ENV_VAR=$ENV_VALUE" "$ENV_FILE_PATH"; then
+  if ! sed -i '/^'"$ENV_VAR"='/c\\'"$ENV_VAR=$ESCAPED_VALUE" "$ENV_FILE_PATH"; then
     printComment "Failed to set $ENV_VAR in $ENV_FILE_PATH." 'error'
 
     return 1
