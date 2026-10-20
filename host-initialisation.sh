@@ -37,7 +37,7 @@ addPiCgroupOptionsToCmdline () {
   printComment 'Adding cgroup memory options to cmdline.txt file at:'
   printComment "$CMDLINE_PATH"
 
-  if ! sudo sh -c "sed 's/\(.*\)rootwait/\1$CGROUP_OPTIONS rootwait/' \"$CMDLINE_PATH\" > \"$CMDLINE_PATH.tmp\" && mv \"$CMDLINE_PATH.tmp\" \"$CMDLINE_PATH\""; then
+  if ! sed -i "s/\(.*\)rootwait/\1$CGROUP_OPTIONS rootwait/" "$CMDLINE_PATH"; then
     printComment 'Failed to add cgroup memory options to cmdline.txt.' 'error'
 
     return 1
@@ -86,7 +86,7 @@ addPiVideoModesToCmdline () {
   printComment 'Adding video modes to cmdline.txt file at:'
   printComment "$CMDLINE_PATH"
 
-  if ! sudo sh -c "echo \"$VIDEO_MODES \$(head -n1 $CMDLINE_PATH)\" > $CMDLINE_PATH"; then
+  if ! sed -i "1s/^/$VIDEO_MODES /" "$CMDLINE_PATH"; then
     printComment 'Failed to add video modes to cmdline.txt.' 'error'
 
     return 1
