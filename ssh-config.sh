@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for dealing with ssh keys.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Adds a host to "~/.ssh/config". Takes four arguments:
 # 
 # 1. "${1:?}" – the name of the host;
@@ -18,7 +18,7 @@
 # N.B.
 # Although these variables may exist in the global scope if "getSshHostDetails" 
 # has been used, this allows fixed details to be passed in if required.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 addHostToSshConfig () {
   local HOST="${1:?}"
   local HOSTNAME="$2"
@@ -42,10 +42,10 @@ addHostToSshConfig () {
   setOwner "$SUDO_USER" "$SSH_CONF_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks to see if the "~/.ssh/config" file exist and creates it if not, adding
 # a basic config to the created file. Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkForAndCreateSshConfig () {
   printComment 'Checking to see if an "~/.ssh/config" file exists…'
 
@@ -61,11 +61,11 @@ checkForAndCreateSshConfig () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets details of an SSH host for adding to the ssh config file. Details are 
 # stored in global variables to allow other functions to use them. Takes no
 # arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getSshHostDetails () {
   promptForUserInput 'What is the name of the host you want to add?'
   SSH_HOST="$(getUserInput)"
@@ -80,7 +80,7 @@ getSshHostDetails () {
   SSH_USER="$(getUserInput)"  
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Displays the values a user needs to add to their local ssh config file. Takes
 # one mandatory argument:
 # 
@@ -90,7 +90,7 @@ getSshHostDetails () {
 # "printf" is used direcrtly to allow the user to copy directly from the 
 # terminal, without "SETUP SCRIPT:" in each line."%4s" is used to add four 
 # spaces to the start off lines and "\n" ensures new lines are printed.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printLocalSshConfig () {
   local SSH_PORT=${1:?}
   local IP_ADDRESS="$(readIpAddress)"

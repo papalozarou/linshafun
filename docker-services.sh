@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for controlling and manipulating docker services.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Controls a docker service, via docker compose. Takes four arguments, two of
 # which are mandatory:
 #
@@ -19,7 +19,7 @@
 #
 # Returns the exit status of "docker compose", so callers can stop if an action
 # failed, e.g. not archiving a database whose service failed to stop.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 controlDockerService () {
   local COMPOSE_FILE_PATH="${1:-$DKR_COMPOSE_FILE_PATH}"
   local ACTION="${2:?}"
@@ -49,7 +49,7 @@ controlDockerService () {
   printComment "$ACTION performed for $SERVICE."
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Controls every service in a docker compose stack. Takes three arguments, one
 # of which is mandatory:
 #
@@ -63,7 +63,7 @@ controlDockerService () {
 #
 # Returns the exit status of "docker compose", so callers can stop if an action
 # failed.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 controlDockerStack () {
   local COMPOSE_FILE_PATH="${1:-$DKR_COMPOSE_FILE_PATH}"
   local ACTION="${2:?}"
@@ -92,7 +92,7 @@ controlDockerStack () {
   printComment "$ACTION performed for the stack."
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Controls every service in multiple docker compose stacks. Takes at least two
 # arguments:
 #
@@ -107,7 +107,7 @@ controlDockerStack () {
 # Returns 1 if the action failed for any stack, so callers can stop if an
 # action failed. The remaining stacks are still acted on, so every failure is
 # reported.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 controlDockerStacks () {
   local ACTION="${1:?}"
   local STACK_DIR_PATH
@@ -122,7 +122,7 @@ controlDockerStacks () {
   return "$STATUS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Controls multiple related docker services. Takes at least two arguments:
 #
 # 1. "${1:?}" – the action to perform, such as "up", "stop", "rm" or "down"; and
@@ -132,7 +132,7 @@ controlDockerStacks () {
 # Returns 1 if the action failed for any service, so callers can stop if an
 # action failed. The remaining services are still acted on, so every failure is
 # reported.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 controlRelatedDockerServices () {
   local ACTION="${1:?}"
   local STATUS=0
@@ -152,7 +152,7 @@ controlRelatedDockerServices () {
   return "$STATUS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets the compose file path for a docker compose stack. Takes one mandatory
 # argument:
 #
@@ -171,7 +171,7 @@ controlRelatedDockerServices () {
 #
 # - https://docs.docker.com/compose/intro/compose-application-model/
 # - https://docs.docker.com/reference/cli/docker/compose/
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getDockerComposeFilePath () {
   local STACK_DIR_PATH="${1:?}"
   local COMPOSE_FILE_PATH="$STACK_DIR_PATH/compose.yml"

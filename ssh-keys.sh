@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for dealing with ssh keys.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Adds a public key to the "authorized_keys" file. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the key file, including directory path.
@@ -15,7 +15,7 @@
 # N.B.
 # "authorized_keys" is created by the redirect even when the public key can't
 # be read.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 addKeyToAuthorizedKeys () {
   local KEY_PATH="${1:?}.pub"
 
@@ -31,10 +31,10 @@ addKeyToAuthorizedKeys () {
   printComment 'Key added.'
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks to see if the "~/.ssh/authorized_keys" file exist and creates it if not.
 # Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkForAndCreateAuthorizedKeys () {
   printComment 'Checking to see if an "~/.ssh/authorized_keys" file exists…'
 
@@ -50,14 +50,14 @@ checkForAndCreateAuthorizedKeys () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks that a user has copied a private key. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the key file, including directory path.
 # 
 # If "yes", removes the key, if "no' or other input the function directs the 
 # user to copy the key and runs this function again.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkPrivateSshKeyCopied () {
   local KEY_PATH="${1:?}"
 
@@ -73,7 +73,7 @@ checkPrivateSshKeyCopied () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks that a user has copied a public key to a remote servers 
 # "~/.ssh/authorized_keys" file. Takes one mandatory argument:
 # 
@@ -81,7 +81,7 @@ checkPrivateSshKeyCopied () {
 # 
 # If no or other input the function directs the user to copy the key and runs 
 # this function again.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkPublicSshKeyCopied () {
   local KEY_PATH="${1:?}"
 
@@ -95,7 +95,7 @@ checkPublicSshKeyCopied () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Generates an ssh key. Takes two arguments:
 #
 # 1. "${1:?}" – the key file, including directory path; and
@@ -107,7 +107,7 @@ checkPublicSshKeyCopied () {
 # N.B.
 # "ssh-keygen" asks before overwriting an existing key, and exits with 1 if the
 # answer is "n".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 generateSshKey () {
   local KEY_PATH="${1:?}"
   local KEY_EMAIL="$2"
@@ -140,11 +140,11 @@ generateSshKey () {
   listDirectories "$KEY_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Get the name of the ssh key and the ssh email if desired. Both variables are 
 # stored in global variables to allow other functions to use them. Takes no
 # arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getSshKeyDetails () {
   promptForUserInput 'What do you want to call your ssh key?'
   SSH_KEY_NAME="$(getUserInput)"
@@ -155,24 +155,24 @@ getSshKeyDetails () {
   SSH_KEY_PATH="$SSH_DIR_PATH/$SSH_KEY_NAME"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Tell the user to copy the private key to their local machine. Takes one 
 # mandatory argument:
 #
 # 1. "${1:?}" – the name of the ssh key file, excluding directory path.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printPrivateKeyUsage () {
   local KEY_NAME="${1:?}"
 
   printComment "Please copy the private key, $KEY_NAME, to your local "'"~/.ssh" directory.'
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Tell the user to copy the private key to their local machine. Takes one 
 # mandatory argument:
 # 
 # 1. "${1:?}" – the name of the ssh key file, excluding directory path.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printPublicKeyUsage () {
   local KEY_NAME="${1:?}"
 

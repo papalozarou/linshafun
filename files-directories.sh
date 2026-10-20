@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for checking, creation and deletion of files or directories.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks to see if a file or directory exists. If the file or directory doesn't 
 # exist, or it does exist and the user wants to replace it, (re)create it. Takes 
 # four arguments, two of which are mandatory:
@@ -21,7 +21,7 @@
 # "REPLACE_STATUS" stays 0 when the file or directory doesn't exist, so the
 # function runs. It is only non-zero when the file or directory exists and the
 # user answers n/N.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkAndCreateOrAskToReplaceFileOrDirectory () {
   local FILE_OR_DIR_PATH="${1:?}"
   local FUNCTION="${2:?}"
@@ -50,19 +50,19 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   listDirectories "$FILE_OR_DIR_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks for a file or directory. Returns 0 if it is present, 1 if it is not.
 # Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the file or directory to check for, including directory path.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkForFileOrDirectory () {
   local FILE_OR_DIR_PATH="${1:?}"
 
   [ -f "$FILE_OR_DIR_PATH" ] || [ -d "$FILE_OR_DIR_PATH" ]
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Copies file(s) and adds a given postfix. Takes two arguments, one of which is
 # mandatory:
 #
@@ -78,7 +78,7 @@ checkForFileOrDirectory () {
 #
 # If a file can't be copied, the function prints an error, carries on with the
 # remaining files, and returns 1.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 copyAndAddPostfixToFiles () {
   local FILE_PATHS="${1:?}"
   local POSTFIX="${2:-".backup"}"
@@ -105,7 +105,7 @@ copyAndAddPostfixToFiles () {
   return "$STATUS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Copies file(s) and removes a given postfix. Takes two arguments, one of
 # which is mandatory:
 #
@@ -121,7 +121,7 @@ copyAndAddPostfixToFiles () {
 #
 # If a file can't be copied, the function prints an error, carries on with the
 # remaining files, and returns 1.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 copyAndRemovePostfixFromFiles () {
   local FILE_PATHS="${1:?}"
   local POSTFIX="${2:-".example"}"
@@ -148,7 +148,7 @@ copyAndRemovePostfixFromFiles () {
   return "$STATUS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Creates directories and subdirectories, using "createDirectory". Takes two 
 # arguments:
 # 
@@ -166,7 +166,7 @@ copyAndRemovePostfixFromFiles () {
 # word splitting here.
 # 
 # And yes it's a nested loop. What of it?
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 createDirectories () {
   local DIR_PATHS="${1:?}"
   local SUB_DIR_NAMES="$2"
@@ -191,7 +191,7 @@ createDirectories () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Creates a directory, then sets its permissions and ownership if given. Takes
 # four arguments, one of which is mandatory:
 #
@@ -219,7 +219,7 @@ createDirectories () {
 # The group defaults to the owner name, which only works on systems that
 # create a group for each user. Pass the group on systems that do not, e.g.
 # "users" on Synology DSM.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 createDirectory () {
   local DIR_PATH="${1:?}"
   local MODE="${2:-}"
@@ -259,7 +259,7 @@ createDirectory () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Creates one or more files. Takes one or more arguments:
 # 
 # 1. "$@" – one or more files to be created, including directory paths.
@@ -267,7 +267,7 @@ createDirectory () {
 # The function loops through each passed argument and creates the file. If a
 # file can't be created, the function prints an error, carries on with the
 # remaining files, and returns 1.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 createFiles () {
   local STATUS=0
 
@@ -290,7 +290,7 @@ createFiles () {
   return "$STATUS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets a list of files with a given prefix. Takes two arguments, one of which
 # is mandatory:
 # 
@@ -304,7 +304,7 @@ createFiles () {
 # - contain directory paths which may require removing; and
 # - need iterating over with explicit word splitting, i.e. without quotes in any
 #   "for" loop.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getListOfFilesByPrefix () {
   local PREFIX="${1:?}"
   local DIR_PATH="${2:-"$USER_DIR_PATH"}"
@@ -314,7 +314,7 @@ getListOfFilesByPrefix () {
   echo "$FILE_PATHS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets a list of files with a given postfix. Takes two arguments:
 # 
 # 1. "${1:-".example"}" – the postfix to search for, excluding wildcard, 
@@ -328,7 +328,7 @@ getListOfFilesByPrefix () {
 # - contain directory paths which may require removing; and
 # - need iterating over with explicit word splitting, i.e. without quotes in any
 #   "for" loop.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getListOfFilesByPostfix () {
   local POSTFIX="${1:-".example"}"
   local DIR_PATH="${2:-"$USER_DIR_PATH"}"
@@ -338,7 +338,7 @@ getListOfFilesByPostfix () {
   echo "$FILE_PATHS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Lists one or more directories. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – a single directory path, or a list of multiple directory paths
@@ -346,7 +346,7 @@ getListOfFilesByPostfix () {
 # 
 # N.B.
 # "$DIR" is not quoted as we explicitly want word splitting here.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 listDirectories () {
   local DIR_PATHS=${1:?}
 
@@ -358,7 +358,7 @@ listDirectories () {
   done
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Removes files or directories. Takes one or more arguments:
 # 
 # 1. "--recursive" – an optional flag, passed first, to also remove directories
@@ -381,7 +381,7 @@ listDirectories () {
 # Alternative Value" in "Parameter Expansion", as per:
 #
 # - https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 removeFileOrDirectory () {
   local RM_OPTION=
   local STATUS=0
@@ -406,7 +406,7 @@ removeFileOrDirectory () {
   return "$STATUS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Renames a file or directory. Takes three arguments, two of which are mandatory:
 #
 # 1. "${1:-"."}" – the directory path to the file or directory, defaulting to
@@ -416,7 +416,7 @@ removeFileOrDirectory () {
 #
 # If the file or directory can't be renamed, the function prints an error and
 # returns 1.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 renameFileOrDirectory () {
 	local DIR_PATH="${1:-"."}"
 	local CURRENT_NAME="${2:?}"

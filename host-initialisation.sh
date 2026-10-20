@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for initialising a host, mainly Raspberry Pi models.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Adds cgroup memory options to the cmdline.txt file to enable memory limits for 
 # containers in Docker Compose. Takes no arguments.
 #
@@ -17,7 +17,7 @@
 #
 # N.B.
 # A reboot is required for changes to take effect.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 addPiCgroupOptionsToCmdline () {
   local CMDLINE_PATH="$(checkPiCmdlineLocation)"
   local CGROUP_OPTIONS='cgroup_memory=1 cgroup_enable=memory'
@@ -53,7 +53,7 @@ addPiCgroupOptionsToCmdline () {
   printSeparator
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Prepends video mode settings to the cmdline.txt file to enable dual 1080p 
 # monitors. Takes no arguments.
 #
@@ -66,7 +66,7 @@ addPiCgroupOptionsToCmdline () {
 #
 # N.B.
 # A reboot is required for changes to take effect.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 addPiVideoModesToCmdline () {
   local CMDLINE_PATH="$(checkPiCmdlineLocation)"
   local VIDEO_MODES='video=HDMI-A-1:1920x1080M@60 video=HDMI-A-2:1920x1080M@60'
@@ -102,10 +102,10 @@ addPiVideoModesToCmdline () {
   printSeparator
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks for the location of the "cmdline.txt" file on a Raspberry Pi. Returns 
 # the path if found, or an empty string if not found. Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkPiCmdlineLocation () {
   local CMDLINE_PATH='/boot/firmware/cmdline.txt'
   local CMDLINE_ALT_PATH='/boot/cmdline.txt'
@@ -119,10 +119,10 @@ checkPiCmdlineLocation () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks for the location of the "config.txt" file on a Raspberry Pi. Returns 
 # the path if found, or an empty string if not found. Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkPiConfigLocation () {
   local CONFIG_PATH='/boot/firmware/config.txt'
   local CONFIG_ALT_PATH='/boot/config.txt'
@@ -136,7 +136,7 @@ checkPiConfigLocation () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Disables the Raspberry Pi's onboard LEDs. Takes no arguments.
 #
 # The function adds the following lines to the end of the "config.txt" file:
@@ -174,7 +174,7 @@ checkPiConfigLocation () {
 # 4 hosts, and online reports differ on whether "4" works on a Pi 4.
 #
 # A reboot is required for changes to take effect.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 disablePiLedsInConfigTxt () {
   local MODEL="$(getRaspberryPiModel)"
   local CONFIG_PATH="$(checkPiConfigLocation)"
@@ -240,7 +240,7 @@ EOF
   printSeparator
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Disables the Raspberry Pi's onboard WiFi by adding "dtoverlay=disable-wifi" to
 # the end of the "config.txt" file. Takes no arguments.
 #
@@ -253,7 +253,7 @@ EOF
 #
 # N.B.
 # A reboot is required for changes to take effect.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 disablePiWifiInConfigTxt () {
   local CONFIG_PATH="$(checkPiConfigLocation)"
   local DISABLE_WIFI='dtoverlay=disable-wifi'
@@ -295,7 +295,7 @@ EOF
   printSeparator
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Enables PCIe Gen 3 on Raspberry Pi models 5 and newer. Takes no arguments.
 #
 # The function adds the following lines to the end of the "config.txt" file:
@@ -319,7 +319,7 @@ EOF
 # Quiet mode (-q) is used to suppress output.
 #
 # A reboot is required for changes to take effect.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 enablePiPcieGen3InConfigTxt () {
   local MODEL="$(getRaspberryPiModel)"
   local CONFIG_PATH="$(checkPiConfigLocation)"
@@ -370,7 +370,7 @@ EOF
   printSeparator
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Reboots the system. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the time to wait before rebooting, in seconds.
@@ -378,7 +378,7 @@ EOF
 # N.B.
 # The function exits with "exit 0" to ensure the calling script stops executing
 # after the reboot command is issued.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 rebootSystem () {
   local WAIT="${1:?}"
   
@@ -389,7 +389,7 @@ rebootSystem () {
   exit 0
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Set the Raspberry Pi EEPROM option "POWER_OFF_ON_HALT" to 1, if the host
 # machine is a Raspberry Pi 4 or newer. Takes no arguments.
 #
@@ -409,7 +409,7 @@ rebootSystem () {
 # applied in place of the current config.
 #
 # A reboot is required for changes to take effect.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 setPiPowerOffOnHalt () {
   local TEMP_FILE_PATH="$(mktemp)"
   local STATUS=0
@@ -457,7 +457,7 @@ EOF
   printSeparator
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Updates the Raspberry Pi bootloader if the host machine is a Raspberry Pi 4 or
 # newer. The function uses the "rpi-eeprom-update -a" command to apply any
 # available updates. Takes no arguments.
@@ -467,7 +467,7 @@ EOF
 #
 # N.B.
 # A reboot is required for changes to take effect.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 updatePiBootloader () {
   local STATUS=0
 
@@ -489,7 +489,7 @@ updatePiBootloader () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Updates the Raspberry Pi firmware if the host machine is a Raspberry Pi 4 or
 # newer. The function uses the "rpi-update" command to apply any available 
 # updates. Takes no arguments.
@@ -499,7 +499,7 @@ updatePiBootloader () {
 #
 # N.B.
 # A reboot is required for changes to take effect.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 updatePiFirmware () {
   local STATUS=0
 

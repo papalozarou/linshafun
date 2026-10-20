@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for manipulating docker images.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Creates one or more images. Takes at least two or more arguments:
 # 
 # 1. "${1:-"$DKR_COMPOSE_FILE_PATH"}" – the compose file, including directory 
@@ -19,7 +19,7 @@
 #
 # If an image fails to build, "controlDockerService" prints the error. The
 # function carries on with the remaining images, and returns 1.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 buildDockerImages () {
   local COMPOSE_FILE_PATH="${1:-"$DKR_COMPOSE_FILE_PATH"}"
   local STATUS=0
@@ -36,12 +36,12 @@ buildDockerImages () {
   return "$STATUS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Lists images. Takes one argument:
 #
 # 1. "${1:-"$DKR_COMPOSE_FILE_PATH"}" – the compose file, including directory 
 #    path and defaulting to "$DKR_COMPOSE_FILE_PATH".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 listDockerImages () {
   local COMPOSE_FILE_PATH="${1:-"$DKR_COMPOSE_FILE_PATH"}"
 
@@ -51,11 +51,11 @@ listDockerImages () {
   printSeparator
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Removes one or more images. Takes at least one or more arguments:
 # 
 # 1. "$@" – one or more images to be removed.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 removeDockerImages () {
   for IMAGE in "$@"; do
     printComment 'Removing the following docker image:'

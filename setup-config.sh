@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for checking, setting and reading setup config options.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Adds a variable to "./setup/[project-name]-setup.var". Takes three mandatory
 # arguments:
 # 
@@ -23,7 +23,7 @@
 # Appending to a file using "cat" as per:
 # 
 # - https://stackoverflow.com/a/50098414
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 addSetupVar () {
 	local VAR_FILE_NAME="${1:?}"
 	local VAR_NAME="${2:?}"
@@ -59,7 +59,7 @@ EOF
 	reloadVarFile "$VAR_FILE_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Check for a current setup config file and directory. If both exist, do 
 # nothing. If either doesn't exist, create them. Takes no arguments. There are
 # three possibilities:
@@ -67,7 +67,7 @@ EOF
 # 1. the setup config file exists so the directory must exist;
 # 2. the setup config directory doesn't exist so the file can't; or
 # 3. the setup config directory exists and the file doesn't.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkForAndCreateSetupConfigFileAndDir () {
   printComment 'Checking to see if a "~/.config" directory exists…'
   printComment 'Checking to see if a setup config file exists…'
@@ -88,17 +88,17 @@ checkForAndCreateSetupConfigFileAndDir () {
   listDirectories "$SETUP_CONF_DIR_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Creates the setup config file and sets the correct permissions and ownership.
 # Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 createSetupConfigFile () {
   createFiles "$SETUP_CONF_PATH"
   setPermissions 600 "$SETUP_CONF_PATH"
   setOwner "$SUDO_USER" "$SETUP_CONF_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets a service name from a given config key. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the config key to be used.
@@ -110,7 +110,7 @@ createSetupConfigFile () {
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in the project's
 # "setup.conf.example" in the relevant setup directory.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getServiceFromConfigKey () {
   local CONF_KEY="${1:?}"
 
@@ -121,16 +121,16 @@ getServiceFromConfigKey () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Lists the contents of the setup config file. Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 listSetupConfig () {
   printComment 'Listing contents of setup config file:'
   printSeparator
   cat "$SETUP_CONF_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Reads and returns a setup config value. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the key of the config value.
@@ -144,7 +144,7 @@ listSetupConfig () {
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 readSetupConfigValue () {
   local CONF_KEY="${1:?}"
   local CONF_OPTION="$(grep "^$CONF_KEY " "$SETUP_CONF_PATH" | head -n 1)"
@@ -152,13 +152,13 @@ readSetupConfigValue () {
   echo "${CONF_OPTION#"$CONF_KEY "}"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Reloads a variable file that has been added to as part of a script. Takes one
 # argument:
 #
 # 1. "${1:-"$SETUP_VAR_PATH"}" – the variable file to reload, including
 #    directory path and defaulting to "$SETUP_VAR_PATH".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 reloadVarFile () {
 	local VAR_FILE_PATH="${1:-"$SETUP_VAR_PATH"}"
 
@@ -168,7 +168,7 @@ reloadVarFile () {
 	. "$VAR_FILE_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Removes a setup config option. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the key of the config option.
@@ -180,7 +180,7 @@ reloadVarFile () {
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 removeSetupConfigOption () {
   local CONF_KEY="${1:?}"
 
@@ -200,7 +200,7 @@ removeSetupConfigOption () {
   listSetupConfig
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Replaces a variable in "./setup/[project-name]-setup.var". Takes three 
 # mandatory arguments:
 # 
@@ -222,7 +222,7 @@ removeSetupConfigOption () {
 #
 # "\" is escaped in the value, as "sed" removes it from the replacement line,
 # e.g. "a\b" would be written as "ab".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 replaceSetupVar () {
   VAR_FILE_NAME="${1:?}"
   VAR_NAME="${2:?}"
@@ -255,7 +255,7 @@ replaceSetupVar () {
 	reloadVarFile "$VAR_FILE_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Writes a setup config option. Takes two mandatory arguments:
 #
 # 1. "${1:?}" – the key of the config option; and
@@ -273,7 +273,7 @@ replaceSetupVar () {
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 writeSetupConfigOption () {
   local CONF_KEY="${1:?}"
   local CONF_VALUE="${2:?}"

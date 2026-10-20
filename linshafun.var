@@ -1,6 +1,6 @@
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Directory variables.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 SUDOERS_CONF_DIR_PATH="/etc/sudoers.d"
 
 USER_DIR_PATH="/home/$SUDO_USER"
@@ -13,13 +13,13 @@ SETUP_CONF_DIR_PATH="$USER_DIR_PATH/.config"
 SERVICES_DIR_PATH="$USER_DIR_PATH/services"
 SETUP_DIR_PATH="$SERVICES_DIR_PATH/setup"
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # File variables.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 SUDOERS_PATH='/etc/sudoers'
 SUDOERS_DEFAULT_CONF_PATH="$SUDOERS_CONF_DIR_PATH/99-default-env-keep"
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # The user's shell profile file, which always holds exactly one path. Uses
 # "$USER_DIR_PATH/.bashrc", unless only "$USER_DIR_PATH/.bash_profile" exists.
 #
@@ -28,7 +28,7 @@ SUDOERS_DEFAULT_CONF_PATH="$SUDOERS_CONF_DIR_PATH/99-default-env-keep"
 # a variable is first added to it. Debian, Ubuntu and Raspberry Pi OS source
 # ".bashrc" from ".profile" for bash, whereas creating ".bash_profile" would
 # stop bash login shells reading ".profile".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 PROFILE_PATH="$USER_DIR_PATH/.bashrc"
 
 if [ ! -f "$PROFILE_PATH" ] && [ -f "$USER_DIR_PATH/.bash_profile" ]; then

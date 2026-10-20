@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for manipulating docker volumes.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Lists the contents of docker volumes. Takes two or more arguments:
 # 
 # 1. "${1:?}" – the voolume prefix, usually the compose "name" attribute; and
@@ -13,7 +13,7 @@
 # N.B.
 # The prefix is converted to lower case and an underscore is added to the end to
 # enable "$PREFIX$VOLUME" to produce "prefix_volume".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 listDockerVolumeContents () {
   local PREFIX="$(changeCase "${1:?}" 'lower')_"
   
@@ -29,7 +29,7 @@ listDockerVolumeContents () {
   done
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Manages docker volumes. Takes at least three mandatory arguments:
 #
 # 1. "${1:?}" – the action to perform; 
@@ -46,7 +46,7 @@ listDockerVolumeContents () {
 # The action is converted to sentence case once, into "ACTION_SENTENCE", for
 # the output. "ACTION" is left as passed, as "docker volume" needs it in lower
 # case for every volume.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 manageDockerVolumes () {
   local ACTION="${1:?}"
   local PREFIX="$(changeCase "${2:?}" 'lower')_"

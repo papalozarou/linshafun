@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions to read the host IP and generate or check port numbers.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Check to see if a generated port number has already been used for another 
 # service. Takes two mandatory arguments:
 # 
@@ -17,7 +17,7 @@
 # The config option key must be formatted exactly as in the config option file,
 # i.e. using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkAgainstExistingPortNumber () {
   local COMPARISON_PORT="${1:?}"
   local SERVICE="${2:?}Port"
@@ -26,13 +26,13 @@ checkAgainstExistingPortNumber () {
   [ "$COMPARISON_PORT" = "$EXISTING_PORT" ]
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Generates a port number then checks against a given service. If the check
 # returns 0, re-run the function to generate a new port number. If the check 
 # returns 1, return the generated port number. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the service to check against.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 generateAndCheckPort () {
   local SERVICE="${1:?}"
   local PORT="$(generatePortNumber)"
@@ -45,19 +45,19 @@ generateAndCheckPort () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Generates a random port number between 2000 and 65000 inclusive. Takes no
 # arguments. As per:
 #
 # - https://unix.stackexchange.com/questions/140750/generate-random-numbers-in-specific-range
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 generatePortNumber () {
   local PORT="$(shuf -i 2000-65000 -n 1)"
 
   echo "$PORT"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets the name of a given network interface, using "nmcli". Takes one mandatory 
 # argument:
 # 
@@ -65,7 +65,7 @@ generatePortNumber () {
 # 
 # N.B.
 # If "nmcli" is not installed this function will fail silently.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getInterfaceName () {
   local INTERFACE_ID="${1:?}"
   local INTERFACE_NAME="$(nmcli -g GENERAL.CONNECTION device show "$INTERFACE_ID")"
@@ -73,9 +73,9 @@ getInterfaceName () {
   echo "$INTERFACE_NAME"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Reads and returns the IP address of the host machine. Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 readIpAddress () {
   local IP_ADDRESS="$(ip route get 8.8.8.8 | grep -oP 'src \K[^ ]+')"
 

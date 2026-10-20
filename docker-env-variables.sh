@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for getting, reading and setting docker environment variables.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Asks the user if they want to re-set an existing docker environment variable. 
 # Takes two arguments, one of which is mandatory:
 # 
@@ -28,7 +28,7 @@
 # The name after "$" is checked with "checkIfValidVariableName" before it is
 # passed to "eval", so a value such as "$HOST_X; rm -rf ~" is shown as written
 # rather than run.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 changeDockerEnvVariable () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
@@ -64,7 +64,7 @@ changeDockerEnvVariable () {
   setDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR" "$ENV_VALUE"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks for and sets multiple docker environment variables. Takes at least two 
 # arguments:
 # 
@@ -77,7 +77,7 @@ changeDockerEnvVariable () {
 # each of the rest of the arguments. As per:
 # 
 # - https://unix.stackexchange.com/a/225951
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkAndSetDockerEnvVariables () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
 
@@ -96,7 +96,7 @@ checkAndSetDockerEnvVariables () {
   done
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks whether a docker environment variable has been set. Takes two 
 # arguments, one of which is mandatory:
 # 
@@ -106,7 +106,7 @@ checkAndSetDockerEnvVariables () {
 # 
 # Returns 0 if the variable is set, returns 1 if it is unset or is set to
 # "${DKR_ENV: $VAR}".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkIfDockerEnvVariableSet () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
@@ -115,7 +115,7 @@ checkIfDockerEnvVariableSet () {
   [ -n "$ENV_VALUE" ] && [ "$ENV_VALUE" != "\${DKR_ENV: \$$ENV_VAR}" ]
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Compares an environment file value with a given value and updates the 
 # environment value if requested. Takes two or more arguments:
 # 
@@ -144,7 +144,7 @@ checkIfDockerEnvVariableSet () {
 #
 # Each name is checked with "checkIfValidVariableName" before it is passed to
 # "eval", so shell syntax cannot be accidentally passed and run by "eval".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 compareAndUpdateDockerEnvVariables () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local STATUS=0
@@ -187,7 +187,7 @@ compareAndUpdateDockerEnvVariables () {
   return "$STATUS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Compares a docker env variable with a given value. Takes three arguments, two
 # of which are mandatory:
 # 
@@ -197,7 +197,7 @@ compareAndUpdateDockerEnvVariables () {
 # 3. "${3:?}" – a value to compare against.
 # 
 # Returns 0 if the variable matches the comparison value, returns 1 otherwise.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 compareDockerEnvVariableWithValue () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
@@ -207,7 +207,7 @@ compareDockerEnvVariableWithValue () {
   [ "$ENV_VALUE" = "$ENV_COMPARISON" ]
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Reads an environment variable from a file. Takes two arguments, one of
 # which is mandatory:
 # 
@@ -227,7 +227,7 @@ compareDockerEnvVariableWithValue () {
 # variable. As per:
 # 
 # - https://stackoverflow.com/a/14093511
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 readDockerEnvVariable () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
@@ -236,7 +236,7 @@ readDockerEnvVariable () {
   echo "$ENV_VALUE"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Substitutes instances of "${DKR_ENV: $ENV_VAR}" with correct values. 
 # Takes three mandatory arguments:
 # 
@@ -257,7 +257,7 @@ readDockerEnvVariable () {
 # N.B.
 # This only replaces the above string, and is used on configuration files, not 
 # ".env" files.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 replaceDockerEnvPlaceholderVariable () {
   local ENV_FILE_PATH="${1:?}"
   local ENV_VAR='${DKR_ENV: '"${2:?}"'}'
@@ -283,7 +283,7 @@ replaceDockerEnvPlaceholderVariable () {
   printComment "Placeholder variable replaced."
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Sets an environment variable in a given environment file. Takes three 
 # arguments, two of which are mandatory:
 #
@@ -309,7 +309,7 @@ replaceDockerEnvPlaceholderVariable () {
 #
 # The variable is checked for before "sed" runs, as "sed" succeeds without
 # changing anything when no line matches.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 setDockerEnvVariable () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"

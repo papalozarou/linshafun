@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions to check, install and remove packages.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks whether a given package is already installed. Takes one mandatory
 # argument:
 # 
@@ -23,7 +23,7 @@
 #
 # The argument must be a package name, not a command name, e.g. "docker-ce", not
 # "docker". A package that "dpkg" doesn't know about reads as not installed.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkForPackage () {
   local PACKAGE="${1:?}"
   local STATUS="$(dpkg-query -W -f='${db:Status-Status}' "$PACKAGE" 2>/dev/null)"
@@ -31,12 +31,12 @@ checkForPackage () {
   [ "$STATUS" = 'installed' ]
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks if one or more packages are installed and if not the packages are 
 # installed. Takes one or more mandatory arguments:
 # 
 # 1. "$@" – the package or packages to be installed.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkForPackagesAndInstall () {
   printComment 'Starting installation of the following packages:'
   printComment "$@"
@@ -53,12 +53,12 @@ checkForPackagesAndInstall () {
   done
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks if one or more packages are installed and if they are the packages is 
 # removed. Takes one or more mandatory arguments:
 # 
 # 1. "$@" – the package or packages to be removed.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkForPackagesAndRemove () {
   printComment 'Starting removal of the following packages:'
   printComment "$@"
@@ -75,7 +75,7 @@ checkForPackagesAndRemove () {
   done
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Installs or removes a given package. Takes at least two or more arguments:
 # 
 # 1. "${1:?}" – the action to be taken, either "install" or "remove"
@@ -93,7 +93,7 @@ checkForPackagesAndRemove () {
 #
 # If "apt" fails for a package, the function prints an error, carries on with
 # the remaining packages, and returns 1.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 installRemovePackages () {
   local ACTION="${1:?}"
   local STATUS=0
@@ -125,12 +125,12 @@ installRemovePackages () {
   return "$STATUS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Updates and upgrades installed packages. Takes no arguments.
 #
 # If "apt update" or "apt upgrade" fails, the function prints an error and
 # returns 1. "apt upgrade" isn't run if "apt update" fails.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 updateUpgrade () {
   local PKGCACHE_PATH='/var/cache/apt/pkgcache.bin'
   local CURRENT_TIME="$(date +%s)"

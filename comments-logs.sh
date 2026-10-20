@@ -1,11 +1,11 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions to print comments, help with comment consistency, and write and
 # rotate comment logs.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Comment variables.
 #
 # N.B.
@@ -15,7 +15,7 @@
 # 
 # Yes, yes we are using the latin phrase, not the abbreviation, for 
 # "COMMENT_PREFIX_WARN".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 COMMENT_COLOUR_PREFIX='\033[32m'
 COMMENT_COLOUR_WARN='\033[33m'
 COMMENT_COLOUR_ERROR='\033[31m'
@@ -27,7 +27,7 @@ COMMENT_SEPARATOR='-------------------------------------------------------------
 COMMENT_LOG_PATH=
 COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Initialises comment logging to a file for the current script run. Takes five
 # arguments, three of which are mandatory:
 #
@@ -67,7 +67,7 @@ COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
 # Without this, every later comment would also print an error, as it fails to
 # write to the missing log. The function then returns 1, without setting the
 # owner or permissions of the log directory.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 initialiseCommentLogs () {
   local LOG_DIR_PATH="${1:?}"
   local LOG_FILE_NAME="${2:?}"
@@ -93,7 +93,7 @@ initialiseCommentLogs () {
   setPermissions '700' "$LOG_DIR_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Prints a comment of any length, via "printLine". Takes two arguments:
 # 
 # 1. "${1:?}" – the full comment to print; and
@@ -110,7 +110,7 @@ initialiseCommentLogs () {
 # "$COMMENT" is not quoted in the "for" loop so it is split into words. "set -f"
 # stops the shell also replacing wildcards with matching file names, and is
 # turned off again after the loop.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printComment () {
   local COMMENT="${1:?}"
   local COMMENT_TYPE="$2"
@@ -136,7 +136,7 @@ printComment () {
   printLine "$CURRENT_LINE" "$COMMENT_TYPE"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Prints a comment line with the specified prefix and colour. Takes two
 # arguments:
 # 
@@ -158,7 +158,7 @@ printComment () {
 #
 # Warnings and errors go to stderr, so they are not captured when called using
 # "$(…)".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printLine () {
   local LINE="${1:?}"
   local TYPE="${2:-regular}"
@@ -174,7 +174,7 @@ printLine () {
   printLogLine "$LINE" "$TYPE"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Logs a comment line using the same prefixes as terminal output. Takes two
 # arguments:
 #
@@ -188,7 +188,7 @@ printLine () {
 # 2026-10-10 05:00:03 SETUP SCRIPT: Stopping stacks.
 #
 # Nothing is logged until "initialiseCommentLogs" has been called.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printLogLine () {
   local LINE="${1:?}"
   local TYPE="${2:-regular}"
@@ -209,14 +209,14 @@ printLogLine () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Tells the user that the script is exiting. Takes one optional argument:
 #
 # 1. "$1" – flag for if exiting with changes.
 # 
 # If the flag is "true" the function will print the additional "changes were
 # made" output.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printScriptExiting () {
   printSeparator
 
@@ -229,30 +229,30 @@ printScriptExiting () {
   printSeparator
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Tells the user that the script has finished. Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printScriptFinished () {
   printSeparator
   printComment 'Script finished.'
   printSeparator
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Prints comment separator. Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printSeparator () {
   printComment "$COMMENT_SEPARATOR"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Tells the user an action is taking place and a wait is needed. Takes three
 # arguments, two of which are mandatory:
 # 
 # 1. "${1:?}" – the service the action is being performed on;
 # 2. "${2:?}" – the action being performed; and
 # 3. "${3:-"60"}" – the length of time, in seconds to wait, defaults to 60.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 printServiceWait () {
   local SERVICE="${1:?}"
   local ACTION="${2:?}"
@@ -264,7 +264,7 @@ printServiceWait () {
   sleep "$WAIT"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Removes archived comment logs older than a given number of days. Takes three
 # mandatory arguments:
 #
@@ -287,7 +287,7 @@ printServiceWait () {
 # path must not contain spaces. A path with spaces is split into separate paths,
 # and any of those that exist are removed, e.g. "/volume1/my logs" removes the
 # "/volume1/my" directory if it exists.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 removeArchivedCommentLogs () {
   local LOG_DIR_PATH="${1:?}"
   local LOG_FILE_NAME="${2:?}"
@@ -297,7 +297,7 @@ removeArchivedCommentLogs () {
   removeFileOrDirectory $ARCHIVED_LOG_FILE_PATHS
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Removes the ANSI colour codes from comment output if it is not going to a
 # terminal. Takes no arguments.
 #
@@ -309,7 +309,7 @@ removeArchivedCommentLogs () {
 # N.B.
 # The log file written by "printLogLine" never contains colour codes, so this
 # function only affects the script's own output.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 removeCommentColoursIfNotTerminal () {
   if [ ! -t 1 ]; then
     COMMENT_COLOUR_PREFIX=''
@@ -319,7 +319,7 @@ removeCommentColoursIfNotTerminal () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Rotates a comment log so each script run starts with a fresh log. Takes three
 # mandatory arguments:
 #
@@ -352,7 +352,7 @@ removeCommentColoursIfNotTerminal () {
 #
 # Renaming keeps the file's modification time, so an archived log's age is
 # measured from the last line written to it, not from when it was archived.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 rotateCommentLog () {
   local LOG_DIR_PATH="${1:?}"
   local LOG_FILE_NAME="${2:?}"

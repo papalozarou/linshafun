@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for getting OS information.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks if the host machine is a Raspberry Pi. Returns 0 if it is, non-zero if
 # it is not. Takes no arguments.
 # 
@@ -14,25 +14,25 @@
 #
 # If the file doesn't exist (e.g. not a Raspberry Pi), any error output is
 # redirected to "/dev/null" and the function returns 2.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkIfRaspberryPi () {
   grep -qi 'raspberry pi' /proc/device-tree/model 2>/dev/null
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks if the script is being run as a given user. Takes one argument:
 #
 # 1. "${1:-root}" – the user name, defaulting to "root".
 #
 # Returns 0 if it is, 1 if it is not.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkIfRunAsUser () {
   local USER_NAME="${1:-root}"
 
   [ "$(id -un)" = "$USER_NAME" ]
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks if the script is being run with "sudo". Returns 0 if it is, 1 if it is
 # not. Takes no arguments.
 #
@@ -41,12 +41,12 @@ checkIfRunAsUser () {
 # login, has no "$SUDO_USER", which setup scripts need for ownership and paths.
 # "$SUDO_USER" is an ordinary variable that anyone can set, so it alone does not
 # prove the script is running as root.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkIfRunWithSudo () {
   [ "$(id -u)" -eq 0 ] && [ -n "$SUDO_USER" ]
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks if the system was rebooted by parsing the output of "who -b" into 
 # seconds, and comparing against the current time. Takes one argument:
 # 
@@ -55,7 +55,7 @@ checkIfRunWithSudo () {
 #
 # Returns 0 if the system was rebooted within the given timeframe, 1 if not, and
 # 2 if the timeframe is not a number.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkIfSystemRebooted () {
   local REBOOT_TIMEFRAME="${1:-60}"
   local CURRENT_TIME="$(date +%s)"
@@ -65,7 +65,7 @@ checkIfSystemRebooted () {
   [ "$TIME_DIFF" -le "$REBOOT_TIMEFRAME" ]
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Compares the current Linux distribution version against a given version. Takes 
 # one mandatory argument:
 #
@@ -83,7 +83,7 @@ checkIfSystemRebooted () {
 # The test is negated with "!" rather than written as "-le", so a version that
 # is not a number still returns 0, as "-gt" fails with status 2 and "!" turns
 # any failure into 0.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 compareOsVersion () {
   local COMPARISON_OS="$(echo "${1:?}" | cut -d'.' -f1)"
   local CURRENT_OS="$(getOsVersion | cut -d'.' -f1)"
@@ -91,49 +91,49 @@ compareOsVersion () {
   ! [ "$CURRENT_OS" -gt "$COMPARISON_OS" ]
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets the host machine architecture, e.g. amd64 or arm64. Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getHostArchitecture () {
   local HOST_ARCHITECTURE="$(dpkg --print-architecture)"
 
   echo "$HOST_ARCHITECTURE"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets the Linux kernal version number the host machine is running. Takes no
 # arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getKernalVersion () {
   local KERNAL_VERSION="$(uname -r)"
 
   echo "$KERNAL_VERSION"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets the Linux distribution codename the host machine is running, e.g. 
 # bookworm, focal or jammy. Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getOsCodename () {
   local OS_CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
 
   echo "$OS_CODENAME"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets the Linux distribution the host machine is running, e.g. ubuntu or
 # debian. Takes no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getOsDistribution () {
   local OS_DISTRIBUTION="$(. /etc/os-release && echo "$ID")"
 
   echo "$OS_DISTRIBUTION"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets the Linux distribution version number the host machine is running. Takes
 # no arguments.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getOsVersion () {
   # local OS_VERSION="$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
   local OS_VERSION="$(. /etc/os-release && echo "$VERSION_ID")"
@@ -151,7 +151,7 @@ getOsVersion () {
 # trimming null bytes with "tr -d '\0'" to enable safe parsing as text, then 
 # using "grep -oi" to case insensitively match only the pattern 
 # "raspberry pi [0-9]", and then cut to extract just the model number.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getRaspberryPiModel () {
   local MODEL_FILE_PATH='/proc/device-tree/model'
 

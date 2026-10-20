@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions used by all setup scripts.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Writes the config key and tells the user that the script has finished. Takes 
 # one mandatory argument:
 # 
@@ -14,7 +14,7 @@
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 finaliseScript () {
   local CONF_KEY="${1:?}"
 
@@ -23,7 +23,7 @@ finaliseScript () {
   printScriptFinished
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks the config file to see if the script has been run and completed before.
 # Takes one mandatory argument:
 #
@@ -35,7 +35,7 @@ finaliseScript () {
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 initialiseScript () {
   local CONF_KEY="${1:?}"
 

@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions to check and create host environment variables.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Adds an "env_keep" statement for a given environment variable to
 # "$SUDOERS_DEFAULT_CONF_PATH", so "sudo" keeps the variable. Takes one
 # mandatory argument:
@@ -22,7 +22,7 @@
 # statement is checked, not the whole file.
 #
 # - https://www.sudo.ws/docs/man/visudo.man/
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 addHostEnvVariableToSudoersConf () {
   local ENV_VAR="${1:?}"
   local ENV_KEEP="Defaults env_keep += \"$ENV_VAR\""
@@ -49,7 +49,7 @@ addHostEnvVariableToSudoersConf () {
   printComment "Added $ENV_VAR to $SUDOERS_DEFAULT_CONF_PATH."
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks for a given environment variable in "$PROFILE_PATH". Returns 0 if the
 # variable is present, returns 1 if not. Only a line starting with
 # "export NAME=" counts. Takes one mandatory argument:
@@ -59,14 +59,14 @@ addHostEnvVariableToSudoersConf () {
 # N.B.
 # The function returns the status of "grep -q", so it returns 2 if
 # "$PROFILE_PATH" can't be read. Callers using "if" treat that as not present.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkForHostEnvVariable () {
   local ENV_VAR="${1:?}"
 
   grep -q "^export $ENV_VAR=" "$PROFILE_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks for, then adds, an environment variable to "$PROFILE_PATH". Takes two
 # mandatory arguments:
 # 
@@ -84,7 +84,7 @@ checkForHostEnvVariable () {
 #
 # N.B.
 # For the shell to pick this up it requires the user to log out and back in.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 setHostEnvVariable () {
   local ENV_VAR="${1:?}"
   local ENV_VALUE="${2:?}"

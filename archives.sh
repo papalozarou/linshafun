@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for creating and extracting archives.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Creates a tar archive of a file or directory. Takes four arguments, two of
 # which are mandatory:
 #
@@ -46,7 +46,7 @@
 # "set --" clears the function's own arguments, then each pattern is added as a
 # separate "--exclude=" argument. As the argument list keeps each item separate,
 # "$@" can be passed to tar in quotes.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 createTarArchive () {
   local SOURCE_PATH="${1:?}"
   local ARCHIVE_FILE_PATH="${2:?}"

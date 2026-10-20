@@ -1,15 +1,15 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for text generation and manipulation.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Adds a prefix to a string. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the string; and
 # 2. "${2:?}" – the prefix to add.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 addPrefix () {
   local STRING="${1:?}"
   local PREFIX="${2:?}"
@@ -19,7 +19,7 @@ addPrefix () {
   echo "$STRING"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Adds a postfix to a string. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the string; and
@@ -28,7 +28,7 @@ addPrefix () {
 # N.B.
 # If adding a file extension, the "." must be included at the start of the 
 # second argument.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 addPostfix () {
   local STRING="${1:?}"
   local POSTFIX="${2:?}"
@@ -38,7 +38,7 @@ addPostfix () {
   echo "$STRING"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Changes the case of text. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – a text string; and
@@ -53,7 +53,7 @@ addPostfix () {
 # N.B.
 # Sentence case uses "awk" rather than "sed", as the "\<" and "\u" needed in
 # "sed" are GNU extensions, which don't work in macOS or BusyBox "sed".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 changeCase () {
   local STRING="${1:?}"
   local CASE="${2:?}"
@@ -89,7 +89,7 @@ checkFileContainsString () {
   grep -q "$STRING" "$FILE_PATH"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks a string for a given substring. Takes two mandatory arguments:
 #
 # 1. "${1:?}" – the string; and
@@ -105,7 +105,7 @@ checkFileContainsString () {
 # not been removed. As per:
 #
 # - https://stackoverflow.com/a/8811800
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkStringContainsSubstring () {
   local STRING="${1:?}"
   local SUBSTRING="${2:?}"
@@ -217,11 +217,11 @@ commentOutLine () {
   fi
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Generates a random alphanumeric string of a given length. Takes one argument:
 # 
 # 1. "${1:-"64"}" – the string length, defaults to 64.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 generateRandomString () {
   local LENGTH="${1:-"64"}"
   local STRING="$(tr -cd '[:alnum:]' < /dev/urandom | fold -w "${LENGTH}" | head -n 1 | tr -d '\n')"
@@ -229,13 +229,13 @@ generateRandomString () {
   echo "$STRING"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Gets the first characters of the first line of a file. Takes two mandatory
 # arguments:
 #
 # 1. "${1:?}" – the file, including directory path; and
 # 2. "${2:?}" – the number of characters to get.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getFirstCharsFromFirstLine () {
   local FILE_PATH="${1:?}"
   local CHAR_COUNT="${2:?}"
@@ -244,7 +244,7 @@ getFirstCharsFromFirstLine () {
   echo "$FIRST_CHARS"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Removes a prefix from a string. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the string; and
@@ -253,7 +253,7 @@ getFirstCharsFromFirstLine () {
 # The function uses pattern matching to trim the string, as per:
 # 
 # - https://unix.stackexchange.com/a/638638
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 removePrefix () {
   local STRING="${1:?}"
   local PREFIX="${2:?}"
@@ -263,7 +263,7 @@ removePrefix () {
   echo "$STRING"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Removes a postfix from a string. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the string; and
@@ -276,7 +276,7 @@ removePrefix () {
 # N.B.
 # If removing a file extension, you must include the "." at the start of the 
 # second argument.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 removePostfix () {
   local STRING="${1:?}"
   local POSTFIX="${2:?}"

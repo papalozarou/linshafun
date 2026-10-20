@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions to check variables.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Checks if a variable name is valid. Returns 0 if the name contains only
 # letters, digits and underscores, and doesn't start with a digit, returns 1
 # otherwise. Takes one argument:
@@ -18,7 +18,7 @@
 # N.B.
 # "$1" is used rather than "${1:?}", as an empty name must return 1 rather
 # than stop the script with an error.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 checkIfValidVariableName () {
   local VAR_NAME="$1"
 
@@ -32,7 +32,7 @@ checkIfValidVariableName () {
   esac
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Verifies variables are set. Takes one or more arguments:
 #
 # 1. "$@" – one or more variable names to verify.
@@ -51,7 +51,7 @@ checkIfValidVariableName () {
 # N.B.
 # Each name is checked with "checkIfValidVariableName" before it is passed to
 # "eval", so shell syntax cannot be accidentally passed and run by "eval".
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 verifyVariablesSet () {
   local VAR_NAME
   local VAR_VALUE

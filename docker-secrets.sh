@@ -1,10 +1,10 @@
 #!/bin/sh
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Functions for manipulating docker secrets.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Creates a docker secret. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the secret file name, either including or excluding the 
@@ -20,7 +20,7 @@
 # N.B.
 # The value is written with "printf '%s\n'", not "echo", so values such as
 # "-n" or "a\nb" are written exactly as given. The file ends with a newline.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 createDockerSecretFile () {
   local SECRET_FILE="${1:?}"
   local SECRET_VALUE="${2:?}"
@@ -47,12 +47,12 @@ createDockerSecretFile () {
   listDirectories "${SECRET_FILE_PATH%/*}"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Creates a docker secret by asking for user input. Takes two arguments: 
 # 
 # 1. "${1:?}" – the secret file name, excluding directory path; and
 # 2. "$2" – an optional warning to be displayed.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 getAndSetDockerSecret () {
   local SECRET_FILE_NAME="${1:?}"
   local WARNING="$2"
@@ -63,11 +63,11 @@ getAndSetDockerSecret () {
   createDockerSecretFile "$SECRET_FILE_NAME" "$SECRET_VALUE"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Reads the value of a secret file. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the secret file name, excluding directory path.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 readDockerSecretFile () {
   local SECRET_FILE_NAME="${1:?}"
   local SECRET_VALUE="$(cat "$DKR_SECRETS_DIR_PATH/$SECRET_FILE_NAME")"
@@ -75,11 +75,11 @@ readDockerSecretFile () {
   echo "$SECRET_VALUE"
 }
 
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Removes a secret file. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the secret file name, excluding directory path.
-#-------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 removeDockerSecretFile () {
   local SECRET_FILE_NAME="${1:?}"
   local SECRET_FILE_PATH="$DKR_SECRETS_DIR_PATH/$SECRET_FILE_NAME"
