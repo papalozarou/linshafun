@@ -84,6 +84,7 @@ copyAndAddPostfixToFiles () {
   local POSTFIX="${2:-".backup"}"
   local STATUS=0
   local FILE_PATH
+  local FILE_COPY
 
   for FILE_PATH in $FILE_PATHS; do
     printComment "Copying and adding $POSTFIX to the file:"
@@ -91,7 +92,7 @@ copyAndAddPostfixToFiles () {
     printComment "$FILE_PATH"
     printSeparator
 
-    local FILE_COPY="$(addPostfix "$FILE_PATH" "$POSTFIX")"
+    FILE_COPY="$(addPostfix "$FILE_PATH" "$POSTFIX")"
 
     if ! cp -p "$FILE_PATH" "$FILE_COPY"; then
       printComment "Failed to copy $FILE_PATH to $FILE_COPY." 'error'
@@ -128,6 +129,7 @@ copyAndRemovePostfixFromFiles () {
   local POSTFIX="${2:-".example"}"
   local STATUS=0
   local FILE_PATH
+  local FILE_COPY
 
   for FILE_PATH in $FILE_PATHS; do
     printComment "Copying and removing $POSTFIX from the file:"
@@ -135,7 +137,7 @@ copyAndRemovePostfixFromFiles () {
     printComment "$FILE_PATH"
     printSeparator
 
-    local FILE_COPY="$(removePostfix "$FILE_PATH" "$POSTFIX")"
+    FILE_COPY="$(removePostfix "$FILE_PATH" "$POSTFIX")"
 
     if ! cp -p "$FILE_PATH" "$FILE_COPY"; then
       printComment "Failed to copy $FILE_PATH to $FILE_COPY." 'error'

@@ -193,11 +193,11 @@ disablePiLedsInConfigTxt () {
   fi
 
   if [ "$MODEL" = 5 ]; then
-    local DISABLE_ETH_LED0="$DISABLE_ETH_LED0"'4'
-    local DISABLE_ETH_LED1="$DISABLE_ETH_LED1"'4'
+    DISABLE_ETH_LED0="$DISABLE_ETH_LED0"'4'
+    DISABLE_ETH_LED1="$DISABLE_ETH_LED1"'4'
   elif [ "$MODEL" = 4 ] || [ "$MODEL" = 3 ]; then
-    local DISABLE_ETH_LED0="$DISABLE_ETH_LED0"'14'
-    local DISABLE_ETH_LED1="$DISABLE_ETH_LED1"'14'
+    DISABLE_ETH_LED0="$DISABLE_ETH_LED0"'14'
+    DISABLE_ETH_LED1="$DISABLE_ETH_LED1"'14'
   else
     printComment 'Disabling LEDs is only supported on Raspberry Pi 3, 4 and 5.' 'error'
 

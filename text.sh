@@ -14,7 +14,7 @@ addPrefix () {
   local STRING="${1:?}"
   local PREFIX="${2:?}"
 
-  local STRING="$PREFIX$STRING"
+  STRING="$PREFIX$STRING"
 
   echo "$STRING"
 }
@@ -33,7 +33,7 @@ addPostfix () {
   local STRING="${1:?}"
   local POSTFIX="${2:?}"
 
-  local STRING="$STRING$POSTFIX"
+  STRING="$STRING$POSTFIX"
 
   echo "$STRING"
 }
@@ -258,7 +258,7 @@ removePrefix () {
   local STRING="${1:?}"
   local PREFIX="${2:?}"
 
-  local STRING="${STRING#"$PREFIX"}"
+  STRING="${STRING#"$PREFIX"}"
 
   echo "$STRING"
 }
@@ -281,7 +281,7 @@ removePostfix () {
   local STRING="${1:?}"
   local POSTFIX="${2:?}"
 
-  local STRING="${STRING%"$POSTFIX"}"
+  STRING="${STRING%"$POSTFIX"}"
 
   echo "$STRING"
 }

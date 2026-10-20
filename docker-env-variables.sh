@@ -150,6 +150,8 @@ compareAndUpdateDockerEnvVariables () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local STATUS=0
   local ENV_VAR
+  local ENV_VALUE
+  local ENV_COMPARISON
 
   shift
 
@@ -162,9 +164,9 @@ compareAndUpdateDockerEnvVariables () {
       continue
     fi
 
-    local ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR")"
+    ENV_VALUE="$(readDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR")"
 
-    eval "local ENV_COMPARISON=\${$ENV_VAR}"
+    eval "ENV_COMPARISON=\${$ENV_VAR}"
 
     printComment "Comparing the env variable for $ENV_VAR with the comparison value…"
 

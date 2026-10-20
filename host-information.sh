@@ -154,9 +154,10 @@ getOsVersion () {
 # ------------------------------------------------------------------------------
 getRaspberryPiModel () {
   local MODEL_FILE_PATH='/proc/device-tree/model'
+  local MODEL
 
   if checkIfRaspberryPi; then
-    local MODEL="$(tr -d '\0' < "$MODEL_FILE_PATH" | grep -oi 'raspberry pi [0-9]' | cut -d' ' -f3)"
+    MODEL="$(tr -d '\0' < "$MODEL_FILE_PATH" | grep -oi 'raspberry pi [0-9]' | cut -d' ' -f3)"
 
     echo "$MODEL"
   fi

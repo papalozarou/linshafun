@@ -16,9 +16,11 @@
 # ------------------------------------------------------------------------------
 listDockerVolumeContents () {
   local PREFIX="$(changeCase "${1:?}" 'lower')_"
+  local VOLUME_NAME
+  local VOLUME
   
-  for VOLUME in "$@"; do
-    local VOLUME="$PREFIX$VOLUME"
+  for VOLUME_NAME in "$@"; do
+    VOLUME="$PREFIX$VOLUME_NAME"
 
     printComment 'Listing contents of the following docker volume:'
     printComment "$VOLUME"
@@ -53,11 +55,13 @@ manageDockerVolumes () {
   local ACTION_SENTENCE="$(changeCase "$ACTION" 'sentence')"
   local VOLUME_STATUS=0
   local STATUS=0
+  local VOLUME_NAME
+  local VOLUME
 
   shift 2
 
-  for VOLUME in "$@"; do
-    local VOLUME="$PREFIX$VOLUME"
+  for VOLUME_NAME in "$@"; do
+    VOLUME="$PREFIX$VOLUME_NAME"
     VOLUME_STATUS=0
 
     printComment "Performing $ACTION on the following docker volume:"

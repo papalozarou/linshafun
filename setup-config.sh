@@ -113,9 +113,10 @@ createSetupConfigFile () {
 # ------------------------------------------------------------------------------
 getServiceFromConfigKey () {
   local CONF_KEY="${1:?}"
+  local SERVICE
 
   if [ -z "${CONF_KEY##configured*}" ]; then
-    local SERVICE="$(changeCase "${CONF_KEY#'configured'}" 'lower')"
+    SERVICE="$(changeCase "${CONF_KEY#'configured'}" 'lower')"
 
     echo "$SERVICE"
   fi
@@ -280,6 +281,7 @@ writeSetupConfigOption () {
   local CONF_OPTION_STATUS=0
   local WRITE_STATUS=0
   local ESCAPED_VALUE="$(printf '%s\n' "$CONF_VALUE" | sed 's/\\/\\\\/g')"
+  local EXISTING_CONF_VALUE
 
   checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY " || CONF_OPTION_STATUS="$?"
 
@@ -287,7 +289,7 @@ writeSetupConfigOption () {
   printComment "$SETUP_CONF_PATH"
 
   if [ "$CONF_OPTION_STATUS" -eq 0 ]; then
-    local EXISTING_CONF_VALUE="$(readSetupConfigValue "$CONF_KEY")"
+    EXISTING_CONF_VALUE="$(readSetupConfigValue "$CONF_KEY")"
 
     printComment "$CONF_KEY already exists with value $EXISTING_CONF_VALUE." 'warning'
   fi
