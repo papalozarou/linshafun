@@ -38,6 +38,8 @@ checkForPackage () {
 # 1. "$@" – the package or packages to be installed.
 # ------------------------------------------------------------------------------
 checkForPackagesAndInstall () {
+  local PACKAGE
+
   printComment 'Starting installation of the following packages:'
   printComment "$@"
 
@@ -60,6 +62,8 @@ checkForPackagesAndInstall () {
 # 1. "$@" – the package or packages to be removed.
 # ------------------------------------------------------------------------------
 checkForPackagesAndRemove () {
+  local PACKAGE
+
   printComment 'Starting removal of the following packages:'
   printComment "$@"
 
@@ -97,6 +101,7 @@ checkForPackagesAndRemove () {
 installRemovePackages () {
   local ACTION="${1:?}"
   local STATUS=0
+  local PACKAGE
 
   if [ "$ACTION" != 'install' ] && [ "$ACTION" != 'remove' ]; then
     printComment "Unknown action \"$ACTION\". Use \"install\" or \"remove\"." 'error'
@@ -106,20 +111,20 @@ installRemovePackages () {
 
   shift
 
-  for i; do
-    printComment "Performing $ACTION for $i."
+  for PACKAGE; do
+    printComment "Performing $ACTION for $PACKAGE."
     printSeparator
 
-    if ! apt "$ACTION" "$i" -y; then
+    if ! apt "$ACTION" "$PACKAGE" -y; then
       printSeparator
-      printComment "Failed to $ACTION $i." 'error'
+      printComment "Failed to $ACTION $PACKAGE." 'error'
       STATUS=1
 
       continue
     fi
 
     printSeparator
-    printComment "Completed $ACTION for $i"
+    printComment "Completed $ACTION for $PACKAGE"
   done
 
   return "$STATUS"

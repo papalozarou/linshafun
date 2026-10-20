@@ -83,6 +83,7 @@ copyAndAddPostfixToFiles () {
   local FILE_PATHS="${1:?}"
   local POSTFIX="${2:-".backup"}"
   local STATUS=0
+  local FILE_PATH
 
   for FILE_PATH in $FILE_PATHS; do
     printComment "Copying and adding $POSTFIX to the file:"
@@ -126,6 +127,7 @@ copyAndRemovePostfixFromFiles () {
   local FILE_PATHS="${1:?}"
   local POSTFIX="${2:-".example"}"
   local STATUS=0
+  local FILE_PATH
 
   for FILE_PATH in $FILE_PATHS; do
     printComment "Copying and removing $POSTFIX from the file:"
@@ -170,6 +172,10 @@ copyAndRemovePostfixFromFiles () {
 createDirectories () {
   local DIR_PATHS="${1:?}"
   local SUB_DIR_NAMES="$2"
+  local DIR_PATH
+  local PARENT_DIR
+  local SUB_DIR_NAME
+  local SUB_DIR_PATH
 
   if [ -z "$SUB_DIR_NAMES" ]; then
     for DIR_PATH in $DIR_PATHS; do
@@ -270,6 +276,7 @@ createDirectory () {
 # ------------------------------------------------------------------------------
 createFiles () {
   local STATUS=0
+  local FILE_PATH
 
   for FILE_PATH in "$@"; do
     printComment 'Creating file at:'
@@ -349,6 +356,7 @@ getListOfFilesByPostfix () {
 # ------------------------------------------------------------------------------
 listDirectories () {
   local DIR_PATHS=${1:?}
+  local DIR_PATH
 
   for DIR_PATH in $DIR_PATHS; do
     printComment 'Listing directory:'
@@ -385,6 +393,7 @@ listDirectories () {
 removeFileOrDirectory () {
   local RM_OPTION=
   local STATUS=0
+  local FILE_OR_DIR_PATH
 
   if [ "$1" = '--recursive' ]; then
     RM_OPTION='-R'

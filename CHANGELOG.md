@@ -23,6 +23,7 @@
 - `changeDockerEnvVariable` only looks up a value that is `$` followed by a valid variable name, e.g. `$HOST_DOMAIN`. Any other value starting with `$HOST` is shown as written. Previously the whole value was passed to `eval`, so `$HOST_X; cmd` ran `cmd`.
 - `changeDockerEnvVariable` shows "(not set)" as the current value when the variable is blank, missing or names an unset host variable. Previously the script exited with status 2.
 - `checkAndSetDockerEnvVariables` prints "H_A is set." or the warning "H_A is not set." instead of "Check returned true." or "Check returned false.".
+- `checkAndSetDockerEnvVariables` and `compareAndUpdateDockerEnvVariables` no longer set `ENV_VAR` in the calling script.
 - `checkIfDockerEnvVariableSet` and `compareDockerEnvVariableWithValue` return 0 or 1 and print nothing. Previously they printed `true` or `false`.
 - `compareAndUpdateDockerEnvVariables` prints the error "H-A is not a valid variable name." for an invalid name, skips it and carries on. It returns 1 if any name was invalid or any change failed. Previously the name was passed to `eval` unchecked, so `H-A` was compared against `A`, and it returned the status of whatever ran last.
 - `compareDockerEnvVariableWithValue` and `readDockerEnvVariable` return the whole value when it contains `=`, e.g. a base64 string ending in `==`. Previously the value was cut off at the second `=`.
@@ -35,11 +36,16 @@
 ### `docker-images.sh`
 
 - `buildDockerImages` returns 1 if any image fails to build, after carrying on with the rest, and no longer prints "Assuming there are no errors above, the image was built.". `controlDockerService` reports each build's result. Previously it always returned 0.
+- `buildDockerImages` and `removeDockerImages` no longer set `IMAGE` in the calling script.
 
 ### `docker-secrets.sh`
 
 - `checkForAndCreateDockerSecretsDir` is removed. Use `createDirectory "$DKR_SECRETS_DIR_PATH" '600'`.
 - `createDockerSecretFile` replaces an existing secret file instead of appending to it, writes the value with `printf` so values such as `-n` are written as given, lists the directory the file is in, and returns 1 with an error if the write fails. Previously a rerun gave a two-line secret, and a failed write reported success.
+
+### `docker-services.sh`
+
+- `controlRelatedDockerServices` no longer sets `SERVICE` in the calling script.
 
 ### `docker-volumes.sh`
 
@@ -51,6 +57,7 @@
 - `checkAndCreateOrAskToReplaceFileOrDirectory` no longer prints "Check returned true." or "Check returned false.".
 - `checkForFileOrDirectory` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createFiles` and `removeFileOrDirectory` return 1 if any file or directory fails, after carrying on with the rest. The copy and create functions print an error naming the file, and no longer print "File copied …" or "File created." after a failure. Previously all four returned 0.
+- `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createDirectories`, `createFiles`, `listDirectories` and `removeFileOrDirectory` no longer set `DIR_PATH`, `FILE_OR_DIR_PATH`, `FILE_PATH`, `PARENT_DIR`, `SUB_DIR_NAME` or `SUB_DIR_PATH` in the calling script.
 - `createDirectories` creates each directory path before its subdirectories.
 - `createDirectory` takes optional permissions, owner and group as its second to fourth arguments, and sets them on the new directory only. If the directory exists, it returns 0 and prints nothing. It no longer creates missing parent directories: it returns 1 with an error if the parent doesn't exist, or if `mkdir`, `chmod` or `chown` fails. Previously it ran `mkdir -p`.
 - `removeFileOrDirectory` removes files only, unless `--recursive` is passed first, e.g. `removeFileOrDirectory --recursive "$DIR_PATH"`. Without it, a directory is left in place, the function prints an error and returns 1. Previously it always ran `rm -R`, so any directory was removed with its contents. Callers that remove directories must add `--recursive`.
@@ -81,6 +88,10 @@
 - `setPiPowerOffOnHalt` returns 1 with the error "Failed to read the current EEPROM config." if `rpi-eeprom-config --out` fails, without applying anything. Previously it applied a config holding only `POWER_OFF_ON_HALT=1`. It also returns 1 with "Failed to update POWER_OFF_ON_HALT." if `--apply` fails or the update isn't in the temporary config, and doesn't write the setup config option. Previously it printed success after a failed apply, and returned 0 after its own failure message.
 - `updatePiBootloader` and `updatePiFirmware` return 1 and print an error when `rpi-eeprom-update` or `rpi-update` fails, without writing the setup config option. Previously they always reported success.
 
+### `initialisation.sh`
+
+- `checkAndCreateServiceFiles` no longer sets `FILE_PATH` in the calling script.
+
 ### `linshafun.var`
 
 - `PROFILE_PATH` holds one path: `~/.bashrc`, or `~/.bash_profile` if only that exists. Previously it held every `.bashrc` and `.bash_profile` anywhere under the home directory, so with more than one, `setHostEnvVariable` wrote nothing but reported success. With neither file, `~/.bashrc` is now created instead of the script exiting.
@@ -100,6 +111,7 @@
 - `checkForPackage` checks whether the package is installed with `dpkg-query`, instead of whether a command with that name exists. A package that isn't a command, e.g. `openssh-server`, now reads as installed, and a command that isn't a package reads as not installed. A removed package whose config files remain reads as not installed. Callers must pass package names, e.g. `docker-ce`, not `docker`.
 - `checkForPackage` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `checkForPackagesAndInstall` and `checkForPackagesAndRemove` no longer print "Check returned true." or "Check returned false." after "Checking to see if … is installed…".
+- `checkForPackagesAndInstall`, `checkForPackagesAndRemove` and `installRemovePackages` no longer set `PACKAGE` or `i` in the calling script.
 - `installRemovePackages` returns 1 with the error "Unknown action "update". Use "install" or "remove"." if the first argument isn't "install" or "remove". Previously it printed "Exiting script with no changes." and exited the script.
 - `installRemovePackages` prints the error "Failed to install foo." if `apt` fails for a package, carries on with the rest, and returns 1. Previously it printed "Completed install for foo" and returned 0.
 - `updateUpgrade` returns 1 with the error "Failed to update and upgrade packages." if `apt update` or `apt upgrade` fails. Previously it printed "Packages updated and upgraded." and returned 0.
@@ -118,6 +130,7 @@
 - `readSetupConfigValue` matches the whole key, so `ssh` no longer matches `sshPort`. Values containing spaces or wildcards are returned as written. It no longer runs `set -f` in the calling script.
 - `removeSetupConfigOption` and `writeSetupConfigOption` match the whole key, so `ssh` no longer matches `sshPort`. Previously `writeSetupConfigOption ssh on` overwrote the `sshPort` line, and `removeSetupConfigOption ssh` deleted it.
 - `removeSetupConfigOption` returns 1 with the error "Failed to remove ssh from …" if `sed` fails. Previously it printed "ssh removed." and returned 0.
+- `replaceSetupVar` no longer sets `VAR_FILE_NAME`, `VAR_FILE_PATH`, `VAR_NAME` or `VAR_VALUE` in the calling script.
 - `replaceSetupVar` writes `\` in the value as given. Previously it was removed, so `a\b` was written as `ab`.
 - `writeSetupConfigOption` no longer has a "Something went wrong" branch that exited the script. It couldn't be reached, as the key check only ever returned found or not found.
 - `writeSetupConfigOption` returns 1 with the error "Failed to write ssh to …" if the option can't be written, and doesn't set the owner or list the setup config. Previously it printed "Config written." and returned 0.

@@ -80,6 +80,7 @@ changeDockerEnvVariable () {
 # ------------------------------------------------------------------------------
 checkAndSetDockerEnvVariables () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
+  local ENV_VAR
 
   shift
 
@@ -148,6 +149,7 @@ checkIfDockerEnvVariableSet () {
 compareAndUpdateDockerEnvVariables () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local STATUS=0
+  local ENV_VAR
 
   shift
 

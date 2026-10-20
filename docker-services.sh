@@ -136,6 +136,7 @@ controlDockerStacks () {
 controlRelatedDockerServices () {
   local ACTION="${1:?}"
   local STATUS=0
+  local SERVICE
 
   shift
 

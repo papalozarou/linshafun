@@ -23,6 +23,7 @@
 buildDockerImages () {
   local COMPOSE_FILE_PATH="${1:-"$DKR_COMPOSE_FILE_PATH"}"
   local STATUS=0
+  local IMAGE
 
   shift
 
@@ -57,6 +58,8 @@ listDockerImages () {
 # 1. "$@" – one or more images to be removed.
 # ------------------------------------------------------------------------------
 removeDockerImages () {
+  local IMAGE
+
   for IMAGE in "$@"; do
     printComment 'Removing the following docker image:'
     printComment "$IMAGE"

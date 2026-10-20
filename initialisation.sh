@@ -16,6 +16,7 @@
 # ------------------------------------------------------------------------------
 checkAndCreateServiceFiles () {
   local FILE_PATHS="$(getListOfFilesByPostfix '.example' "$SERVICES_DIR_PATH")"
+  local FILE_PATH
 
   for FILE_PATH in $FILE_PATHS; do
     FILE_W_POSTFIX="$FILE_PATH"

@@ -224,10 +224,10 @@ removeSetupConfigOption () {
 # e.g. "a\b" would be written as "ab".
 # ------------------------------------------------------------------------------
 replaceSetupVar () {
-  VAR_FILE_NAME="${1:?}"
-  VAR_NAME="${2:?}"
-  VAR_VALUE="${3:?}"
-  VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
+  local VAR_FILE_NAME="${1:?}"
+  local VAR_NAME="${2:?}"
+  local VAR_VALUE="${3:?}"
+  local VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
   local STATUS=0
   local ESCAPED_VALUE="$(printf '%s\n' "$VAR_VALUE" | sed 's/\\/\\\\/g')"
 
