@@ -125,6 +125,7 @@
 
 - `initialiseScript` prints "Checking the setup config to see if this step has already been performed…" whether or not the setup config file exists, and no longer prints "Check returned …". Its "Something went wrong" branch, which couldn't be reached, is removed.
 - `initialiseScript` matches the whole key, so `ssh` no longer matches `sshPort`. Previously a step whose key was part of a longer key, e.g. `ssh` and `sshPort`, was treated as already performed.
+- `initialiseScript` exits with status 0 when the step has already been performed, as there is nothing to do. Previously it exited with status 1, so a chain such as `./05-setup-ssh-key.sh && ./06-configure-sshd.sh` stopped at a step that was already done.
 
 ### `ssh-config.sh`
 

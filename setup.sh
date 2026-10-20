@@ -29,7 +29,8 @@ finaliseScript () {
 #
 # 1. "${1:?}" – the config option key to be used.
 #
-# If the script has been run before, the script will exit. If not it will run.
+# If the script has been run before, the script exits with status 0, as there
+# is nothing to do. If not it will run.
 # A missing setup config file counts as not run before.
 # 
 # N.B.
@@ -46,7 +47,7 @@ initialiseScript () {
     printComment 'You have already performed this step.' 'warning'
     printScriptExiting
 
-    exit 1
+    exit 0
   fi
 
   printComment 'You have not performed this step. Running script.'
