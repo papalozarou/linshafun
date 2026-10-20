@@ -161,6 +161,9 @@ reloadVarFile () {
 # 
 # 1. "${1:?}" – the key of the config option.
 # 
+# If the config option can't be removed, the function prints an error and
+# returns 1, without listing the setup config.
+#
 # N.B.
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
@@ -172,12 +175,14 @@ removeSetupConfigOption () {
   printComment "Removing $CONF_KEY from:"
   printComment "$SETUP_CONF_PATH"
 
-  if checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY "; then
-    sed -i '/^'"$CONF_KEY"' /d' "$SETUP_CONF_PATH"
-
-    printComment "$CONF_KEY removed."
-  else
+  if ! checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY "; then
     printComment "$CONF_KEY not found, no changes made." 'warning'
+  elif ! sed -i '/^'"$CONF_KEY"' /d' "$SETUP_CONF_PATH"; then
+    printComment "Failed to remove $CONF_KEY from $SETUP_CONF_PATH." 'error'
+
+    return 1
+  else
+    printComment "$CONF_KEY removed."
   fi
 
   listSetupConfig
@@ -232,6 +237,9 @@ replaceSetupVar () {
 #
 # Once the config option is written, the file ownership is set to "$SUDO_USER".
 # 
+# If the config option can't be written, the function prints an error and
+# returns 1, without setting the owner or listing the setup config.
+#
 # N.B.
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
@@ -241,6 +249,7 @@ writeSetupConfigOption () {
   local CONF_KEY="${1:?}"
   local CONF_VALUE="${2:?}"
   local CONF_OPTION_STATUS=0
+  local WRITE_STATUS=0
 
   checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY " || CONF_OPTION_STATUS="$?"
 
@@ -255,21 +264,28 @@ writeSetupConfigOption () {
 
   if [ "$CONF_OPTION_STATUS" -eq 0 ] && [ "$EXISTING_CONF_VALUE" = "$CONF_VALUE" ]; then
     printComment 'No changes made.'
-  elif [ "$CONF_OPTION_STATUS" -eq 0 ]; then
+    listSetupConfig
+
+    return 0
+  fi
+
+  if [ "$CONF_OPTION_STATUS" -eq 0 ]; then
     printComment "Overwriting existing value with $CONF_VALUE." 'warning'
 
-    sed -i '/^'"$CONF_KEY"' /c\'"$CONF_KEY $CONF_VALUE" "$SETUP_CONF_PATH"
-
-    printComment 'Config written.'
-
-    setOwner "$SUDO_USER" "$SETUP_CONF_PATH"
+    sed -i '/^'"$CONF_KEY"' /c\'"$CONF_KEY $CONF_VALUE" "$SETUP_CONF_PATH" || WRITE_STATUS=1
   else
-    echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF_PATH"
-
-    printComment 'Config written.'
-
-    setOwner "$SUDO_USER" "$SETUP_CONF_PATH"
+    echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF_PATH" || WRITE_STATUS=1
   fi
+
+  if [ "$WRITE_STATUS" -ne 0 ]; then
+    printComment "Failed to write $CONF_KEY to $SETUP_CONF_PATH." 'error'
+
+    return 1
+  fi
+
+  printComment 'Config written.'
+
+  setOwner "$SUDO_USER" "$SETUP_CONF_PATH"
 
   listSetupConfig
 }

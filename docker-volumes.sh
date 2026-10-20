@@ -39,30 +39,48 @@ listDockerVolumeContents () {
 # N.B.
 # The prefix is converted to lower case and an underscore is added to the end to
 # enable "$PREFIX$VOLUME" to produce "prefix_volume".
+#
+# If "docker volume" fails for a volume, the function prints an error, carries
+# on with the remaining volumes, and returns 1.
+#
+# The action is converted to sentence case once, into "ACTION_SENTENCE", for
+# the output. "ACTION" is left as passed, as "docker volume" needs it in lower
+# case for every volume.
 #-------------------------------------------------------------------------------
 manageDockerVolumes () {
   local ACTION="${1:?}"
   local PREFIX="$(changeCase "${2:?}" 'lower')_"
-
-  printComment "$ACTION and $PREFIX"
+  local ACTION_SENTENCE="$(changeCase "$ACTION" 'sentence')"
+  local VOLUME_STATUS=0
+  local STATUS=0
 
   shift 2
 
   for VOLUME in "$@"; do
     local VOLUME="$PREFIX$VOLUME"
+    VOLUME_STATUS=0
 
     printComment "Performing $ACTION on the following docker volume:"
     printComment "$VOLUME"
     printSeparator
 
     if [ "$ACTION" = 'rm' ]; then 
-      docker volume "$ACTION" -f "$VOLUME"
+      docker volume "$ACTION" -f "$VOLUME" || VOLUME_STATUS="$?"
     else
-      docker volume "$ACTION" "$VOLUME"
+      docker volume "$ACTION" "$VOLUME" || VOLUME_STATUS="$?"
     fi
 
     printSeparator
-    ACTION="$(changeCase "$ACTION" 'sentence')"
-    printComment "$ACTION performed on $VOLUME."
+
+    if [ "$VOLUME_STATUS" -ne 0 ]; then
+      printComment "$ACTION_SENTENCE failed on $VOLUME." 'error'
+      STATUS=1
+
+      continue
+    fi
+
+    printComment "$ACTION_SENTENCE performed on $VOLUME."
   done
+
+  return "$STATUS"
 }
