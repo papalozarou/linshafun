@@ -126,7 +126,7 @@ installRemovePackages () {
 }
 
 #-------------------------------------------------------------------------------
-# Updates and upgrades installed packages.
+# Updates and upgrades installed packages. Takes no arguments.
 #
 # If "apt update" or "apt upgrade" fails, the function prints an error and
 # returns 1. "apt upgrade" isn't run if "apt update" fails.

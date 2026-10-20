@@ -6,7 +6,7 @@
 
 #-------------------------------------------------------------------------------
 # Checks if the host machine is a Raspberry Pi. Returns 0 if it is, non-zero if
-# it is not.
+# it is not. Takes no arguments.
 # 
 # N.B.
 # The check is done by looking for "Raspberry Pi" in "/proc/device-tree/model",
@@ -34,7 +34,7 @@ checkIfRunAsUser () {
 
 #-------------------------------------------------------------------------------
 # Checks if the script is being run with "sudo". Returns 0 if it is, 1 if it is
-# not.
+# not. Takes no arguments.
 #
 # N.B.
 # Both checks are needed. A script run as root without "sudo", e.g. from a root
@@ -92,7 +92,7 @@ compareOsVersion () {
 }
 
 #-------------------------------------------------------------------------------
-# Gets the host machine architecture, e.g. amd64 or arm64.
+# Gets the host machine architecture, e.g. amd64 or arm64. Takes no arguments.
 #-------------------------------------------------------------------------------
 getHostArchitecture () {
   local HOST_ARCHITECTURE="$(dpkg --print-architecture)"
@@ -101,7 +101,8 @@ getHostArchitecture () {
 }
 
 #-------------------------------------------------------------------------------
-# Gets the Linux kernal version number the host machine is running.
+# Gets the Linux kernal version number the host machine is running. Takes no
+# arguments.
 #-------------------------------------------------------------------------------
 getKernalVersion () {
   local KERNAL_VERSION="$(uname -r)"
@@ -111,7 +112,7 @@ getKernalVersion () {
 
 #-------------------------------------------------------------------------------
 # Gets the Linux distribution codename the host machine is running, e.g. 
-# bookworm, focal or jammy.
+# bookworm, focal or jammy. Takes no arguments.
 #-------------------------------------------------------------------------------
 getOsCodename () {
   local OS_CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
@@ -121,7 +122,7 @@ getOsCodename () {
 
 #-------------------------------------------------------------------------------
 # Gets the Linux distribution the host machine is running, e.g. ubuntu or
-# debian.
+# debian. Takes no arguments.
 #-------------------------------------------------------------------------------
 getOsDistribution () {
   local OS_DISTRIBUTION="$(. /etc/os-release && echo "$ID")"
@@ -130,7 +131,8 @@ getOsDistribution () {
 }
 
 #-------------------------------------------------------------------------------
-# Gets the Linux distribution version number the host machine is running.
+# Gets the Linux distribution version number the host machine is running. Takes
+# no arguments.
 #-------------------------------------------------------------------------------
 getOsVersion () {
   # local OS_VERSION="$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
@@ -141,7 +143,8 @@ getOsVersion () {
 
 # ------------------------------------------------------------------------------
 # Gets the Raspberry Pi model number if the host machine is a Raspberry Pi. If 
-# the host machine is not a Raspberry Pi an empty string is returned.
+# the host machine is not a Raspberry Pi an empty string is returned. Takes no
+# arguments.
 # 
 # N.B.
 # The model number is extracted from the binary file "/proc/device-tree/model", 

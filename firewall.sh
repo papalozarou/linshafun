@@ -41,7 +41,7 @@ addRuleToUfw () {
 }
 
 #-------------------------------------------------------------------------------
-# Lists current ufw rules, with numbers.
+# Lists current ufw rules, with numbers. Takes no arguments.
 #-------------------------------------------------------------------------------
 listUfwRules () {
   printComment 'Listing UFW rules…'

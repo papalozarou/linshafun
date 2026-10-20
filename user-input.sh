@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Gets user input and returns it.
+# Gets user input and returns it. Takes no arguments.
 #-------------------------------------------------------------------------------
 getUserInput () {
   local USER_INPUT=
@@ -17,7 +17,7 @@ getUserInput () {
 
 #-------------------------------------------------------------------------------
 # Specifically gets "y/Y" or "n/N" input, forcing the user to choose one. 
-# Returns 0 for "y/Y" and 1 for "n/N".
+# Returns 0 for "y/Y" and 1 for "n/N". Takes no arguments.
 #
 # N.B.
 # Any other input prints an error and asks again. The function then returns the

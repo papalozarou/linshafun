@@ -7,7 +7,8 @@
 #-------------------------------------------------------------------------------
 # Checks and creates all required service files. The function checks for 
 # existing service files by grabbing a list of files ending in ".example",
-# removing the prefix and checking and creating each file in turn.
+# removing the prefix and checking and creating each file in turn. Takes no
+# arguments.
 # 
 # N.B.
 # Two global variables are created for the file, both with and without the 
@@ -25,7 +26,7 @@ checkAndCreateServiceFiles () {
 }
 
 #-------------------------------------------------------------------------------
-# Creates services files from "*.example" files.
+# Creates services files from "*.example" files. Takes no arguments.
 # 
 # The function first checks if a service file exists, and if so backs it up, 
 # then creates the new service file from the respective "*.example" file.

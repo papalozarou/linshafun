@@ -61,6 +61,7 @@ addScriptToCron () {
 # Gets the script filename, then generates the snippet name, for the cronjob. 
 # These are placed in global variables, "$CRON_SCRIPT_NAME",
 # "$CRON_SNIPPET_NAME" and "$CRON_SCRIPT_PATH", for use in other functions.
+# Takes no arguments.
 #-------------------------------------------------------------------------------
 getCronFilenames () {
   promptForUserInput 'What is the name of your script? This will also be the name of the snippet placed in "/etc/cron.d". You do not need to include the file extension ".sh"' 'It is assumed the script is placed in your home directory. If you wish to place it elsewhere do so, however you will need to update the generated snippet to point to this new location.'
@@ -72,7 +73,7 @@ getCronFilenames () {
 
 #-------------------------------------------------------------------------------
 # Gets a schedule for the cronjob. This is placed in a global variable, 
-# "$CRON_SCHEDULE", for use in other functions.
+# "$CRON_SCHEDULE", for use in other functions. Takes no arguments.
 #-------------------------------------------------------------------------------
 getCronSchedule () {
   promptForUserInput 'What schedule do you want this script to run on?' 'The format of the schedule should be five values separated by spaces, i.e. "x x x x x". You can use https://crontab.guru to help create the correct schedule.'

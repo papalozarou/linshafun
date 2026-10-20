@@ -6,7 +6,7 @@
 
 #-------------------------------------------------------------------------------
 # Adds cgroup memory options to the cmdline.txt file to enable memory limits for 
-# containers in Docker Compose.
+# containers in Docker Compose. Takes no arguments.
 #
 # The function checks for the cmdline.txt file first in "/boot/firmware", then
 # in "/boot", adjusting "$CMDLINE_PATH" accordingly. If the "cmdline.txt" file
@@ -55,7 +55,7 @@ addPiCgroupOptionsToCmdline () {
 
 #-------------------------------------------------------------------------------
 # Prepends video mode settings to the cmdline.txt file to enable dual 1080p 
-# monitors.
+# monitors. Takes no arguments.
 #
 # The function checks for the cmdline.txt file first in "/boot/firmware", then
 # in "/boot", adjusting "$CMDLINE_PATH" accordingly. If the "cmdline.txt" file
@@ -104,7 +104,7 @@ addPiVideoModesToCmdline () {
 
 #-------------------------------------------------------------------------------
 # Checks for the location of the "cmdline.txt" file on a Raspberry Pi. Returns 
-# the path if found, or an empty string if not found.
+# the path if found, or an empty string if not found. Takes no arguments.
 #-------------------------------------------------------------------------------
 checkPiCmdlineLocation () {
   local CMDLINE_PATH='/boot/firmware/cmdline.txt'
@@ -121,7 +121,7 @@ checkPiCmdlineLocation () {
 
 #-------------------------------------------------------------------------------
 # Checks for the location of the "config.txt" file on a Raspberry Pi. Returns 
-# the path if found, or an empty string if not found.
+# the path if found, or an empty string if not found. Takes no arguments.
 #-------------------------------------------------------------------------------
 checkPiConfigLocation () {
   local CONFIG_PATH='/boot/firmware/config.txt'
@@ -137,8 +137,9 @@ checkPiConfigLocation () {
 }
 
 #-------------------------------------------------------------------------------
-# Disables the Raspberry Pi's onboard LEDs by adding the following lines to the
-# end of the "config.txt" file:
+# Disables the Raspberry Pi's onboard LEDs. Takes no arguments.
+#
+# The function adds the following lines to the end of the "config.txt" file:
 #
 # - "dtparam=eth_led0=4" (Pi 5) or "dtparam=eth_led0=14" (Pi 3 and 4)
 # - "dtparam=eth_led1=4" (Pi 5) or "dtparam=eth_led1=14" (Pi 3 and 4)
@@ -241,7 +242,7 @@ EOF
 
 #-------------------------------------------------------------------------------
 # Disables the Raspberry Pi's onboard WiFi by adding "dtoverlay=disable-wifi" to
-# the end of the "config.txt" file.
+# the end of the "config.txt" file. Takes no arguments.
 #
 # The function checks for the config.txt file first in "/boot/firmware", then 
 # in "/boot", adjusting "$CONFIG_PATH" accordingly. If the "config.txt" file 
@@ -295,8 +296,9 @@ EOF
 }
 
 #-------------------------------------------------------------------------------
-# Enables PCIe Gen 3 on Raspberry Pi models 5 and newer by adding the following
-# lines to the end of the "config.txt" file:
+# Enables PCIe Gen 3 on Raspberry Pi models 5 and newer. Takes no arguments.
+#
+# The function adds the following lines to the end of the "config.txt" file:
 #
 # - "dtparam=pciex1"
 # - "dtparam=pciex1_gen=3"
@@ -389,7 +391,7 @@ rebootSystem () {
 
 #-------------------------------------------------------------------------------
 # Set the Raspberry Pi EEPROM option "POWER_OFF_ON_HALT" to 1, if the host
-# machine is a Raspberry Pi 4 or newer.
+# machine is a Raspberry Pi 4 or newer. Takes no arguments.
 #
 # The function captures the current EEPROM config in a temporary file, then
 # either updates "POWER_OFF_ON_HALT" to 1 or appends "POWER_OFF_ON_HALT=1". The
@@ -458,7 +460,7 @@ EOF
 #-------------------------------------------------------------------------------
 # Updates the Raspberry Pi bootloader if the host machine is a Raspberry Pi 4 or
 # newer. The function uses the "rpi-eeprom-update -a" command to apply any
-# available updates.
+# available updates. Takes no arguments.
 #
 # Returns 1 if "rpi-eeprom-update" fails, without writing the setup config
 # option, so callers can stop before rebooting.
@@ -490,7 +492,7 @@ updatePiBootloader () {
 #-------------------------------------------------------------------------------
 # Updates the Raspberry Pi firmware if the host machine is a Raspberry Pi 4 or
 # newer. The function uses the "rpi-update" command to apply any available 
-# updates.
+# updates. Takes no arguments.
 #
 # Returns 1 if "rpi-update" fails, without writing the setup config option, so
 # callers can stop before rebooting.

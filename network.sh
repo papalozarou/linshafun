@@ -46,7 +46,8 @@ generateAndCheckPort () {
 }
 
 #-------------------------------------------------------------------------------
-# Generates a random port number between 2000 and 65000 inclusive, as per:
+# Generates a random port number between 2000 and 65000 inclusive. Takes no
+# arguments. As per:
 #
 # - https://unix.stackexchange.com/questions/140750/generate-random-numbers-in-specific-range
 #-------------------------------------------------------------------------------
@@ -73,7 +74,7 @@ getInterfaceName () {
 }
 
 #-------------------------------------------------------------------------------
-# Reads and returns the IP address of the host machine.
+# Reads and returns the IP address of the host machine. Takes no arguments.
 #-------------------------------------------------------------------------------
 readIpAddress () {
   local IP_ADDRESS="$(ip route get 8.8.8.8 | grep -oP 'src \K[^ ]+')"

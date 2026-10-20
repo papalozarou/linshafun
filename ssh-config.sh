@@ -44,7 +44,7 @@ addHostToSshConfig () {
 
 #-------------------------------------------------------------------------------
 # Checks to see if the "~/.ssh/config" file exist and creates it if not, adding
-# a basic config to the created file.
+# a basic config to the created file. Takes no arguments.
 #-------------------------------------------------------------------------------
 checkForAndCreateSshConfig () {
   printComment 'Checking to see if an "~/.ssh/config" file exists…'
@@ -63,7 +63,8 @@ checkForAndCreateSshConfig () {
 
 #-------------------------------------------------------------------------------
 # Gets details of an SSH host for adding to the ssh config file. Details are 
-# stored in global variables to allow other functions to use them.
+# stored in global variables to allow other functions to use them. Takes no
+# arguments.
 #-------------------------------------------------------------------------------
 getSshHostDetails () {
   promptForUserInput 'What is the name of the host you want to add?'

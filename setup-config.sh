@@ -61,7 +61,8 @@ EOF
 
 #-------------------------------------------------------------------------------
 # Check for a current setup config file and directory. If both exist, do 
-# nothing. If either doesn't exist, create them. There are three possibilities:
+# nothing. If either doesn't exist, create them. Takes no arguments. There are
+# three possibilities:
 # 
 # 1. the setup config file exists so the directory must exist;
 # 2. the setup config directory doesn't exist so the file can't; or
@@ -89,6 +90,7 @@ checkForAndCreateSetupConfigFileAndDir () {
 
 #-------------------------------------------------------------------------------
 # Creates the setup config file and sets the correct permissions and ownership.
+# Takes no arguments.
 #-------------------------------------------------------------------------------
 createSetupConfigFile () {
   createFiles "$SETUP_CONF_PATH"
@@ -120,7 +122,7 @@ getServiceFromConfigKey () {
 }
 
 #-------------------------------------------------------------------------------
-# Lists the contents of the setup config file
+# Lists the contents of the setup config file. Takes no arguments.
 #-------------------------------------------------------------------------------
 listSetupConfig () {
   printComment 'Listing contents of setup config file:'

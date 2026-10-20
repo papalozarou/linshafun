@@ -33,6 +33,7 @@ addKeyToAuthorizedKeys () {
 
 #-------------------------------------------------------------------------------
 # Checks to see if the "~/.ssh/authorized_keys" file exist and creates it if not.
+# Takes no arguments.
 #-------------------------------------------------------------------------------
 checkForAndCreateAuthorizedKeys () {
   printComment 'Checking to see if an "~/.ssh/authorized_keys" file exists…'
@@ -141,7 +142,8 @@ generateSshKey () {
 
 #-------------------------------------------------------------------------------
 # Get the name of the ssh key and the ssh email if desired. Both variables are 
-# stored in global variables to allow other functions to use them
+# stored in global variables to allow other functions to use them. Takes no
+# arguments.
 #-------------------------------------------------------------------------------
 getSshKeyDetails () {
   promptForUserInput 'What do you want to call your ssh key?'
