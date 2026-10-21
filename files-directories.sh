@@ -418,23 +418,20 @@ removeFilesOrDirectories () {
 }
 
 # ------------------------------------------------------------------------------
-# Renames a file or directory. Takes three arguments, two of which are mandatory:
+# Renames a file or directory. Takes two mandatory arguments:
 #
-# 1. "${1:-"."}" – the directory path to the file or directory, defaulting to
-#    the current directory, ".";
-# 2. "${2:?}" – the current file or directory name; and
-# 3. "${3:?}" – the new file or directory name.
+# 1. "${1:?}" – the current file or directory, including directory path; and
+# 2. "${2:?}" – the new file or directory, including directory path.
 #
 # If the file or directory can't be renamed, the function prints an error and
 # returns 1.
 # ------------------------------------------------------------------------------
 renameFileOrDirectory () {
-  local DIR_PATH="${1:-"."}"
-  local CURRENT_NAME="${2:?}"
-  local NEW_NAME="${3:?}"
+  local CURRENT_PATH="${1:?}"
+  local NEW_PATH="${2:?}"
 
-  if ! mv "$DIR_PATH/$CURRENT_NAME" "$DIR_PATH/$NEW_NAME"; then
-    printComment "Failed to rename $DIR_PATH/$CURRENT_NAME to $NEW_NAME." 'error'
+  if ! mv "$CURRENT_PATH" "$NEW_PATH"; then
+    printComment "Failed to rename $CURRENT_PATH to $NEW_PATH." 'error'
 
     return 1
   fi

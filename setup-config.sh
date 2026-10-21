@@ -5,11 +5,9 @@
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# Adds a variable to "./setup/[project-name]-setup.var". Takes three mandatory
-# arguments:
+# Adds a variable to a setup variable file. Takes three mandatory arguments:
 # 
-# 1. "${1:?}" – the project's setup variable file name, without "-setup.var" and 
-#    excluding the directory path;
+# 1. "${1:?}" – the setup variable file, including directory path;
 # 2. "${2:?}" – the name of the variable to be added; and
 # 3. "${3:?}" – the value of the variable to be added.
 #
@@ -25,10 +23,9 @@
 # - https://stackoverflow.com/a/50098414
 # ------------------------------------------------------------------------------
 addSetupVar () {
-  local VAR_FILE_NAME="${1:?}"
+  local VAR_FILE_PATH="${1:?}"
   local VAR_NAME="${2:?}"
   local VAR_VALUE="${3:?}"
-  local VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
   local STATUS=0
 
   if ! checkIfValidVariableName "$VAR_NAME"; then
@@ -202,11 +199,9 @@ removeSetupConfigOption () {
 }
 
 # ------------------------------------------------------------------------------
-# Replaces a variable in "./setup/[project-name]-setup.var". Takes three 
-# mandatory arguments:
+# Replaces a variable in a setup variable file. Takes three mandatory arguments:
 # 
-# 1. "${1:?}" – the project's setup variable file name, without "-setup.var" and 
-#    excluding the directory path;
+# 1. "${1:?}" – the setup variable file, including directory path;
 # 2. "${2:?}" – the name of the variable to be replaced; and
 # 3. "${3:?}" – the new value of the variable.
 #
@@ -225,10 +220,9 @@ removeSetupConfigOption () {
 # e.g. "a\b" would be written as "ab".
 # ------------------------------------------------------------------------------
 replaceSetupVar () {
-  local VAR_FILE_NAME="${1:?}"
+  local VAR_FILE_PATH="${1:?}"
   local VAR_NAME="${2:?}"
   local VAR_VALUE="${3:?}"
-  local VAR_FILE_PATH="$SETUP_DIR_PATH/$VAR_FILE_NAME-setup.var"
   local STATUS=0
   local ESCAPED_VALUE="$(printf '%s\n' "$VAR_VALUE" | sed 's/\\/\\\\/g')"
 
