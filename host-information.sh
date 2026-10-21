@@ -135,7 +135,6 @@ getOsDistribution () {
 # no arguments.
 # ------------------------------------------------------------------------------
 getOsVersion () {
-  # local OS_VERSION="$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | tr -d '"')"
   local OS_VERSION="$(. /etc/os-release && echo "$VERSION_ID")"
 
   echo "$OS_VERSION"
