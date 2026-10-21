@@ -32,4 +32,8 @@ Functions _try_ to use `verbValue` or `verbObject` as naming conventions, for ex
 To make this setup as portable as possible all scripts are POSIX compliant, i.e. they use `#!/bin/sh` not `#!/bin/bash`, with some cheeky liberties taken for readability – usually using `local` variable declarations within functions for readability.
 
 *N.B.*
-There is little to no error checking within these scripts. I may get around to that one day.
+Most functions check the status of the commands they run. If a command fails, its own error is shown, the function prints an error saying what failed, and returns 1. The calling script decides what happens next.
+
+Functions named `checkFooBar`, e.g. `checkForPackage`, return 0 or 1 and print nothing, so they can be used directly in `if checkFooBar; then`. Functions named `checkFooAndBar`, e.g. `checkForAndCreateSshConfig`, check something and then act on it.
+
+Only `initialiseScript` and `rebootSystem` exit the script. Mandatory arguments are declared with `"${1:?}"`, so if one is missing the shell stops the script with status 2.
