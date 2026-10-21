@@ -28,14 +28,13 @@ COMMENT_LOG_PATH=
 COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
 
 # ------------------------------------------------------------------------------
-# Initialises comment logging to a file for the current script run. Takes five
-# arguments, three of which are mandatory:
+# Initialises comment logging to a file for the current script run. Takes four
+# arguments, two of which are mandatory:
 #
-# 1. "${1:?}" – the log directory path;
-# 2. "${2:?}" – the log file name;
-# 3. "${3:?}" – the log user;
-# 4. "${4:-$3}" – the log group, defaulting to the log user; and
-# 5. "${5:-7}" – the maximum age, in days, to keep archived logs for,
+# 1. "${1:?}" – the log file, including directory path;
+# 2. "${2:?}" – the log user;
+# 3. "${3:-$2}" – the log group, defaulting to the log user; and
+# 4. "${4:-7}" – the maximum age, in days, to keep archived logs for,
 #    defaulting to 7.
 #
 # The function:
@@ -69,22 +68,22 @@ COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
 # owner or permissions of the log directory.
 # ------------------------------------------------------------------------------
 initialiseCommentLogs () {
-  local LOG_DIR_PATH="${1:?}"
-  local LOG_FILE_NAME="${2:?}"
-  local LOG_USER="${3:?}"
-  local LOG_GROUP="${4:-$LOG_USER}"
-  local LOG_MAX_AGE_DAYS="${5:-7}"
+  local LOG_FILE_PATH="${1:?}"
+  local LOG_USER="${2:?}"
+  local LOG_GROUP="${3:-$LOG_USER}"
+  local LOG_MAX_AGE_DAYS="${4:-7}"
+  local LOG_DIR_PATH="${LOG_FILE_PATH%/*}"
 
   createDirectory "$(dirname "$LOG_DIR_PATH")" '700' "$LOG_USER" "$LOG_GROUP"
   createDirectory "$LOG_DIR_PATH"
 
-  COMMENT_LOG_PATH="$LOG_DIR_PATH/$LOG_FILE_NAME"
+  COMMENT_LOG_PATH="$LOG_FILE_PATH"
 
-  rotateCommentLog "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$LOG_MAX_AGE_DAYS"
+  rotateCommentLog "$LOG_FILE_PATH" "$LOG_MAX_AGE_DAYS"
 
   if ! touch "$COMMENT_LOG_PATH"; then
     COMMENT_LOG_PATH=
-    printComment "Failed to create the log file at $LOG_DIR_PATH/$LOG_FILE_NAME. Logging is off for this run." 'error'
+    printComment "Failed to create the log file at $LOG_FILE_PATH. Logging is off for this run." 'error'
 
     return 1
   fi
@@ -265,12 +264,11 @@ printServiceWait () {
 }
 
 # ------------------------------------------------------------------------------
-# Removes archived comment logs older than a given number of days. Takes three
+# Removes archived comment logs older than a given number of days. Takes two
 # mandatory arguments:
 #
-# 1. "${1:?}" – the log directory path;
-# 2. "${2:?}" – the log file name; and
-# 3. "${3:?}" – the maximum age, in days, to keep archived logs for.
+# 1. "${1:?}" – the log file, including directory path; and
+# 2. "${2:?}" – the maximum age, in days, to keep archived logs for.
 #
 # Archived logs are files named "<log file name>.*" in the log directory, as
 # created by "rotateCommentLog". The current log file is never removed.
@@ -289,9 +287,10 @@ printServiceWait () {
 # "/volume1/my" directory if it exists.
 # ------------------------------------------------------------------------------
 removeArchivedCommentLogs () {
-  local LOG_DIR_PATH="${1:?}"
-  local LOG_FILE_NAME="${2:?}"
-  local LOG_MAX_AGE_DAYS="${3:?}"
+  local LOG_FILE_PATH="${1:?}"
+  local LOG_MAX_AGE_DAYS="${2:?}"
+  local LOG_DIR_PATH="${LOG_FILE_PATH%/*}"
+  local LOG_FILE_NAME="${LOG_FILE_PATH##*/}"
   local ARCHIVED_LOG_FILE_PATHS="$(find "$LOG_DIR_PATH" -type f -name "$LOG_FILE_NAME.*" -mtime "+$LOG_MAX_AGE_DAYS")"
 
   removeFilesOrDirectories $ARCHIVED_LOG_FILE_PATHS
@@ -320,12 +319,11 @@ removeCommentColoursIfNotTerminal () {
 }
 
 # ------------------------------------------------------------------------------
-# Rotates a comment log so each script run starts with a fresh log. Takes three
+# Rotates a comment log so each script run starts with a fresh log. Takes two
 # mandatory arguments:
 #
-# 1. "${1:?}" – the log directory path;
-# 2. "${2:?}" – the log file name; and
-# 3. "${3:?}" – the maximum age, in days, to keep archived logs for.
+# 1. "${1:?}" – the log file, including directory path; and
+# 2. "${2:?}" – the maximum age, in days, to keep archived logs for.
 #
 # The function:
 #
@@ -354,10 +352,8 @@ removeCommentColoursIfNotTerminal () {
 # measured from the last line written to it, not from when it was archived.
 # ------------------------------------------------------------------------------
 rotateCommentLog () {
-  local LOG_DIR_PATH="${1:?}"
-  local LOG_FILE_NAME="${2:?}"
-  local LOG_MAX_AGE_DAYS="${3:?}"
-  local LOG_FILE_PATH="$LOG_DIR_PATH/$LOG_FILE_NAME"
+  local LOG_FILE_PATH="${1:?}"
+  local LOG_MAX_AGE_DAYS="${2:?}"
   local CURRENT_TIMESTAMP="$(date "+$COMMENT_LOG_TIMESTAMP_FORMAT")"
   local LOG_TIMESTAMP=
 
@@ -371,5 +367,5 @@ rotateCommentLog () {
     renameFileOrDirectory "$LOG_FILE_PATH" "$LOG_FILE_PATH.$(echo "$LOG_TIMESTAMP" | tr ' :' '--')"
   fi
 
-  removeArchivedCommentLogs "$LOG_DIR_PATH" "$LOG_FILE_NAME" "$LOG_MAX_AGE_DAYS"
+  removeArchivedCommentLogs "$LOG_FILE_PATH" "$LOG_MAX_AGE_DAYS"
 }
