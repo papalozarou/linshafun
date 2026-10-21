@@ -9,25 +9,41 @@
 # exist, or it does exist and the user wants to replace it, (re)create it. Takes 
 # four arguments, two of which are mandatory:
 # 
-# 1. "${1:?}" – the file or directory to check for and create or replace, 
+# 1. "--replace" – an optional flag, passed first, to ask the user whether to
+#    "replace" the file or directory, instead of "recreate" it;
+# 2. "${1:?}" – the file or directory to check for and create or replace, 
 #    including directory path;
-# 2. "${2:?}" – the function to execute if the file or directory doesn't exist, 
-#    or the user chooses to replace it; 
-# 3. "${3:-"recreate"}" – the action being performed, all lowercase, 
-#    defaulting to "recreate"; and
-# 4. "$4" – an optional warning to be displayed if the file is to be replaced or 
+# 3. "${2:?}" – the function to execute if the file or directory doesn't exist, 
+#    or the user chooses to replace it; and
+# 4. "$3" – an optional warning to be displayed if the file is to be replaced or 
 #    recreated.
+#
+# Returns 1 with an error if an option is unknown or comes after the other
+# arguments.
 #
 # "REPLACE_STATUS" stays 0 when the file or directory doesn't exist, so the
 # function runs. It is only non-zero when the file or directory exists and the
 # user answers n/N.
 # ------------------------------------------------------------------------------
 checkAndCreateOrAskToReplaceFileOrDirectory () {
-  local FILE_OR_DIR_PATH="${1:?}"
-  local FUNCTION="${2:?}"
-  local ACTION="${3:-"recreate"}"
-  local WARNING="$4"
+  local REPLACE_TF=false
+  local OPTION_COUNT=0
+  local FILE_OR_DIR_PATH
+  local FUNCTION
+  local ACTION='recreate'
+  local WARNING
   local REPLACE_STATUS=0
+
+  readOptions 'replace=REPLACE_TF' "$@" || return 1
+  shift "$OPTION_COUNT"
+
+  FILE_OR_DIR_PATH="${1:?}"
+  FUNCTION="${2:?}"
+  WARNING="$3"
+
+  if [ "$REPLACE_TF" = true ]; then
+    ACTION='replace'
+  fi
 
   printComment 'Checking for file or directory at:'
   printComment -- "$FILE_OR_DIR_PATH"
@@ -379,6 +395,8 @@ listDirectories () {
 # The function loops through each passed argument and removes the file or 
 # directory. If a file or directory can't be removed, the function prints an
 # error, carries on with the remaining files or directories, and returns 1.
+# It also returns 1 with an error, without removing anything, if an option is
+# unknown or comes after the paths.
 #
 # Without "--recursive" only files are removed, matching "rm". A directory is
 # left in place and counts as a failure, so a wrong path can't remove a whole
@@ -393,13 +411,17 @@ listDirectories () {
 # - https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html
 # ------------------------------------------------------------------------------
 removeFilesOrDirectories () {
+  local RECURSIVE_TF=false
+  local OPTION_COUNT=0
   local RM_OPTION=
   local STATUS=0
   local FILE_OR_DIR_PATH
 
-  if [ "$1" = '--recursive' ]; then
+  readOptions 'recursive=RECURSIVE_TF' "$@" || return 1
+  shift "$OPTION_COUNT"
+
+  if [ "$RECURSIVE_TF" = true ]; then
     RM_OPTION='-R'
-    shift
   fi
 
   for FILE_OR_DIR_PATH in "$@"; do

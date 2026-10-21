@@ -8,12 +8,13 @@
 # Creates a tar archive of a file or directory. Takes four arguments, two of
 # which are mandatory:
 #
-# 1. "${1:?}" – the file or directory to archive, including directory path;
-# 2. "${2:?}" – the archive file path, including file name and ".tar" extension;
-# 3. "$3" – optional exclude patterns, separated by spaces, e.g.
-#    "#recycle .DS_Store *.log"; and
-# 4. "${4:-false}" – an optional flag to add the date to the archive file name,
-#    defaulting to "false".
+# 1. "--date" – an optional flag, passed first, to add the date to the archive
+#    file name;
+# 2. "${1:?}" – the file or directory to archive, including directory path;
+# 3. "${2:?}" – the archive file path, including file name and ".tar" extension;
+#    and
+# 4. "$3" – optional exclude patterns, separated by spaces, e.g.
+#    "#recycle .DS_Store *.log".
 #
 # Paths in the archive start at the source's own name, e.g. archiving
 # "/volumeX/docker" archives "docker/…" not "volumeX/docker/…".
@@ -22,12 +23,15 @@
 # matches patterns against any part of a path, e.g. "stack-one/cache" matches
 # "docker/stack-one/cache".
 #
-# The date flag adds the current date to the end of the file name before any
+# "--date" adds the current date to the end of the file name before any
 # file extensions. "sed" matches the file name only and any suffix after ".tar"
 # is kept. "printf" is used so backslashes in the path are not changed.
 #
-# The function returns the exit status of "tar" for the caller to handle. For
-# GNU tar:
+# Returns 1 with an error if an option is unknown or comes after the other
+# arguments.
+#
+# Otherwise the function returns the exit status of "tar" for the caller to
+# handle. For GNU tar:
 #
 # - 0 – success
 # - 1 – some files changed while tar was reading them
@@ -48,11 +52,19 @@
 # "$@" can be passed to tar in quotes.
 # ------------------------------------------------------------------------------
 createTarArchive () {
-  local SOURCE_PATH="${1:?}"
-  local ARCHIVE_FILE_PATH="${2:?}"
-  local EXCLUDE_PATTERNS="$3 "
-  local DATE_TF="${4:-false}"
+  local DATE_TF=false
+  local OPTION_COUNT=0
+  local SOURCE_PATH
+  local ARCHIVE_FILE_PATH
+  local EXCLUDE_PATTERNS
   local EXCLUDE_PATTERN
+
+  readOptions 'date=DATE_TF' "$@" || return 1
+  shift "$OPTION_COUNT"
+
+  SOURCE_PATH="${1:?}"
+  ARCHIVE_FILE_PATH="${2:?}"
+  EXCLUDE_PATTERNS="$3 "
 
   if [ "$DATE_TF" = true ]; then
     ARCHIVE_FILE_PATH="$(printf '%s\n' "$ARCHIVE_FILE_PATH" | sed "s|\([^/]*\)\.tar\([^/]*\)$|\1-$(date +%Y-%m-%d).tar\2|")"

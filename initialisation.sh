@@ -22,7 +22,7 @@ checkAndCreateServiceFiles () {
     FILE_W_POSTFIX="$FILE_PATH"
     FILE_NO_POSTFIX="$(removePostfix "$FILE_PATH" ".example")"
 
-    checkAndCreateOrAskToReplaceFileOrDirectory "$FILE_NO_POSTFIX" 'createServiceFile' 'recreate'
+    checkAndCreateOrAskToReplaceFileOrDirectory "$FILE_NO_POSTFIX" 'createServiceFile'
   done
 }
 

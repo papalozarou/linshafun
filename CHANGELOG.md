@@ -2,6 +2,10 @@
 
 ## Unreleased – v2.0.0
 
+### `archives.sh`
+
+- `createTarArchive` takes `--date` before the other arguments, in place of `true` as the fourth argument.
+
 ### `comments-logs.sh`
 
 - `createUserLogDir` is removed. `initialiseCommentLogs` creates the log directory's parent with `createDirectory`, with mode "700" and the log user as owner.
@@ -11,12 +15,14 @@
 - `printComment` prints warnings and errors to stderr, not stdout. Regular comments stay on stdout. This stops them being captured with the output of functions called using "$(…)".
 - `printComment` prints wildcards in a comment as written, e.g. `*.log`, instead of replacing them with matching file names. It no longer sets `CURRENT_LINE` and `WORD` in the calling script.
 - `printComment` takes `--warning` or `--error` before the comment, in place of `'warning'` or `'error'` after it, e.g. `printComment --warning 'Text.'`. A comment that starts with `-` must follow `--`, e.g. `printComment -- "$TEXT"`. It returns 1 with an error for an unknown option, an option after the comment, both options, or more than one comment. Previously any second argument other than `warning` or `error` was ignored.
+- `printScriptExiting` takes `--changes` in place of `true`, and returns 1 with an error if given any other argument.
 - `readOptions` is added. It reads long options, e.g. `--warning`, from the start of a function's arguments.
 
 ### `crontab.sh`
 
 - `addScriptToCron` no longer prints "Check returned true." or "Check returned false." after "Checking to see if …".
 - `addScriptToCron` returns 1 with an error if the snippet can't be written, instead of exiting the script, and no longer prints "Checking to see if the snippet was created…". Previously it checked that the snippet file existed, so a failed write over an existing snippet reported success.
+- `addScriptToCron` takes `--no-log` before the other arguments, in place of `false` as the fifth argument.
 - `checkForAndCreateUserLogDir` is removed. Use `createDirectory "$USER_LOG_DIR_PATH" '700' "$SUDO_USER"`.
 
 ### `docker-env-variables.sh`
@@ -62,6 +68,7 @@
 ### `files-directories.sh`
 
 - `checkAndCreateOrAskToReplaceFileOrDirectory` no longer prints "Check returned true." or "Check returned false.".
+- `checkAndCreateOrAskToReplaceFileOrDirectory` takes `--replace` before the other arguments, in place of the action word as the third argument. Without it the prompt says "recreate". The warning moves from the fourth argument to the third.
 - `checkForFileOrDirectory` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createFiles` and `removeFilesOrDirectories` return 1 if any file or directory fails, after carrying on with the rest. The copy and create functions print an error naming the file, and no longer print "File copied …" or "File created." after a failure. Previously all four returned 0.
 - `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createDirectories`, `createFiles`, `listDirectories` and `removeFilesOrDirectories` no longer set `DIR_PATH`, `FILE_OR_DIR_PATH`, `FILE_PATH`, `PARENT_DIR`, `SUB_DIR_NAME` or `SUB_DIR_PATH` in the calling script.
@@ -69,6 +76,7 @@
 - `createDirectory` takes optional permissions, owner and group as its second to fourth arguments, and sets them on the new directory only. If the directory exists, it returns 0 and prints nothing. It no longer creates missing parent directories: it returns 1 with an error if the parent doesn't exist, or if `mkdir`, `chmod` or `chown` fails. Previously it ran `mkdir -p`.
 - `removeFileOrDirectory` is renamed to `removeFilesOrDirectories`, as it takes one or more paths.
 - `removeFilesOrDirectories` removes files only, unless `--recursive` is passed first, e.g. `removeFilesOrDirectories --recursive "$DIR_PATH"`. Without it, a directory is left in place, the function prints an error and returns 1. Previously it always ran `rm -R`, so any directory was removed with its contents. Callers that remove directories must add `--recursive`.
+- `removeFilesOrDirectories` returns 1 with an error, without removing anything, for an unknown option, e.g. `-R`, or an option after the paths. Previously a late `--recursive` was passed to `rm` as a path.
 - `renameFileOrDirectory` prints an error if `mv` fails. It still returns 1.
 - `renameFileOrDirectory` takes the current and new full paths, like `mv`. Previously it took a directory, defaulting to ".", then the current and new names.
 

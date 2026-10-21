@@ -8,16 +8,16 @@
 # Adds a script, on a schedule, to a given user's crontab, via a snippet in 
 # "/etc/cron.d". Takes five arguments:
 #
-# 1. "${1:-"root"}" – a username, defaulting to "root";
-# 2. "${2:-"$CRON_SCRIPT_PATH"}" – the command to run or the file path, 
+# 1. "--no-log" – an optional flag, passed first, to turn off log output to a
+#    file in the user's home directory;
+# 2. "${1:-"root"}" – a username, defaulting to "root";
+# 3. "${2:-"$CRON_SCRIPT_PATH"}" – the command to run or the file path, 
 #    including directory path, defaulting to the global variable
 #    "$CRON_SCRIPT_PATH";
-# 3. "${3:-"$CRON_SCHEDULE"}" – the cron schedule, in "* * * * *" format, 
-#    defaulting to the global variable "$CRON_SCHEDULE";
-# 4. "${4:-"$CRON_SNIPPET_NAME"}" – the snippet name to be placed in 
-#    "/etc/cron.d", defaulting to the global variable "$CRON_SNIPPET_NAME"; and
-# 5. "${5:-true}" – an optional flag to enable log output to a file in the 
-#    user's home directory, defaulting to "true".
+# 4. "${3:-"$CRON_SCHEDULE"}" – the cron schedule, in "* * * * *" format, 
+#    defaulting to the global variable "$CRON_SCHEDULE"; and
+# 5. "${4:-"$CRON_SNIPPET_NAME"}" – the snippet name to be placed in 
+#    "/etc/cron.d", defaulting to the global variable "$CRON_SNIPPET_NAME".
 # 
 # N.B.
 # If using the global variables they must be assigned first using their 
@@ -27,20 +27,32 @@
 # - "getCronSchedule".
 # 
 # If the snippet can't be written to "/etc/cron.d", the function prints an
-# error and returns 1.
+# error and returns 1. It also returns 1 with an error if an option is unknown
+# or comes after the other arguments.
 # ------------------------------------------------------------------------------
 addScriptToCron () {
-  local CRON_USER="${1:-"root"}"
-  local CMD_OR_SCRIPT_PATH="${2:-"$CRON_SCRIPT_PATH"}"
-  local SCHEDULE="${3:-"$CRON_SCHEDULE"}"
-  local SNIPPET_NAME="${4:-"$CRON_SNIPPET_NAME"}"
-  local LOG_TF="${5:-true}"
-  local SNIPPET_PATH="/etc/cron.d/$SNIPPET_NAME"
-  local CRON_LINE="$SCHEDULE $CRON_USER $CMD_OR_SCRIPT_PATH"
+  local NO_LOG_TF=false
+  local OPTION_COUNT=0
+  local CRON_USER
+  local CMD_OR_SCRIPT_PATH
+  local SCHEDULE
+  local SNIPPET_NAME
+  local SNIPPET_PATH
+  local CRON_LINE
+
+  readOptions 'no-log=NO_LOG_TF' "$@" || return 1
+  shift "$OPTION_COUNT"
+
+  CRON_USER="${1:-"root"}"
+  CMD_OR_SCRIPT_PATH="${2:-"$CRON_SCRIPT_PATH"}"
+  SCHEDULE="${3:-"$CRON_SCHEDULE"}"
+  SNIPPET_NAME="${4:-"$CRON_SNIPPET_NAME"}"
+  SNIPPET_PATH="/etc/cron.d/$SNIPPET_NAME"
+  CRON_LINE="$SCHEDULE $CRON_USER $CMD_OR_SCRIPT_PATH"
 
   printComment 'Adding to the system crontab, as a snippet in "/etc/cron.d".'
 
-  if [ "$LOG_TF" = true ]; then
+  if [ "$NO_LOG_TF" = false ]; then
     CRON_LINE="$CRON_LINE >> $USER_LOG_DIR_PATH/$SNIPPET_NAME.log 2>&1"
   fi
 

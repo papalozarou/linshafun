@@ -249,15 +249,28 @@ printLogLine () {
 # ------------------------------------------------------------------------------
 # Tells the user that the script is exiting. Takes one optional argument:
 #
-# 1. "$1" – flag for if exiting with changes.
+# 1. "--changes" – an optional flag to print the "changes were made" warning,
+#    instead of "Exiting script with no changes.".
 # 
-# If the flag is "true" the function will print the additional "changes were
-# made" output.
+# Returns 1 with an error if an option is unknown, or if any other argument is
+# passed.
 # ------------------------------------------------------------------------------
 printScriptExiting () {
+  local CHANGES_TF=false
+  local OPTION_COUNT=0
+
+  readOptions 'changes=CHANGES_TF' "$@" || return 1
+  shift "$OPTION_COUNT"
+
+  if [ "$#" -gt 0 ]; then
+    printComment --error 'printScriptExiting takes no arguments other than "--changes".'
+
+    return 1
+  fi
+
   printSeparator
 
-  if [ "$1" = true ]; then
+  if [ "$CHANGES_TF" = true ]; then
     printComment --warning 'Exiting script, however some changes were made – please review the script output.'
   else
     printComment 'Exiting script with no changes.'
