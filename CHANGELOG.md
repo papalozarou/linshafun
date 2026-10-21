@@ -24,10 +24,12 @@
 - `changeDockerEnvVariable` shows "(not set)" as the current value when the variable is blank, missing or names an unset host variable. Previously the script exited with status 2.
 - `checkAndSetDockerEnvVariables` prints "H_A is set." or the warning "H_A is not set." instead of "Check returned true." or "Check returned false.".
 - `checkAndSetDockerEnvVariables` and `compareAndUpdateDockerEnvVariables` no longer set `ENV_VAR` in the calling script.
-- `checkIfDockerEnvVariableSet` and `compareDockerEnvVariableWithValue` return 0 or 1 and print nothing. Previously they printed `true` or `false`.
+- `checkIfDockerEnvVariableSet` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `compareAndUpdateDockerEnvVariables` prints the error "H-A is not a valid variable name." for an invalid name, skips it and carries on. It returns 1 if any name was invalid or any change failed. Previously the name was passed to `eval` unchecked, so `H-A` was compared against `A`, and it returned the status of whatever ran last.
-- `compareDockerEnvVariableWithValue` and `readDockerEnvVariable` return the whole value when it contains `=`, e.g. a base64 string ending in `==`. Previously the value was cut off at the second `=`.
-- `compareDockerEnvVariableWithValue`, `readDockerEnvVariable` and `setDockerEnvVariable` only match a line that starts with the variable name, so `H_IP` no longer matches `C_PIH_IP=` or a commented-out `# H_IP=`. Previously the first line containing `H_IP=` was read, and `setDockerEnvVariable` overwrote every such line. A line starting with `export` or a space is no longer matched.
+- `compareAndUpdateDockerEnvVariables` compares an empty comparison value with the file value. Previously the script exited with status 2.
+- `compareDockerEnvVariableWithValue` is removed. `compareAndUpdateDockerEnvVariables` compares the value it has already read with `readDockerEnvVariable`.
+- `readDockerEnvVariable` returns the whole value when it contains `=`, e.g. a base64 string ending in `==`. Previously the value was cut off at the second `=`.
+- `readDockerEnvVariable` and `setDockerEnvVariable` only match a line that starts with the variable name, so `H_IP` no longer matches `C_PIH_IP=` or a commented-out `# H_IP=`. Previously the first line containing `H_IP=` was read, and `setDockerEnvVariable` overwrote every such line. A line starting with `export` or a space is no longer matched.
 - `replaceDockerEnvPlaceholderVariable` returns 1 with the error "Failed to replace ${DKR_ENV: H_A} in …" if `sed` fails, e.g. the file doesn't exist. Previously it printed "Placeholder variable replaced." and returned 0.
 - `replaceDockerEnvPlaceholderVariable` writes `&`, `|` and `\` in the value as given. Previously `&` was replaced with the placeholder, `|` made `sed` fail, and `\` was removed, so `a\b` was written as `ab`.
 - `setDockerEnvVariable` returns 1 with the error "Failed to set H_A, as it was not found in …" if no line starts with `H_A=`, or "Failed to set H_A in …" if `sed` fails. Previously it printed "Variable updated." and returned 0 without writing anything. It still never adds a missing variable.
@@ -85,7 +87,7 @@
 
 - `addPiCgroupOptionsToCmdline`, `addPiVideoModesToCmdline`, `disablePiLedsInConfigTxt`, `disablePiWifiInConfigTxt` and `enablePiPcieGen3InConfigTxt` return 1 with an error, e.g. "Failed to disable WiFi in config.txt.", if `cmdline.txt` or `config.txt` can't be written, and don't write the setup config option. Previously they reported success and wrote the option as `true`, so a rerun skipped the step.
 - `addPiCgroupOptionsToCmdline` and `addPiVideoModesToCmdline` edit `cmdline.txt` with `sed -i`. Previously they ran the edit through `sudo`, so they failed where `sudo` isn't installed.
-- `checkPiCmdlineLocation` and `checkPiConfigLocation` are renamed to `getPiCmdlinePath` and `getPiConfigPath`, as they return a path.
+- `checkPiCmdlineLocation` and `checkPiConfigLocation` are replaced by `getPiBootFilePath`, which takes the file name, e.g. `getPiBootFilePath 'config.txt'`.
 - `disablePiLedsInConfigTxt` gets the Pi model itself instead of relying on the caller's `MODEL`. It supports models 3, 4 and 5, using `14` for models 3 and 4, and returns 1 with an error on any other model. Previously an unset `MODEL` or an unsupported model wrote `dtparam=eth_led0=` and `dtparam=eth_led1=` with no value and reported success.
 - `enablePiPcieGen3InConfigTxt` returns 1 with an error below a Raspberry Pi 5. Previously it wrote the PCIe lines on any model.
 - `setPiPowerOffOnHalt` saves and applies the change when `POWER_OFF_ON_HALT` is 0. Previously it printed the updated config, applied nothing and reported a failure. The temporary config file now has a random name from `mktemp` instead of `/tmp/bootconf.txt`.
