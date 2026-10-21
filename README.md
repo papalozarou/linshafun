@@ -36,4 +36,6 @@ Most functions check the status of the commands they run. If a command fails, it
 
 Functions named `checkFooBar`, e.g. `checkForPackage`, return 0 or 1 and print nothing, so they can be used directly in `if checkFooBar; then`. Functions named `checkFooAndBar`, e.g. `checkForAndCreateSshConfig`, check something and then act on it.
 
+Options, e.g. `--warning` or `--recursive`, go before any other arguments, e.g. `printComment --warning 'Text.'` or `removeFilesOrDirectories --recursive "$DIR_PATH"`. A function returns 1 with an error for an option it doesn't know, or for one placed after the other arguments. A value that starts with `-` must follow `--`, e.g. `printComment -- "$TEXT"`.
+
 Only `initialiseScript` and `rebootSystem` exit the script. Mandatory arguments are declared with `"${1:?}"`, so if one is missing the shell stops the script with status 2.
