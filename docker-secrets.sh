@@ -86,5 +86,5 @@ removeDockerSecretFile () {
 
   printComment 'Removing the secret file at:'
   printComment "$SECRET_FILE_PATH"
-  removeFileOrDirectory "$SECRET_FILE_PATH"
+  removeFilesOrDirectories "$SECRET_FILE_PATH"
 }

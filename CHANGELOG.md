@@ -57,11 +57,12 @@
 
 - `checkAndCreateOrAskToReplaceFileOrDirectory` no longer prints "Check returned true." or "Check returned false.".
 - `checkForFileOrDirectory` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
-- `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createFiles` and `removeFileOrDirectory` return 1 if any file or directory fails, after carrying on with the rest. The copy and create functions print an error naming the file, and no longer print "File copied …" or "File created." after a failure. Previously all four returned 0.
-- `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createDirectories`, `createFiles`, `listDirectories` and `removeFileOrDirectory` no longer set `DIR_PATH`, `FILE_OR_DIR_PATH`, `FILE_PATH`, `PARENT_DIR`, `SUB_DIR_NAME` or `SUB_DIR_PATH` in the calling script.
+- `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createFiles` and `removeFilesOrDirectories` return 1 if any file or directory fails, after carrying on with the rest. The copy and create functions print an error naming the file, and no longer print "File copied …" or "File created." after a failure. Previously all four returned 0.
+- `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createDirectories`, `createFiles`, `listDirectories` and `removeFilesOrDirectories` no longer set `DIR_PATH`, `FILE_OR_DIR_PATH`, `FILE_PATH`, `PARENT_DIR`, `SUB_DIR_NAME` or `SUB_DIR_PATH` in the calling script.
 - `createDirectories` creates each directory path before its subdirectories.
 - `createDirectory` takes optional permissions, owner and group as its second to fourth arguments, and sets them on the new directory only. If the directory exists, it returns 0 and prints nothing. It no longer creates missing parent directories: it returns 1 with an error if the parent doesn't exist, or if `mkdir`, `chmod` or `chown` fails. Previously it ran `mkdir -p`.
-- `removeFileOrDirectory` removes files only, unless `--recursive` is passed first, e.g. `removeFileOrDirectory --recursive "$DIR_PATH"`. Without it, a directory is left in place, the function prints an error and returns 1. Previously it always ran `rm -R`, so any directory was removed with its contents. Callers that remove directories must add `--recursive`.
+- `removeFileOrDirectory` is renamed to `removeFilesOrDirectories`, as it takes one or more paths.
+- `removeFilesOrDirectories` removes files only, unless `--recursive` is passed first, e.g. `removeFilesOrDirectories --recursive "$DIR_PATH"`. Without it, a directory is left in place, the function prints an error and returns 1. Previously it always ran `rm -R`, so any directory was removed with its contents. Callers that remove directories must add `--recursive`.
 - `renameFileOrDirectory` prints an error if `mv` fails. It still returns 1.
 
 ### `firewall.sh`
@@ -78,6 +79,7 @@
 ### `host-information.sh`
 
 - `checkIfRaspberryPi`, `checkIfRunAsUser`, `checkIfRunWithSudo`, `checkIfSystemRebooted` and `compareOsVersion` return 0 for true and non-zero for false, and print nothing. `checkIfRaspberryPi` returns 2 when `/proc/device-tree/model` doesn't exist and `checkIfSystemRebooted` returns 2 when the timeframe isn't a number; otherwise they return 0 or 1. Previously they printed `true` or `false`, so callers must use `if checkIfRaspberryPi; then` instead of comparing `"$(checkIfRaspberryPi)"`.
+- `getKernalVersion` is renamed to `getKernelVersion`.
 
 ### `host-initialisation.sh`
 
@@ -113,10 +115,12 @@
 - `checkForPackage` checks whether the package is installed with `dpkg-query`, instead of whether a command with that name exists. A package that isn't a command, e.g. `openssh-server`, now reads as installed, and a command that isn't a package reads as not installed. A removed package whose config files remain reads as not installed. Callers must pass package names, e.g. `docker-ce`, not `docker`.
 - `checkForPackage` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `checkForPackagesAndInstall` and `checkForPackagesAndRemove` no longer print "Check returned true." or "Check returned false." after "Checking to see if … is installed…".
-- `checkForPackagesAndInstall`, `checkForPackagesAndRemove` and `installRemovePackages` no longer set `PACKAGE` or `i` in the calling script.
-- `installRemovePackages` returns 1 with the error "Unknown action "update". Use "install" or "remove"." if the first argument isn't "install" or "remove". Previously it printed "Exiting script with no changes." and exited the script.
-- `installRemovePackages` prints the error "Failed to install foo." if `apt` fails for a package, carries on with the rest, and returns 1. Previously it printed "Completed install for foo" and returned 0.
-- `updateUpgrade` returns 1 with the error "Failed to update and upgrade packages." if `apt update` or `apt upgrade` fails. Previously it printed "Packages updated and upgraded." and returned 0.
+- `checkForPackagesAndInstall`, `checkForPackagesAndRemove` and `managePackages` no longer set `PACKAGE` or `i` in the calling script.
+- `installRemovePackages` is renamed to `managePackages`, to match `manageDockerVolumes`.
+- `managePackages` returns 1 with the error "Unknown action "update". Use "install" or "remove"." if the first argument isn't "install" or "remove". Previously it printed "Exiting script with no changes." and exited the script.
+- `managePackages` prints the error "Failed to install foo." if `apt` fails for a package, carries on with the rest, and returns 1. Previously it printed "Completed install for foo" and returned 0.
+- `updateAndUpgradePackages` returns 1 with the error "Failed to update and upgrade packages." if `apt update` or `apt upgrade` fails. Previously it printed "Packages updated and upgraded." and returned 0.
+- `updateUpgrade` is renamed to `updateAndUpgradePackages`.
 
 ### `services.sh`
 
@@ -156,9 +160,9 @@
 - `checkForAndCreateAuthorizedKeys` no longer prints "Check returned true." or "Check returned false.".
 - `checkPrivateSshKeyCopied` and `checkPublicSshKeyCopied` are renamed to `confirmPrivateSshKeyCopied` and `confirmPublicSshKeyCopied`, as they ask the user to confirm instead of returning a status.
 - `confirmPrivateSshKeyCopied` no longer sets `KEY_COPIED_YN` in the calling script.
-- `confirmPrivateSshKeyCopied` removes the key with `removeFileOrDirectory`, so it prints "Removing file or directory at:" and "File or directory removed.", and returns 1 with an error if the key can't be removed. Previously it printed "Private key removed." even when `rm` failed.
+- `confirmPrivateSshKeyCopied` removes the key with `removeFilesOrDirectories`, so it prints "Removing file or directory at:" and "File or directory removed.", and returns 1 with an error if the key can't be removed. Previously it printed "Private key removed." even when `rm` failed.
 - `generateSshKey` returns 1 with the error "Failed to generate an ssh key at …" if `ssh-keygen` fails, e.g. when the overwrite prompt is answered "n", and doesn't set the key files' permissions or owner. Previously it printed "Key generated." and returned 0.
-- `removePrivateSshKey` and `removePublicSshKey` are removed. Use `removeFileOrDirectory`, e.g. `removeFileOrDirectory "$KEY_PATH" "$KEY_PATH.pub"`.
+- `removePrivateSshKey` and `removePublicSshKey` are removed. Use `removeFilesOrDirectories`, e.g. `removeFilesOrDirectories "$KEY_PATH" "$KEY_PATH.pub"`.
 
 ### `text.sh`
 

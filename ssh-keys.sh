@@ -65,7 +65,7 @@ confirmPrivateSshKeyCopied () {
   promptForUserInput "Have you copied the private key to your local ssh directory (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
 
   if getUserInputYN; then
-    removeFileOrDirectory "$KEY_PATH"
+    removeFilesOrDirectories "$KEY_PATH"
   else
     printComment 'You must copy the private key below to your local ssh directory.' 'error'
     printComment "$KEY_PATH" 'error'

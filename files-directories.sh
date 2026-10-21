@@ -392,7 +392,7 @@ listDirectories () {
 #
 # - https://pubs.opengroup.org/onlinepubs/9799919799/utilities/V3_chap02.html
 # ------------------------------------------------------------------------------
-removeFileOrDirectory () {
+removeFilesOrDirectories () {
   local RM_OPTION=
   local STATUS=0
   local FILE_OR_DIR_PATH

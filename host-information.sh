@@ -101,13 +101,13 @@ getHostArchitecture () {
 }
 
 # ------------------------------------------------------------------------------
-# Gets the Linux kernal version number the host machine is running. Takes no
+# Gets the Linux kernel version number the host machine is running. Takes no
 # arguments.
 # ------------------------------------------------------------------------------
-getKernalVersion () {
-  local KERNAL_VERSION="$(uname -r)"
+getKernelVersion () {
+  local KERNEL_VERSION="$(uname -r)"
 
-  echo "$KERNAL_VERSION"
+  echo "$KERNEL_VERSION"
 }
 
 # ------------------------------------------------------------------------------

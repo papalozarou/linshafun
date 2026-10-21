@@ -283,7 +283,7 @@ printServiceWait () {
 # not POSIX.
 #
 # "$ARCHIVED_LOG_FILE_PATHS" is not quoted when passed to
-# "removeFileOrDirectory", to allow for word splitting, so the log directory
+# "removeFilesOrDirectories", to allow for word splitting, so the log directory
 # path must not contain spaces. A path with spaces is split into separate paths,
 # and any of those that exist are removed, e.g. "/volume1/my logs" removes the
 # "/volume1/my" directory if it exists.
@@ -294,7 +294,7 @@ removeArchivedCommentLogs () {
   local LOG_MAX_AGE_DAYS="${3:?}"
   local ARCHIVED_LOG_FILE_PATHS="$(find "$LOG_DIR_PATH" -type f -name "$LOG_FILE_NAME.*" -mtime "+$LOG_MAX_AGE_DAYS")"
 
-  removeFileOrDirectory $ARCHIVED_LOG_FILE_PATHS
+  removeFilesOrDirectories $ARCHIVED_LOG_FILE_PATHS
 }
 
 # ------------------------------------------------------------------------------

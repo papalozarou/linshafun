@@ -50,7 +50,7 @@ checkForPackagesAndInstall () {
       printComment "You have already installed $PACKAGE."
     else
       printComment "You need to install $PACKAGE." 'warning'
-      installRemovePackages "install" "$PACKAGE"
+      managePackages "install" "$PACKAGE"
     fi
   done
 }
@@ -72,7 +72,7 @@ checkForPackagesAndRemove () {
 
     if checkForPackage "$PACKAGE"; then
       printComment "You need to remove $PACKAGE." 'warning'
-      installRemovePackages "remove" "$PACKAGE"
+      managePackages "remove" "$PACKAGE"
     else
       printComment "You have already removed $PACKAGE."
     fi
@@ -98,7 +98,7 @@ checkForPackagesAndRemove () {
 # If "apt" fails for a package, the function prints an error, carries on with
 # the remaining packages, and returns 1.
 # ------------------------------------------------------------------------------
-installRemovePackages () {
+managePackages () {
   local ACTION="${1:?}"
   local STATUS=0
   local PACKAGE
@@ -136,7 +136,7 @@ installRemovePackages () {
 # If "apt update" or "apt upgrade" fails, the function prints an error and
 # returns 1. "apt upgrade" isn't run if "apt update" fails.
 # ------------------------------------------------------------------------------
-updateUpgrade () {
+updateAndUpgradePackages () {
   local PKGCACHE_PATH='/var/cache/apt/pkgcache.bin'
   local CURRENT_TIME="$(date +%s)"
   local LAST_UPDATE="$(stat -c %Y "$PKGCACHE_PATH" 2>/dev/null || echo 0)"
