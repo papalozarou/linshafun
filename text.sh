@@ -267,7 +267,7 @@ removePrefix () {
 # Removes a postfix from a string. Takes two mandatory arguments:
 # 
 # 1. "${1:?}" – the string; and
-# 2. "${2:?}" – the postix to remove.
+# 2. "${2:?}" – the postfix to remove.
 # 
 # The function uses pattern matching to trim the string, as per:
 # 

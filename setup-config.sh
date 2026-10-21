@@ -245,7 +245,7 @@ replaceSetupVar () {
 
   if [ "$STATUS" -eq 0 ] && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
     printSeparator
-    printComment '$'"$VAR_NAME variable added."
+    printComment '$'"$VAR_NAME variable replaced."
   else
     printComment 'There was a problem replacing the $'"$VAR_NAME variable. Please check the variable file at:" 'error'
     printComment "$VAR_FILE_PATH" 'error'

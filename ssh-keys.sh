@@ -169,7 +169,7 @@ printPrivateKeyUsage () {
 }
 
 # ------------------------------------------------------------------------------
-# Tell the user to copy the private key to their local machine. Takes one 
+# Tell the user to copy the public key to their remote host. Takes one 
 # mandatory argument:
 # 
 # 1. "${1:?}" – the name of the ssh key file, excluding directory path.

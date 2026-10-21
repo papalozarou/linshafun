@@ -5,7 +5,7 @@
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# Adds a script, on a schedule, to a given user's crontab, via a snipper in 
+# Adds a script, on a schedule, to a given user's crontab, via a snippet in 
 # "/etc/cron.d". Takes five arguments:
 #
 # 1. "${1:-"root"}" – a username, defaulting to "root";
@@ -54,7 +54,7 @@ addScriptToCron () {
   printSeparator
   cat "$SNIPPET_PATH"
   printSeparator
-  printComment 'Script added to cron, using a snippet in "/etc/crond.d".'
+  printComment 'Script added to cron, using a snippet in "/etc/cron.d".'
 }
 
 # ------------------------------------------------------------------------------

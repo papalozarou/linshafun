@@ -12,7 +12,7 @@
 #    directory path and defaulting to "$DKR_ENV_FILE_PATH"; and
 # 2. "${2:?}" – the existing variable.
 # 
-# If a user choses "y/Y" the variable is set via "setEnvVariable".
+# If a user chooses "y/Y" the variable is set via "setDockerEnvVariable".
 # 
 # If the value is blank or missing, "(not set)" is shown as the current value.
 # 
@@ -200,7 +200,7 @@ compareAndUpdateDockerEnvVariables () {
 # 2. "${2:?}" – an environment variable to check.
 # 
 # The variable and value are read from the file with "grep" as a single string, 
-# then piped to "cut", which uses the equals sign as a field delimter to return 
+# then piped to "cut", which uses the equals sign as a field delimiter to return
 # the second field onwards, i.e. the whole value, including any equals signs
 # within it. As per:
 # 
@@ -248,7 +248,7 @@ replaceDockerEnvPlaceholderVariable () {
   local ENV_VALUE="${3:?}"
   local ESCAPED_VALUE="$(printf '%s\n' "$ENV_VALUE" | sed 's/[\\&|]/\\&/g')"
 
-  printComment "Replacing placholder $ENV_VAR with value $ENV_VALUE, in:"
+  printComment "Replacing placeholder $ENV_VAR with value $ENV_VALUE, in:"
   printComment "$ENV_FILE_PATH"
   printSeparator
   grep "$ENV_VAR" "$ENV_FILE_PATH"

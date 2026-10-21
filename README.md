@@ -5,7 +5,7 @@ Linux Shared Functions for various setup scripts.
 Variables _try_ to be as explicit and consistent as possible, for example:
 
 * being explicit about whether something includes a path or is only a name, e.g. `FILE_NAME` or `DIR_NAME` vs `FILE_PATH` or `DIR_PATH`; and 
-* using consistent abberviations such as `DIR`, `CONF` and `VAR`.
+* using consistent abbreviations such as `DIR`, `CONF` and `VAR`.
 
 Functions _try_ to use `verbValue` or `verbObject` as naming conventions, for example:
 

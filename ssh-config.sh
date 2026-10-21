@@ -87,9 +87,9 @@ getSshHostDetails () {
 # 1. "${1:?}" – the ssh port number.
 # 
 # N.B.
-# "printf" is used direcrtly to allow the user to copy directly from the 
+# "printf" is used directly to allow the user to copy directly from the 
 # terminal, without "SETUP SCRIPT:" in each line."%4s" is used to add four 
-# spaces to the start off lines and "\n" ensures new lines are printed.
+# spaces to the start of lines and "\n" ensures new lines are printed.
 # ------------------------------------------------------------------------------
 printLocalSshConfig () {
   local SSH_PORT=${1:?}
