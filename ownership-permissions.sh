@@ -25,11 +25,11 @@ setOwner () {
   local GROUP="${3:-$OWNER}"
 
   printComment "Setting ownership of:"
-  printComment "$FILE_DIR_PATH"
+  printComment -- "$FILE_DIR_PATH"
   printComment "to $OWNER:$GROUP."
 
   if ! chown -R "$OWNER:$GROUP" "$FILE_DIR_PATH"; then
-    printComment "Failed to set ownership of $FILE_DIR_PATH to $OWNER:$GROUP." 'error'
+    printComment --error "Failed to set ownership of $FILE_DIR_PATH to $OWNER:$GROUP."
 
     return 1
   fi
@@ -48,11 +48,11 @@ setPermissions () {
   local FILE_DIR_PATH="${2:?}"
 
   printComment "Setting permissions of:"
-  printComment "$FILE_DIR_PATH"
+  printComment -- "$FILE_DIR_PATH"
   printComment "to $PERMISSIONS."
 
   if ! chmod -R "$PERMISSIONS" "$FILE_DIR_PATH"; then
-    printComment "Failed to set permissions of $FILE_DIR_PATH to $PERMISSIONS." 'error'
+    printComment --error "Failed to set permissions of $FILE_DIR_PATH to $PERMISSIONS."
 
     return 1
   fi

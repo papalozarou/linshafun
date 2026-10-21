@@ -147,20 +147,20 @@ commentInLine () {
 
   if grep -q "^[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment 'The line starting with:'
-    printComment "$PARTIAL"
+    printComment -- "$PARTIAL"
     printComment 'is already uncommented in:'
-    printComment "$FILE_PATH."
+    printComment -- "$FILE_PATH."
   elif grep -q "^[[:space:]]*${CHAR}[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment 'Uncommenting line starting with:'
-    printComment "$CHAR $PARTIAL"
+    printComment -- "$CHAR $PARTIAL"
     printComment 'in:'
-    printComment "$FILE_PATH"
+    printComment -- "$FILE_PATH"
     sed -i "\\${SEPARATOR}^[[:space:]]*${CHAR}[[:space:]]*${ESCAPED_PARTIAL}${SEPARATOR}s${SEPARATOR}^\([[:space:]]*\)${CHAR}[[:space:]]*${SEPARATOR}\1${SEPARATOR}" "$FILE_PATH"
   else
-    printComment 'A line starting with:' 'error'
-    printComment "$PARTIAL" 'error'
-    printComment 'not found in:' 'error'
-    printComment "$FILE_PATH" 'error'
+    printComment --error 'A line starting with:'
+    printComment --error -- "$PARTIAL"
+    printComment --error 'not found in:'
+    printComment --error -- "$FILE_PATH"
     return 1
   fi
 }
@@ -199,20 +199,20 @@ commentOutLine () {
 
   if grep -q "^[[:space:]]*${CHAR}[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment 'The line starting with:'
-    printComment "$PARTIAL"
+    printComment -- "$PARTIAL"
     printComment 'is already commented out in:'
-    printComment "$FILE_PATH."
+    printComment -- "$FILE_PATH."
   elif grep -q "^[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment 'Commenting out line starting with:'
-    printComment "$PARTIAL"
+    printComment -- "$PARTIAL"
     printComment 'in:'
-    printComment "$FILE_PATH"
+    printComment -- "$FILE_PATH"
     sed -i "\\${SEPARATOR}^[[:space:]]*${ESCAPED_PARTIAL}${SEPARATOR}s${SEPARATOR}^\([[:space:]]*\)${SEPARATOR}\1${CHAR} ${SEPARATOR}" "$FILE_PATH"
   else
-    printComment 'A line starting with:' 'error'
-    printComment "$PARTIAL" 'error'
-    printComment 'not found in:' 'error'
-    printComment "$FILE_PATH" 'error'
+    printComment --error 'A line starting with:'
+    printComment --error -- "$PARTIAL"
+    printComment --error 'not found in:'
+    printComment --error -- "$FILE_PATH"
     return 1
   fi
 }

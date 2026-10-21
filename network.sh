@@ -38,7 +38,7 @@ generateAndCheckPort () {
   local PORT="$(generatePortNumber)"
 
   if checkAgainstExistingPortNumber "$PORT" "$SERVICE"; then
-    printComment "Port $PORT is already used by $SERVICE. Re-running to generate another port number." 'warning'
+    printComment --warning "Port $PORT is already used by $SERVICE. Re-running to generate another port number."
     generateAndCheckPort "$SERVICE"
   else
     echo "$PORT"    

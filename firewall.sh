@@ -32,7 +32,7 @@ addRuleToUfw () {
   fi
 
   if [ "$STATUS" -ne 0 ]; then
-    printComment "Failed to add rule $ACTION $PORT to UFW." 'error'
+    printComment --error "Failed to add rule $ACTION $PORT to UFW."
 
     return 1
   fi

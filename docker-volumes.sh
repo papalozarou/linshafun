@@ -23,7 +23,7 @@ listDockerVolumeContents () {
     VOLUME="$PREFIX$VOLUME_NAME"
 
     printComment 'Listing contents of the following docker volume:'
-    printComment "$VOLUME"
+    printComment -- "$VOLUME"
 
     printSeparator
     docker run --rm -i -v="$VOLUME":/tmp/myvolume busybox ls -lna -R /tmp/myvolume
@@ -65,7 +65,7 @@ manageDockerVolumes () {
     VOLUME_STATUS=0
 
     printComment "Performing $ACTION on the following docker volume:"
-    printComment "$VOLUME"
+    printComment -- "$VOLUME"
     printSeparator
 
     if [ "$ACTION" = 'rm' ]; then 
@@ -77,13 +77,13 @@ manageDockerVolumes () {
     printSeparator
 
     if [ "$VOLUME_STATUS" -ne 0 ]; then
-      printComment "$ACTION_SENTENCE failed on $VOLUME." 'error'
+      printComment --error -- "$ACTION_SENTENCE failed on $VOLUME."
       STATUS=1
 
       continue
     fi
 
-    printComment "$ACTION_SENTENCE performed on $VOLUME."
+    printComment -- "$ACTION_SENTENCE performed on $VOLUME."
   done
 
   return "$STATUS"

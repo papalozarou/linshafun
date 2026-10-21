@@ -30,7 +30,7 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   local REPLACE_STATUS=0
 
   printComment 'Checking for file or directory at:'
-  printComment "$FILE_OR_DIR_PATH"
+  printComment -- "$FILE_OR_DIR_PATH"
 
   if checkForFileOrDirectory "$FILE_OR_DIR_PATH"; then
     promptForUserInput "The file or directory exists. Do you want to $ACTION it (y/n)?" 'This cannot be undone if you answer y/Y.'
@@ -89,13 +89,13 @@ copyAndAddPostfixToFiles () {
   for FILE_PATH in $FILE_PATHS; do
     printComment "Copying and adding $POSTFIX to the file:"
     printSeparator
-    printComment "$FILE_PATH"
+    printComment -- "$FILE_PATH"
     printSeparator
 
     FILE_COPY="$(addPostfix "$FILE_PATH" "$POSTFIX")"
 
     if ! cp -p "$FILE_PATH" "$FILE_COPY"; then
-      printComment "Failed to copy $FILE_PATH to $FILE_COPY." 'error'
+      printComment --error "Failed to copy $FILE_PATH to $FILE_COPY."
       STATUS=1
 
       continue
@@ -134,13 +134,13 @@ copyAndRemovePostfixFromFiles () {
   for FILE_PATH in $FILE_PATHS; do
     printComment "Copying and removing $POSTFIX from the file:"
     printSeparator
-    printComment "$FILE_PATH"
+    printComment -- "$FILE_PATH"
     printSeparator
 
     FILE_COPY="$(removePostfix "$FILE_PATH" "$POSTFIX")"
 
     if ! cp -p "$FILE_PATH" "$FILE_COPY"; then
-      printComment "Failed to copy $FILE_PATH to $FILE_COPY." 'error'
+      printComment --error "Failed to copy $FILE_PATH to $FILE_COPY."
       STATUS=1
 
       continue
@@ -240,28 +240,28 @@ createDirectory () {
   fi
 
   if [ ! -d "$PARENT_DIR_PATH" ]; then
-    printComment "Failed to create the directory at $DIR_PATH, as its parent directory $PARENT_DIR_PATH does not exist." 'error'
+    printComment --error "Failed to create the directory at $DIR_PATH, as its parent directory $PARENT_DIR_PATH does not exist."
 
     return 1
   fi
 
   printComment 'Creating directory at:'
-  printComment "$DIR_PATH"
+  printComment -- "$DIR_PATH"
 
   if ! mkdir "$DIR_PATH"; then
-    printComment "Failed to create the directory at $DIR_PATH." 'error'
+    printComment --error "Failed to create the directory at $DIR_PATH."
 
     return 1
   fi
 
   if [ -n "$MODE" ] && ! chmod "$MODE" "$DIR_PATH"; then
-    printComment "Failed to set permissions of $DIR_PATH to $MODE." 'error'
+    printComment --error "Failed to set permissions of $DIR_PATH to $MODE."
 
     return 1
   fi
 
   if [ -n "$OWNER" ] && ! chown "$OWNER:$GROUP" "$DIR_PATH"; then
-    printComment "Failed to set ownership of $DIR_PATH to $OWNER:$GROUP." 'error'
+    printComment --error "Failed to set ownership of $DIR_PATH to $OWNER:$GROUP."
 
     return 1
   fi
@@ -282,10 +282,10 @@ createFiles () {
 
   for FILE_PATH in "$@"; do
     printComment 'Creating file at:'
-    printComment "$FILE_PATH"
+    printComment -- "$FILE_PATH"
 
     if ! touch "$FILE_PATH"; then
-      printComment "Failed to create the file at $FILE_PATH." 'error'
+      printComment --error "Failed to create the file at $FILE_PATH."
       STATUS=1
 
       continue
@@ -404,12 +404,12 @@ removeFilesOrDirectories () {
 
   for FILE_OR_DIR_PATH in "$@"; do
     printComment 'Removing file or directory at:'
-    printComment "$FILE_OR_DIR_PATH"
+    printComment -- "$FILE_OR_DIR_PATH"
 
     if rm ${RM_OPTION:+"$RM_OPTION"} "$FILE_OR_DIR_PATH"; then
       printComment 'File or directory removed.'
     else
-      printComment 'File or directory could not be removed. Please check it exists and that you have permission to remove it.' 'error'
+      printComment --error 'File or directory could not be removed. Please check it exists and that you have permission to remove it.'
       STATUS=1
     fi
   done
@@ -431,7 +431,7 @@ renameFileOrDirectory () {
   local NEW_PATH="${2:?}"
 
   if ! mv "$CURRENT_PATH" "$NEW_PATH"; then
-    printComment "Failed to rename $CURRENT_PATH to $NEW_PATH." 'error'
+    printComment --error "Failed to rename $CURRENT_PATH to $NEW_PATH."
 
     return 1
   fi

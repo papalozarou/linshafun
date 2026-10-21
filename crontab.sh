@@ -45,7 +45,7 @@ addScriptToCron () {
   fi
 
   if ! echo "$CRON_LINE" > "$SNIPPET_PATH"; then
-    printComment 'An error occurred when creating the snippet.' 'error'
+    printComment --error 'An error occurred when creating the snippet.'
 
     return 1
   fi

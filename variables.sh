@@ -59,7 +59,7 @@ verifyVariablesSet () {
 
   for VAR_NAME in "$@"; do
     if ! checkIfValidVariableName "$VAR_NAME"; then
-      printComment "$VAR_NAME is not a valid variable name." 'error'
+      printComment --error -- "$VAR_NAME is not a valid variable name."
 
       VARS_STATUS=1
 
@@ -69,7 +69,7 @@ verifyVariablesSet () {
     eval "VAR_VALUE=\${$VAR_NAME:-}"
 
     if [ -z "$VAR_VALUE" ]; then
-      printComment "$VAR_NAME is not set." 'error'
+      printComment --error -- "$VAR_NAME is not set."
 
       VARS_STATUS=1
     fi

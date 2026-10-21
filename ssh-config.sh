@@ -27,7 +27,7 @@ addHostToSshConfig () {
   local IDENTITY_FILE_NAME="$HOST"
 
   printComment "Adding host, $HOST, to ssh config file at:"
-  printComment "$SSH_CONF_PATH"
+  printComment -- "$SSH_CONF_PATH"
 
   {
     echo "Host $HOST"
@@ -53,7 +53,7 @@ checkForAndCreateSshConfig () {
     printComment 'The ssh config file already exists.'
   else
     printComment 'Creating an ssh config file at:'
-    printComment "$SSH_CONF_PATH"
+    printComment -- "$SSH_CONF_PATH"
     createFiles "$SSH_CONF_PATH"
 
     setPermissions 600 "$SSH_CONF_PATH"

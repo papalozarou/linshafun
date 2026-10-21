@@ -41,7 +41,7 @@ checkForPackagesAndInstall () {
   local PACKAGE
 
   printComment 'Starting installation of the following packages:'
-  printComment "$@"
+  printComment -- "$*"
 
   for PACKAGE in "$@"; do
     printComment "Checking to see if $PACKAGE is installed…"
@@ -49,7 +49,7 @@ checkForPackagesAndInstall () {
     if checkForPackage "$PACKAGE"; then
       printComment "You have already installed $PACKAGE."
     else
-      printComment "You need to install $PACKAGE." 'warning'
+      printComment --warning "You need to install $PACKAGE."
       managePackages "install" "$PACKAGE"
     fi
   done
@@ -65,13 +65,13 @@ checkForPackagesAndRemove () {
   local PACKAGE
 
   printComment 'Starting removal of the following packages:'
-  printComment "$@"
+  printComment -- "$*"
 
   for PACKAGE in "$@"; do
     printComment "Checking to see if $PACKAGE is installed…"
 
     if checkForPackage "$PACKAGE"; then
-      printComment "You need to remove $PACKAGE." 'warning'
+      printComment --warning "You need to remove $PACKAGE."
       managePackages "remove" "$PACKAGE"
     else
       printComment "You have already removed $PACKAGE."
@@ -104,7 +104,7 @@ managePackages () {
   local PACKAGE
 
   if [ "$ACTION" != 'install' ] && [ "$ACTION" != 'remove' ]; then
-    printComment "Unknown action \"$ACTION\". Use \"install\" or \"remove\"." 'error'
+    printComment --error "Unknown action \"$ACTION\". Use \"install\" or \"remove\"."
 
     return 1
   fi
@@ -117,7 +117,7 @@ managePackages () {
 
     if ! apt "$ACTION" "$PACKAGE" -y; then
       printSeparator
-      printComment "Failed to $ACTION $PACKAGE." 'error'
+      printComment --error "Failed to $ACTION $PACKAGE."
       STATUS=1
 
       continue
@@ -155,7 +155,7 @@ updateAndUpgradePackages () {
   fi
 
   if [ "$STATUS" -ne 0 ]; then
-    printComment 'Failed to update and upgrade packages.' 'error'
+    printComment --error 'Failed to update and upgrade packages.'
 
     return 1
   fi

@@ -62,7 +62,7 @@ removeDockerImages () {
 
   for IMAGE in "$@"; do
     printComment 'Removing the following docker image:'
-    printComment "$IMAGE"
+    printComment -- "$IMAGE"
     printSeparator
     docker image rm "$IMAGE"
     printSeparator

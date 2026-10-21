@@ -20,10 +20,10 @@ addKeyToAuthorizedKeys () {
   local KEY_PATH="${1:?}.pub"
 
   printComment 'Adding public key to:'
-  printComment "$SSH_AUTH_KEYS_PATH"
+  printComment -- "$SSH_AUTH_KEYS_PATH"
 
   if ! cat "$KEY_PATH" >> "$SSH_AUTH_KEYS_PATH"; then
-    printComment "Failed to add the public key at $KEY_PATH." 'error'
+    printComment --error "Failed to add the public key at $KEY_PATH."
 
     return 1
   fi
@@ -39,10 +39,10 @@ checkForAndCreateAuthorizedKeys () {
   printComment 'Checking to see if an "~/.ssh/authorized_keys" file exists…'
 
   if checkForFileOrDirectory "$SSH_AUTH_KEYS_PATH"; then
-    printComment 'The authorized keys file already exists.' 'warning'
+    printComment --warning 'The authorized keys file already exists.'
   else
     printComment 'Creating an authorized_keys file at:'
-    printComment "$SSH_AUTH_KEYS_PATH"
+    printComment -- "$SSH_AUTH_KEYS_PATH"
     createFiles "$SSH_AUTH_KEYS_PATH"
 
     setPermissions 600 "$SSH_AUTH_KEYS_PATH"
@@ -67,8 +67,8 @@ confirmPrivateSshKeyCopied () {
   if getUserInputYN; then
     removeFilesOrDirectories "$KEY_PATH"
   else
-    printComment 'You must copy the private key below to your local ssh directory.' 'error'
-    printComment "$KEY_PATH" 'error'
+    printComment --error 'You must copy the private key below to your local ssh directory.'
+    printComment --error -- "$KEY_PATH"
 
     confirmPrivateSshKeyCopied "$KEY_PATH"
   fi
@@ -89,8 +89,8 @@ confirmPublicSshKeyCopied () {
   promptForUserInput "Have you copied the public key to your remote server's authorized_keys file (y/n)?" 'If you answer y and have not copied the key, you will lose access via ssh.'
 
   if ! getUserInputYN; then
-    printComment "You must copy the public key below to your remote server's authorized_keys file." 'error'
-    printComment "$KEY_PATH" 'error'
+    printComment --error "You must copy the public key below to your remote server's authorized_keys file."
+    printComment --error -- "$KEY_PATH"
 
     confirmPublicSshKeyCopied "$KEY_PATH"
   fi
@@ -115,7 +115,7 @@ generateSshKey () {
   local STATUS=0
 
   printComment 'Generating an ssh key at:' 
-  printComment "$KEY_PATH."
+  printComment -- "$KEY_PATH."
   printSeparator
 
   if [ -z "$KEY_EMAIL" ]; then
@@ -127,7 +127,7 @@ generateSshKey () {
   printSeparator
 
   if [ "$STATUS" -ne 0 ]; then
-    printComment "Failed to generate an ssh key at $KEY_PATH." 'error'
+    printComment --error "Failed to generate an ssh key at $KEY_PATH."
 
     return 1
   fi

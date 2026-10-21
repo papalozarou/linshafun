@@ -33,10 +33,10 @@ controlService () {
   printSeparator
 
   if [ "$STATUS" -ne 0 ]; then
-    printComment "$ACTION failed for $SERVICE." 'error'
+    printComment --error -- "$ACTION failed for $SERVICE."
 
     return 1
   fi
 
-  printComment "$ACTION performed for $SERVICE."
+  printComment -- "$ACTION performed for $SERVICE."
 }

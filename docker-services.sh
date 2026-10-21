@@ -27,7 +27,7 @@ controlDockerService () {
   local FLAGS="$4"
 
   printComment "Performing $ACTION for $SERVICE, using compose file:"
-  printComment "$COMPOSE_FILE_PATH"
+  printComment -- "$COMPOSE_FILE_PATH"
   printSeparator
 
   if [ "$ACTION" = "up" ]; then
@@ -42,11 +42,11 @@ controlDockerService () {
   ACTION="$(changeCase "$ACTION" 'sentence')"
 
   if [ "$STATUS" -ne 0 ]; then
-    printComment "$ACTION failed for $SERVICE with exit status $STATUS." 'error'
+    printComment --error -- "$ACTION failed for $SERVICE with exit status $STATUS."
     return "$STATUS"
   fi
 
-  printComment "$ACTION performed for $SERVICE."
+  printComment -- "$ACTION performed for $SERVICE."
 }
 
 # ------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ controlDockerStack () {
   local FLAGS="$3"
 
   printComment "Performing $ACTION for the stack, using compose file:"
-  printComment "$COMPOSE_FILE_PATH"
+  printComment -- "$COMPOSE_FILE_PATH"
   printSeparator
 
   if [ "$ACTION" = "up" ]; then
@@ -85,11 +85,11 @@ controlDockerStack () {
   ACTION="$(changeCase "$ACTION" 'sentence')"
 
   if [ "$STATUS" -ne 0 ]; then
-    printComment "$ACTION failed for the stack with exit status $STATUS." 'error'
+    printComment --error -- "$ACTION failed for the stack with exit status $STATUS."
     return "$STATUS"
   fi
 
-  printComment "$ACTION performed for the stack."
+  printComment -- "$ACTION performed for the stack."
 }
 
 # ------------------------------------------------------------------------------

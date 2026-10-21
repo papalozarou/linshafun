@@ -29,13 +29,13 @@ addSetupVar () {
   local STATUS=0
 
   if ! checkIfValidVariableName "$VAR_NAME"; then
-    printComment "$VAR_NAME is not a valid variable name." 'error'
+    printComment --error -- "$VAR_NAME is not a valid variable name."
 
     return 1
   fi
 
   printComment 'Adding $'"$VAR_NAME variable to:"
-  printComment "$VAR_FILE_PATH"
+  printComment -- "$VAR_FILE_PATH"
 
   cat <<EOF >> "$VAR_FILE_PATH" || STATUS="$?"
 $VAR_NAME="$VAR_VALUE"
@@ -47,8 +47,8 @@ EOF
     printSeparator
     printComment '$'"$VAR_NAME variable added."
   else
-    printComment 'There was a problem adding the $'"$VAR_NAME variable. Please check the variable file at:" 'error'
-    printComment "$VAR_FILE_PATH" 'error'
+    printComment --error 'There was a problem adding the $'"$VAR_NAME variable. Please check the variable file at:"
+    printComment --error -- "$VAR_FILE_PATH"
 
     return 1
   fi
@@ -72,12 +72,12 @@ checkForAndCreateSetupConfigFileAndDir () {
   if checkForFileOrDirectory "$SETUP_CONF_PATH"; then
     printComment 'The setup config file and directory exist.'
   elif ! checkForFileOrDirectory "$SETUP_CONF_DIR_PATH"; then
-    printComment 'The setup config file and directory do not exist.' 'warning'
+    printComment --warning 'The setup config file and directory do not exist.'
 
     createDirectory "$SETUP_CONF_DIR_PATH" '' "$SUDO_USER"
     createSetupConfigFile
   else
-    printComment 'The setup config file does not exist.' 'warning'
+    printComment --warning 'The setup config file does not exist.'
 
     createSetupConfigFile
   fi
@@ -161,7 +161,7 @@ reloadVarFile () {
   local VAR_FILE_PATH="${1:-"$SETUP_VAR_PATH"}"
 
   printComment 'Reloading setup variable file at:'
-  printComment "$VAR_FILE_PATH"
+  printComment -- "$VAR_FILE_PATH"
 
   . "$VAR_FILE_PATH"
 }
@@ -183,16 +183,16 @@ removeSetupConfigOption () {
   local CONF_KEY="${1:?}"
 
   printComment "Removing $CONF_KEY from:"
-  printComment "$SETUP_CONF_PATH"
+  printComment -- "$SETUP_CONF_PATH"
 
   if ! checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY "; then
-    printComment "$CONF_KEY not found, no changes made." 'warning'
+    printComment --warning -- "$CONF_KEY not found, no changes made."
   elif ! sed -i '/^'"$CONF_KEY"' /d' "$SETUP_CONF_PATH"; then
-    printComment "Failed to remove $CONF_KEY from $SETUP_CONF_PATH." 'error'
+    printComment --error "Failed to remove $CONF_KEY from $SETUP_CONF_PATH."
 
     return 1
   else
-    printComment "$CONF_KEY removed."
+    printComment -- "$CONF_KEY removed."
   fi
 
   listSetupConfig
@@ -227,13 +227,13 @@ replaceSetupVar () {
   local ESCAPED_VALUE="$(printf '%s\n' "$VAR_VALUE" | sed 's/\\/\\\\/g')"
 
   if ! checkIfValidVariableName "$VAR_NAME"; then
-    printComment "$VAR_NAME is not a valid variable name." 'error'
+    printComment --error -- "$VAR_NAME is not a valid variable name."
 
     return 1
   fi
 
   printComment 'Replacing $'"$VAR_NAME"' in:'
-  printComment "$VAR_FILE_PATH"
+  printComment -- "$VAR_FILE_PATH"
 
   sed -i '/^'"$VAR_NAME"'=/c\'"$VAR_NAME=\"$ESCAPED_VALUE\"" "$VAR_FILE_PATH" || STATUS="$?"
 
@@ -241,8 +241,8 @@ replaceSetupVar () {
     printSeparator
     printComment '$'"$VAR_NAME variable replaced."
   else
-    printComment 'There was a problem replacing the $'"$VAR_NAME variable. Please check the variable file at:" 'error'
-    printComment "$VAR_FILE_PATH" 'error'
+    printComment --error 'There was a problem replacing the $'"$VAR_NAME variable. Please check the variable file at:"
+    printComment --error -- "$VAR_FILE_PATH"
 
     return 1
   fi
@@ -280,12 +280,12 @@ writeSetupConfigOption () {
   checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY " || CONF_OPTION_STATUS="$?"
 
   printComment "Writing $CONF_KEY with value $CONF_VALUE to:"
-  printComment "$SETUP_CONF_PATH"
+  printComment -- "$SETUP_CONF_PATH"
 
   if [ "$CONF_OPTION_STATUS" -eq 0 ]; then
     EXISTING_CONF_VALUE="$(readSetupConfigValue "$CONF_KEY")"
 
-    printComment "$CONF_KEY already exists with value $EXISTING_CONF_VALUE." 'warning'
+    printComment --warning -- "$CONF_KEY already exists with value $EXISTING_CONF_VALUE."
   fi
 
   if [ "$CONF_OPTION_STATUS" -eq 0 ] && [ "$EXISTING_CONF_VALUE" = "$CONF_VALUE" ]; then
@@ -296,7 +296,7 @@ writeSetupConfigOption () {
   fi
 
   if [ "$CONF_OPTION_STATUS" -eq 0 ]; then
-    printComment "Overwriting existing value with $CONF_VALUE." 'warning'
+    printComment --warning "Overwriting existing value with $CONF_VALUE."
 
     sed -i '/^'"$CONF_KEY"' /c\'"$CONF_KEY $ESCAPED_VALUE" "$SETUP_CONF_PATH" || WRITE_STATUS=1
   else
@@ -304,7 +304,7 @@ writeSetupConfigOption () {
   fi
 
   if [ "$WRITE_STATUS" -ne 0 ]; then
-    printComment "Failed to write $CONF_KEY to $SETUP_CONF_PATH." 'error'
+    printComment --error "Failed to write $CONF_KEY to $SETUP_CONF_PATH."
 
     return 1
   fi

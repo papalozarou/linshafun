@@ -10,6 +10,8 @@
 - `printCheckResult` is removed. Callers print "Checking …" with `printComment` and branch with `if checkFoo; then`. Previously it printed "Check returned true." or "Check returned false." and exited the script on any other value.
 - `printComment` prints warnings and errors to stderr, not stdout. Regular comments stay on stdout. This stops them being captured with the output of functions called using "$(…)".
 - `printComment` prints wildcards in a comment as written, e.g. `*.log`, instead of replacing them with matching file names. It no longer sets `CURRENT_LINE` and `WORD` in the calling script.
+- `printComment` takes `--warning` or `--error` before the comment, in place of `'warning'` or `'error'` after it, e.g. `printComment --warning 'Text.'`. A comment that starts with `-` must follow `--`, e.g. `printComment -- "$TEXT"`. It returns 1 with an error for an unknown option, an option after the comment, both options, or more than one comment. Previously any second argument other than `warning` or `error` was ignored.
+- `readOptions` is added. It reads long options, e.g. `--warning`, from the start of a function's arguments.
 
 ### `crontab.sh`
 
@@ -120,6 +122,7 @@
 - `checkForPackage` checks whether the package is installed with `dpkg-query`, instead of whether a command with that name exists. A package that isn't a command, e.g. `openssh-server`, now reads as installed, and a command that isn't a package reads as not installed. A removed package whose config files remain reads as not installed. Callers must pass package names, e.g. `docker-ce`, not `docker`.
 - `checkForPackage` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `checkForPackagesAndInstall` and `checkForPackagesAndRemove` no longer print "Check returned true." or "Check returned false." after "Checking to see if … is installed…".
+- `checkForPackagesAndInstall` and `checkForPackagesAndRemove` list every package passed. Previously only the first was listed.
 - `checkForPackagesAndInstall`, `checkForPackagesAndRemove` and `managePackages` no longer set `PACKAGE` or `i` in the calling script.
 - `installRemovePackages` is renamed to `managePackages`, to match `manageDockerVolumes`.
 - `managePackages` returns 1 with the error "Unknown action "update". Use "install" or "remove"." if the first argument isn't "install" or "remove". Previously it printed "Exiting script with no changes." and exited the script.

@@ -83,7 +83,7 @@ initialiseCommentLogs () {
 
   if ! touch "$COMMENT_LOG_PATH"; then
     COMMENT_LOG_PATH=
-    printComment "Failed to create the log file at $LOG_FILE_PATH. Logging is off for this run." 'error'
+    printComment --error "Failed to create the log file at $LOG_FILE_PATH. Logging is off for this run."
 
     return 1
   fi
@@ -93,14 +93,21 @@ initialiseCommentLogs () {
 }
 
 # ------------------------------------------------------------------------------
-# Prints a comment of any length, via "printLine". Takes two arguments:
+# Prints a comment of any length, via "printLine". Takes three arguments, one of
+# which is mandatory:
 # 
-# 1. "${1:?}" – the full comment to print; and
-# 2. "$2" – an optional flag indicating if the comment is a 
-#    "warning" or an "error".
+# 1. "--warning" – an optional flag, passed first, to print the comment as a
+#    warning;
+# 2. "--error" – an optional flag, passed first, to print the comment as an
+#    error; and
+# 3. "${1:?}" – the full comment to print.
 # 
 # The comment is split into words and printed in lines that do not exceed the
 # standard terminal length of 80 characters, including prefix.
+#
+# Returns 1 with an error if an option is unknown or comes after the comment,
+# if both "--warning" and "--error" are passed, or if more than one comment is
+# passed.
 # 
 # The function handles line breaks and ensures that the last line is printed 
 # even if it does not reach the maximum length, via the last for loop.
@@ -109,13 +116,44 @@ initialiseCommentLogs () {
 # "$COMMENT" is not quoted in the "for" loop so it is split into words. "set -f"
 # stops the shell also replacing wildcards with matching file names, and is
 # turned off again after the loop.
+#
+# A comment that starts with "-" must follow "--", e.g.
+# "printComment -- "$COMMENT_SEPARATOR"", or it is read as an unknown option.
+# Pass "--" before any comment that starts with a variable, as its value could
+# start with "-".
 # ------------------------------------------------------------------------------
 printComment () {
-  local COMMENT="${1:?}"
-  local COMMENT_TYPE="$2"
+  local WARNING_TF=false
+  local ERROR_TF=false
+  local OPTION_COUNT=0
+  local COMMENT_TYPE=
+  local COMMENT
   local LINE_LENGTH=66
   local CURRENT_LINE=
   local WORD
+
+  readOptions 'warning=WARNING_TF error=ERROR_TF' "$@" || return 1
+  shift "$OPTION_COUNT"
+
+  if [ "$#" -gt 1 ]; then
+    printComment --error "printComment takes one comment, but was given $#."
+
+    return 1
+  fi
+
+  if [ "$WARNING_TF" = true ] && [ "$ERROR_TF" = true ]; then
+    printComment --error 'printComment takes "--warning" or "--error", not both.'
+
+    return 1
+  fi
+
+  COMMENT="${1:?}"
+
+  if [ "$WARNING_TF" = true ]; then
+    COMMENT_TYPE='warning'
+  elif [ "$ERROR_TF" = true ]; then
+    COMMENT_TYPE='error'
+  fi
 
   set -f
 
@@ -220,7 +258,7 @@ printScriptExiting () {
   printSeparator
 
   if [ "$1" = true ]; then
-    printComment 'Exiting script, however some changes were made – please review the script output.' 'warning'
+    printComment --warning 'Exiting script, however some changes were made – please review the script output.'
   else
     printComment 'Exiting script with no changes.'
   fi
@@ -241,7 +279,7 @@ printScriptFinished () {
 # Prints comment separator. Takes no arguments.
 # ------------------------------------------------------------------------------
 printSeparator () {
-  printComment "$COMMENT_SEPARATOR"
+  printComment -- "$COMMENT_SEPARATOR"
 }
 
 # ------------------------------------------------------------------------------
@@ -258,9 +296,87 @@ printServiceWait () {
   local WAIT="${3:-"60"}"
 
   printComment "To give $SERVICE time to $ACTION we will wait at least $WAIT seconds."
-  printComment 'Please do not stop the script.' 'warning'
+  printComment --warning 'Please do not stop the script.'
   
   sleep "$WAIT"
+}
+
+# ------------------------------------------------------------------------------
+# Reads the options at the start of a function's arguments, and sets a variable
+# to "true" for each option found. Takes two or more arguments, one of which is
+# mandatory:
+#
+# 1. "${1:?}" – the options the function accepts, separated by spaces, each as
+#    "<option name>=<variable name>", e.g. "warning=WARNING_TF error=ERROR_TF";
+#    and
+# 2. "$@" – the function's own arguments, passed as "$@".
+#
+# Options are read from the front of the arguments, and reading stops at the
+# first argument that doesn't start with "-", or at "--". "OPTION_COUNT" is set
+# to the number of arguments read, including "--", so the calling function can
+# remove them with "shift "$OPTION_COUNT"".
+#
+# The function prints an error and returns 1 if:
+#
+# 1. an argument starting with "-" isn't one of the accepted options, e.g.
+#    "--warnig", "-w" or "----------"; or
+# 2. one of the accepted options appears after the first argument that isn't an
+#    option, e.g. "printComment 'Text.' --warning".
+#
+# The second check is skipped after "--", so a value that matches an option
+# name can be passed after it.
+#
+# N.B.
+# The calling function must declare "OPTION_COUNT" and each option's variable
+# as local, with a default, before calling this function, e.g.
+# "local DATE_TF=false". Variables set by a function belong to the nearest
+# calling function that declared them local, so they don't leak into the
+# script.
+#
+# "eval" only sets variable names written in the calling function's own code,
+# never a value passed by a caller.
+#
+# Long options are used, e.g. "--warning", so options can't be grouped as in
+# "rm -rf". "getopts" only reads single character options.
+# ------------------------------------------------------------------------------
+readOptions () {
+  local OPTION_SPECS=" ${1:?} "
+  local OPTION_NAME
+  local VAR_NAME
+
+  shift
+  OPTION_COUNT=0
+
+  while [ "$#" -gt 0 ]; do
+    case "$1" in
+      --) OPTION_COUNT=$((OPTION_COUNT + 1)); return 0 ;;
+      --*) OPTION_NAME="${1#--}" ;;
+      -*) printComment --error "Unknown option $1."; return 1 ;;
+      *) break ;;
+    esac
+
+    case "$OPTION_SPECS" in
+      *" $OPTION_NAME="*) ;;
+      *) printComment --error "Unknown option $1."; return 1 ;;
+    esac
+
+    VAR_NAME="${OPTION_SPECS#*" $OPTION_NAME="}"
+    VAR_NAME="${VAR_NAME%% *}"
+    eval "$VAR_NAME=true"
+    OPTION_COUNT=$((OPTION_COUNT + 1))
+    shift
+  done
+
+  for OPTION_NAME in "$@"; do
+    case "$OPTION_NAME" in
+      --*) ;;
+      *) continue ;;
+    esac
+
+    case "$OPTION_SPECS" in
+      *" ${OPTION_NAME#--}="*) printComment --error "Option $OPTION_NAME must come before the other arguments."; return 1 ;;
+    esac
+  done
 }
 
 # ------------------------------------------------------------------------------

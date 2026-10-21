@@ -31,7 +31,7 @@ getUserInputYN () {
   elif [ "$INPUT_YN" = "n" ] || [ "$INPUT_YN" = "N" ]; then
     return 1
   else
-    printComment 'You must respond y/Y or n/N to proceed.' 'error'
+    printComment --error 'You must respond y/Y or n/N to proceed.'
     getUserInputYN
   fi
 }
@@ -52,11 +52,11 @@ getUserInputYN () {
 promptForUserInput () {
   local QUESTION="${1:?}"
   
-  printComment "$QUESTION"
+  printComment -- "$QUESTION"
 
   shift
 
   if  [ "$#" -ge 1 ]; then
-    printComment "$1" 'warning'
+    printComment --warning -- "$1"
   fi
 }

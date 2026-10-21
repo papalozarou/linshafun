@@ -43,7 +43,7 @@ changeDockerEnvVariable () {
 
   printComment "The current value of $ENV_VAR is:"
   printSeparator
-  printComment "${ENV_VALUE:-(not set)}"
+  printComment -- "${ENV_VALUE:-(not set)}"
   printSeparator
 
   promptForUserInput "Do you want to set a new value for $ENV_VAR (y/n)?" 'This may break existing setups if running these scripts again.'
@@ -88,9 +88,9 @@ checkAndSetDockerEnvVariables () {
     printComment "Checking to see if $ENV_VAR is set…"
 
     if checkIfDockerEnvVariableSet "$ENV_FILE_PATH" "$ENV_VAR"; then
-      printComment "$ENV_VAR is set."
+      printComment -- "$ENV_VAR is set."
     else
-      printComment "$ENV_VAR is not set." 'warning'
+      printComment --warning -- "$ENV_VAR is not set."
     fi
 
     changeDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR"
@@ -157,7 +157,7 @@ compareAndUpdateDockerEnvVariables () {
 
   for ENV_VAR in "$@"; do
     if ! checkIfValidVariableName "$ENV_VAR"; then
-      printComment "$ENV_VAR is not a valid variable name." 'error'
+      printComment --error -- "$ENV_VAR is not a valid variable name."
 
       STATUS=1
 
@@ -178,10 +178,10 @@ compareAndUpdateDockerEnvVariables () {
       printSeparator
       printComment "No changes to $ENV_VAR made."
     else
-      printComment "The current value of $ENV_VAR is different to the comparison value:" 'warning'
+      printComment --warning "The current value of $ENV_VAR is different to the comparison value:"
       printSeparator
-      printComment "Environment file value: $ENV_VALUE" 'warning'
-      printComment "Comparison value:       $ENV_COMPARISON" 'warning'
+      printComment --warning "Environment file value: $ENV_VALUE"
+      printComment --warning "Comparison value:       $ENV_COMPARISON"
       printSeparator
 
       changeDockerEnvVariable "$ENV_FILE_PATH" "$ENV_VAR" || STATUS=1
@@ -249,13 +249,13 @@ replaceDockerEnvPlaceholderVariable () {
   local ESCAPED_VALUE="$(printf '%s\n' "$ENV_VALUE" | sed 's/[\\&|]/\\&/g')"
 
   printComment "Replacing placeholder $ENV_VAR with value $ENV_VALUE, in:"
-  printComment "$ENV_FILE_PATH"
+  printComment -- "$ENV_FILE_PATH"
   printSeparator
   grep "$ENV_VAR" "$ENV_FILE_PATH"
   printSeparator
 
   if ! sed -i 's|'"$ENV_VAR"'|'"$ESCAPED_VALUE"'|g' "$ENV_FILE_PATH"; then
-    printComment "Failed to replace $ENV_VAR in $ENV_FILE_PATH." 'error'
+    printComment --error "Failed to replace $ENV_VAR in $ENV_FILE_PATH."
 
     return 1
   fi
@@ -301,16 +301,16 @@ setDockerEnvVariable () {
   local ESCAPED_VALUE="$(printf '%s\n' "$ENV_VALUE" | sed 's/\\/\\\\/g')"
 
   printComment "Setting $ENV_VAR to $ENV_VALUE in:"
-  printComment "$ENV_FILE_PATH"
+  printComment -- "$ENV_FILE_PATH"
 
   if ! grep -q "^$ENV_VAR=" "$ENV_FILE_PATH"; then
-    printComment "Failed to set $ENV_VAR, as it was not found in $ENV_FILE_PATH." 'error'
+    printComment --error "Failed to set $ENV_VAR, as it was not found in $ENV_FILE_PATH."
 
     return 1
   fi
 
   if ! sed -i '/^'"$ENV_VAR"='/c\\'"$ENV_VAR=$ESCAPED_VALUE" "$ENV_FILE_PATH"; then
-    printComment "Failed to set $ENV_VAR in $ENV_FILE_PATH." 'error'
+    printComment --error "Failed to set $ENV_VAR in $ENV_FILE_PATH."
 
     return 1
   fi

@@ -25,11 +25,11 @@ createDockerSecretFile () {
   local STATUS=0
 
   printComment 'Generating a secret file at:'
-  printComment "$SECRET_FILE_PATH"
+  printComment -- "$SECRET_FILE_PATH"
   printf '%s\n' "$SECRET_VALUE" > "$SECRET_FILE_PATH" || STATUS="$?"
 
   if [ "$STATUS" -ne 0 ]; then
-    printComment "Failed to write the secret file at $SECRET_FILE_PATH." 'error'
+    printComment --error "Failed to write the secret file at $SECRET_FILE_PATH."
 
     return 1
   fi
@@ -76,6 +76,6 @@ removeDockerSecretFile () {
   local SECRET_FILE_PATH="${1:?}"
 
   printComment 'Removing the secret file at:'
-  printComment "$SECRET_FILE_PATH"
+  printComment -- "$SECRET_FILE_PATH"
   removeFilesOrDirectories "$SECRET_FILE_PATH"
 }
