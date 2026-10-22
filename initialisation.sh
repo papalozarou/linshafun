@@ -9,37 +9,35 @@
 # existing service files by grabbing a list of files ending in ".example",
 # removing the prefix and checking and creating each file in turn. Takes no
 # arguments.
-# 
-# N.B.
-# Two global variables are created for the file, both with and without the 
-# ".example" postfix, for reuse in the "createServiceFile" function.
 # ------------------------------------------------------------------------------
 checkAndCreateServiceFiles () {
   local FILE_PATHS="$(getListOfFilesByPostfix '.example' "$SERVICES_DIR_PATH")"
   local FILE_PATH
+  local SERVICE_FILE_PATH
 
   for FILE_PATH in $FILE_PATHS; do
-    FILE_W_POSTFIX="$FILE_PATH"
-    FILE_NO_POSTFIX="$(removePostfix "$FILE_PATH" ".example")"
+    SERVICE_FILE_PATH="$(removePostfix "$FILE_PATH" ".example")"
 
-    checkAndCreateOrAskToReplaceFileOrDirectory "$FILE_NO_POSTFIX" 'createServiceFile'
+    checkAndCreateOrAskToReplaceFileOrDirectory "$SERVICE_FILE_PATH" 'createServiceFile'
   done
 }
 
 # ------------------------------------------------------------------------------
-# Creates services files from "*.example" files. Takes no arguments.
-# 
-# The function first checks if a service file exists, and if so backs it up, 
-# then creates the new service file from the respective "*.example" file.
-# 
-# N.B.
-# The two global variables, created in "checkAndCreateServiceFiles", are used 
-# here to avoid duplicating removing and adding the postfix.
+# Creates a service file from its "*.example" file. Takes one mandatory
+# argument:
+#
+# 1. "${1:?}" – the service file, including directory path and excluding the
+#    ".example" postfix.
+#
+# The function first checks if the service file exists, and if so backs it up,
+# then creates the new service file from "$1.example".
 # ------------------------------------------------------------------------------
 createServiceFile () {
-  if checkForFileOrDirectory "$FILE_NO_POSTFIX"; then
-    copyAndAddPostfixToFiles "$FILE_NO_POSTFIX"
+  local FILE_PATH="${1:?}"
+
+  if checkForFileOrDirectory "$FILE_PATH"; then
+    copyAndAddPostfixToFiles "$FILE_PATH"
   fi
 
-  copyAndRemovePostfixFromFiles "$FILE_W_POSTFIX"
+  copyAndRemovePostfixFromFiles "$FILE_PATH.example"
 }

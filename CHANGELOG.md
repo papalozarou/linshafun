@@ -125,7 +125,8 @@
 
 ### `initialisation.sh`
 
-- `checkAndCreateServiceFiles` no longer sets `FILE_PATH` in the calling script.
+- `checkAndCreateServiceFiles` no longer sets `FILE_NO_POSTFIX`, `FILE_PATH` or `FILE_W_POSTFIX` in the calling script.
+- `createServiceFile` takes the service file's full path, without `.example`, and creates it from the matching `.example` file. Previously it took no arguments and used the `FILE_NO_POSTFIX` and `FILE_W_POSTFIX` globals set by `checkAndCreateServiceFiles`, so a direct call created whichever file was checked last.
 
 ### `linshafun.var`
 
@@ -169,6 +170,7 @@
 - `createSetupConfigDirectory` is removed. `checkForAndCreateSetupConfigFileAndDir` calls `createDirectory` with `SUDO_USER` as owner.
 - `readSetupConfigValue` matches the whole key, so `ssh` no longer matches `sshPort`. Values containing spaces or wildcards are returned as written. It no longer runs `set -f` in the calling script.
 - `readSetupConfigValue` returns `\` in the value as given, and returns a value of `-n` instead of nothing. Previously dash's `echo` changed sequences such as `\n` into the characters they stand for, so `writeSetupConfigOption` rewrote an unchanged value containing `\` instead of printing "No changes made.".
+- `reloadVarFile` takes the variable file's full path as a mandatory argument. Previously it defaulted to `$SETUP_VAR_PATH`, which nothing sets.
 - `removeSetupConfigOption` and `writeSetupConfigOption` match the whole key, so `ssh` no longer matches `sshPort`. Previously `writeSetupConfigOption ssh on` overwrote the `sshPort` line, and `removeSetupConfigOption ssh` deleted it.
 - `removeSetupConfigOption` returns 1 with the error "Failed to remove ssh from …" if `sed` fails. Previously it printed "ssh removed." and returned 0.
 - `replaceSetupVar` no longer sets `VAR_FILE_NAME`, `VAR_FILE_PATH`, `VAR_NAME` or `VAR_VALUE` in the calling script.

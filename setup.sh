@@ -35,6 +35,9 @@ finaliseScript () {
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
 # "setup.conf.example" in the relevant setup directory.
+#
+# The setup config file is read from "$SETUP_CONF_PATH", which the calling
+# project must set.
 # ------------------------------------------------------------------------------
 initialiseScript () {
   local CONF_KEY="${1:?}"

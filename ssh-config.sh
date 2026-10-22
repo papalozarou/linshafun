@@ -66,6 +66,15 @@ checkForAndCreateSshConfig () {
 # Gets details of an SSH host for adding to the ssh config file. Details are 
 # stored in global variables to allow other functions to use them. Takes no
 # arguments.
+#
+# The global variables are "$SSH_HOST", "$SSH_HOSTNAME", "$SSH_PORT" and
+# "$SSH_USER", e.g. for passing to "addHostToSshConfig".
+#
+# N.B.
+# Nothing in linshafun reads these variables, so ShellCheck's "variable appears
+# unused" warning (SC2034) is turned off for this function.
+#
+# shellcheck disable=SC2034
 # ------------------------------------------------------------------------------
 getSshHostDetails () {
   promptForUserInput 'What is the name of the host you want to add?'

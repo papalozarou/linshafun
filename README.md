@@ -51,3 +51,11 @@ Functions named `checkFooBar`, e.g. `checkForPackage`, return 0 or 1 and print n
 Options, e.g. `--warning` or `--recursive`, go before any other arguments, e.g. `printComment --warning 'Text.'` or `removeFilesOrDirectories --recursive "$DIR_PATH"`. A function returns 1 with an error for an option it doesn't know, or for one placed after the other arguments. A value that starts with `-` must follow `--`, e.g. `printComment -- "$TEXT"`.
 
 Only `initialiseScript` and `rebootSystem` exit the script. Mandatory arguments are declared with `"${1:?}"`, so if one is missing the shell stops the script with status 2.
+
+Most globals that functions read are set in `linshafun.var` and `linshafun-docker.var`. The calling project must set `SETUP_CONF_PATH`, the setup config file including directory path, e.g. in its own `.var` file. It is used by the functions in `setup-config.sh` and by `initialiseScript`.
+
+Some functions set globals for the calling script to use:
+
+* `getCronFilenames` sets `CRON_SCRIPT_NAME`, `CRON_SCRIPT_PATH` and `CRON_SNIPPET_NAME`, and `getCronSchedule` sets `CRON_SCHEDULE`. `addScriptToCron` uses `CRON_SCRIPT_PATH`, `CRON_SCHEDULE` and `CRON_SNIPPET_NAME` when the matching argument isn't passed;
+* `getSshHostDetails` sets `SSH_HOST`, `SSH_HOSTNAME`, `SSH_PORT` and `SSH_USER`; and
+* `getSshKeyDetails` sets `SSH_KEY_NAME`, `SSH_EMAIL` and `SSH_KEY_PATH`.

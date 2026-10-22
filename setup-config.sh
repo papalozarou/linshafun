@@ -2,6 +2,10 @@
 
 # ------------------------------------------------------------------------------
 # Functions for checking, setting and reading setup config options.
+#
+# N.B.
+# The setup config file is read from "$SETUP_CONF_PATH". linshafun doesn't set
+# it, so the calling project must, e.g. in its own ".var" file.
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
@@ -152,13 +156,12 @@ readSetupConfigValue () {
 
 # ------------------------------------------------------------------------------
 # Reloads a variable file that has been added to as part of a script. Takes one
-# argument:
+# mandatory argument:
 #
-# 1. "${1:-"$SETUP_VAR_PATH"}" – the variable file to reload, including
-#    directory path and defaulting to "$SETUP_VAR_PATH".
+# 1. "${1:?}" – the variable file to reload, including directory path.
 # ------------------------------------------------------------------------------
 reloadVarFile () {
-  local VAR_FILE_PATH="${1:-"$SETUP_VAR_PATH"}"
+  local VAR_FILE_PATH="${1:?}"
 
   printComment 'Reloading setup variable file at:'
   printComment -- "$VAR_FILE_PATH"

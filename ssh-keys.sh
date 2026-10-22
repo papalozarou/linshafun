@@ -145,6 +145,15 @@ generateSshKey () {
 # Get the name of the ssh key and the ssh email if desired. Both variables are 
 # stored in global variables to allow other functions to use them. Takes no
 # arguments.
+#
+# The global variables are "$SSH_KEY_NAME", "$SSH_EMAIL" and "$SSH_KEY_PATH",
+# e.g. for passing to "generateSshKey".
+#
+# N.B.
+# Nothing in linshafun reads "$SSH_EMAIL" or "$SSH_KEY_PATH", so ShellCheck's
+# "variable appears unused" warning (SC2034) is turned off for this function.
+#
+# shellcheck disable=SC2034
 # ------------------------------------------------------------------------------
 getSshKeyDetails () {
   promptForUserInput 'What do you want to call your ssh key?'
