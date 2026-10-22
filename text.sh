@@ -126,7 +126,7 @@ checkStringContainsSubstring () {
 # The function allows for tabs or spaces before the commented out line and
 # preserves indentations.
 # 
-# The "sed" command uses the control character "\001" as its separator.
+# The "sed" commands use the control character "\001" as their separator.
 # Partials are escaped so that "\", "[", ".", "*", "^" and "$" are matched
 # literally, e.g. "[main]" only matches "[main]", not a line starting with "m",
 # "a", "i" or "n".
@@ -143,7 +143,7 @@ commentInLine () {
   local PARTIAL="${2:?}"
   local CHAR="${3:-#}"
   local SEPARATOR="$(printf '\001')"
-  local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed 's/[[\.*^$]/\\&/g')"
+  local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed "s${SEPARATOR}[[\\.*^\$]${SEPARATOR}\\\\&${SEPARATOR}g")"
 
   if grep -q "^[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment 'The line starting with:'
@@ -178,7 +178,7 @@ commentInLine () {
 # The function allows for tabs or spaces before the line and preserves 
 # indentations.
 # 
-# The "sed" command uses the control character "\001" as its separator.
+# The "sed" commands use the control character "\001" as their separator.
 # Partials are escaped so that "\", "[", ".", "*", "^" and "$" are matched
 # literally, e.g. "[main]" only matches "[main]", not a line starting with "m",
 # "a", "i" or "n".
@@ -195,7 +195,7 @@ commentOutLine () {
   local PARTIAL="${2:?}"
   local CHAR="${3:-#}"
   local SEPARATOR="$(printf '\001')"
-  local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed 's/[[\.*^$]/\\&/g')"
+  local ESCAPED_PARTIAL="$(printf '%s\n' "$PARTIAL" | sed "s${SEPARATOR}[[\\.*^\$]${SEPARATOR}\\\\&${SEPARATOR}g")"
 
   if grep -q "^[[:space:]]*${CHAR}[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment 'The line starting with:'

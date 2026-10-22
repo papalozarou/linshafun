@@ -15,12 +15,15 @@
 # If "cmdline.txt" can't be written, the function prints an error and returns
 # 1, without writing the setup config option.
 #
+# The "sed" command uses the control character "\001" as its separator.
+#
 # N.B.
 # A reboot is required for changes to take effect.
 # ------------------------------------------------------------------------------
 addPiCgroupOptionsToCmdline () {
   local CMDLINE_PATH="$(getPiBootFilePath 'cmdline.txt')"
   local CGROUP_OPTIONS='cgroup_memory=1 cgroup_enable=memory'
+  local SEPARATOR="$(printf '\001')"
 
   if [ -z "$CMDLINE_PATH" ]; then
     printComment --error 'A cmdline.txt file was not found in /boot/firmware or /boot.'
@@ -37,7 +40,7 @@ addPiCgroupOptionsToCmdline () {
   printComment 'Adding cgroup memory options to cmdline.txt file at:'
   printComment -- "$CMDLINE_PATH"
 
-  if ! sed -i "s/\(.*\)rootwait/\1$CGROUP_OPTIONS rootwait/" "$CMDLINE_PATH"; then
+  if ! sed -i "s${SEPARATOR}\(.*\)rootwait${SEPARATOR}\1$CGROUP_OPTIONS rootwait${SEPARATOR}" "$CMDLINE_PATH"; then
     printComment --error 'Failed to add cgroup memory options to cmdline.txt.'
 
     return 1
@@ -64,12 +67,15 @@ addPiCgroupOptionsToCmdline () {
 # If "cmdline.txt" can't be written, the function prints an error and returns
 # 1, without writing the setup config option.
 #
+# The "sed" command uses the control character "\001" as its separator.
+#
 # N.B.
 # A reboot is required for changes to take effect.
 # ------------------------------------------------------------------------------
 addPiVideoModesToCmdline () {
   local CMDLINE_PATH="$(getPiBootFilePath 'cmdline.txt')"
   local VIDEO_MODES='video=HDMI-A-1:1920x1080M@60 video=HDMI-A-2:1920x1080M@60'
+  local SEPARATOR="$(printf '\001')"
 
   if [ -z "$CMDLINE_PATH" ]; then
     printComment --error 'cmdline.txt file not found in /boot/firmware or /boot.'
@@ -86,7 +92,7 @@ addPiVideoModesToCmdline () {
   printComment 'Adding video modes to cmdline.txt file at:'
   printComment -- "$CMDLINE_PATH"
 
-  if ! sed -i "1s/^/$VIDEO_MODES /" "$CMDLINE_PATH"; then
+  if ! sed -i "1s${SEPARATOR}^${SEPARATOR}$VIDEO_MODES ${SEPARATOR}" "$CMDLINE_PATH"; then
     printComment --error 'Failed to add video modes to cmdline.txt.'
 
     return 1
@@ -392,6 +398,8 @@ rebootSystem () {
 # returns 1, without writing the setup config option. The temporary file is
 # removed either way.
 #
+# The "sed" command uses the control character "\001" as its separator.
+#
 # N.B.
 # The function stops if "rpi-eeprom-config --out" fails, as the temporary
 # config would otherwise hold only "POWER_OFF_ON_HALT=1", and that file would be
@@ -402,6 +410,7 @@ rebootSystem () {
 setPiPowerOffOnHalt () {
   local TEMP_FILE_PATH="$(mktemp)"
   local STATUS=0
+  local SEPARATOR="$(printf '\001')"
 
   if ! rpi-eeprom-config --out "$TEMP_FILE_PATH"; then
     printComment --error 'Failed to read the current EEPROM config.'
@@ -413,7 +422,7 @@ setPiPowerOffOnHalt () {
   if grep -q 'POWER_OFF_ON_HALT=0' "$TEMP_FILE_PATH"; then
     printComment 'Setting POWER_OFF_ON_HALT to 1 in EEPROM config.'
 
-    sed -i 's/POWER_OFF_ON_HALT=0/POWER_OFF_ON_HALT=1/' "$TEMP_FILE_PATH"
+    sed -i "s${SEPARATOR}POWER_OFF_ON_HALT=0${SEPARATOR}POWER_OFF_ON_HALT=1${SEPARATOR}" "$TEMP_FILE_PATH"
   elif grep -q 'POWER_OFF_ON_HALT=1' "$TEMP_FILE_PATH"; then
     printComment 'POWER_OFF_ON_HALT already set to 1 in EEPROM config.'
   else

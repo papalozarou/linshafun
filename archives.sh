@@ -25,7 +25,8 @@
 #
 # "--date" adds the current date to the end of the file name before any
 # file extensions. "sed" matches the file name only and any suffix after ".tar"
-# is kept. "printf" is used so backslashes in the path are not changed.
+# is kept. "printf" is used so backslashes in the path are not changed. The
+# "sed" command uses the control character "\001" as its separator.
 #
 # Returns 1 with an error if an option is unknown or comes after the other
 # arguments.
@@ -58,6 +59,7 @@ createTarArchive () {
   local ARCHIVE_FILE_PATH
   local EXCLUDE_PATTERNS
   local EXCLUDE_PATTERN
+  local SEPARATOR="$(printf '\001')"
 
   readOptions 'date=DATE_TF' "$@" || return 1
   shift "$OPTION_COUNT"
@@ -67,7 +69,7 @@ createTarArchive () {
   EXCLUDE_PATTERNS="$3 "
 
   if [ "$DATE_TF" = true ]; then
-    ARCHIVE_FILE_PATH="$(printf '%s\n' "$ARCHIVE_FILE_PATH" | sed "s|\([^/]*\)\.tar\([^/]*\)$|\1-$(date +%Y-%m-%d).tar\2|")"
+    ARCHIVE_FILE_PATH="$(printf '%s\n' "$ARCHIVE_FILE_PATH" | sed "s${SEPARATOR}\([^/]*\)\.tar\([^/]*\)\$${SEPARATOR}\1-$(date +%Y-%m-%d).tar\2${SEPARATOR}")"
   fi
 
   set --

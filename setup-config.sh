@@ -174,6 +174,8 @@ reloadVarFile () {
 # If the config option can't be removed, the function prints an error and
 # returns 1, without listing the setup config.
 #
+# The "sed" command uses the control character "\001" as its separator.
+#
 # N.B.
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
@@ -181,13 +183,14 @@ reloadVarFile () {
 # ------------------------------------------------------------------------------
 removeSetupConfigOption () {
   local CONF_KEY="${1:?}"
+  local SEPARATOR="$(printf '\001')"
 
   printComment "Removing $CONF_KEY from:"
   printComment -- "$SETUP_CONF_PATH"
 
   if ! checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY "; then
     printComment --warning -- "$CONF_KEY not found, no changes made."
-  elif ! sed -i '/^'"$CONF_KEY"' /d' "$SETUP_CONF_PATH"; then
+  elif ! sed -i "\\${SEPARATOR}^${CONF_KEY} ${SEPARATOR}d" "$SETUP_CONF_PATH"; then
     printComment --error "Failed to remove $CONF_KEY from $SETUP_CONF_PATH."
 
     return 1
@@ -218,13 +221,16 @@ removeSetupConfigOption () {
 #
 # "\" is escaped in the value, as "sed" removes it from the replacement line,
 # e.g. "a\b" would be written as "ab".
+#
+# The "sed" commands use the control character "\001" as their separator.
 # ------------------------------------------------------------------------------
 replaceSetupVar () {
   local VAR_FILE_PATH="${1:?}"
   local VAR_NAME="${2:?}"
   local VAR_VALUE="${3:?}"
   local STATUS=0
-  local ESCAPED_VALUE="$(printf '%s\n' "$VAR_VALUE" | sed 's/\\/\\\\/g')"
+  local SEPARATOR="$(printf '\001')"
+  local ESCAPED_VALUE="$(printf '%s\n' "$VAR_VALUE" | sed "s${SEPARATOR}\\\\${SEPARATOR}\\\\\\\\${SEPARATOR}g")"
 
   if ! checkIfValidVariableName "$VAR_NAME"; then
     printComment --error -- "$VAR_NAME is not a valid variable name."
@@ -235,7 +241,7 @@ replaceSetupVar () {
   printComment 'Replacing $'"$VAR_NAME"' in:'
   printComment -- "$VAR_FILE_PATH"
 
-  sed -i '/^'"$VAR_NAME"'=/c\'"$VAR_NAME=\"$ESCAPED_VALUE\"" "$VAR_FILE_PATH" || STATUS="$?"
+  sed -i "\\${SEPARATOR}^${VAR_NAME}=${SEPARATOR}c\\${VAR_NAME}=\"${ESCAPED_VALUE}\"" "$VAR_FILE_PATH" || STATUS="$?"
 
   if [ "$STATUS" -eq 0 ] && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
     printSeparator
@@ -264,6 +270,8 @@ replaceSetupVar () {
 # "\" is escaped in the value when an existing option is overwritten, as "sed"
 # removes it from the replacement line, e.g. "a\b" would be written as "ab".
 #
+# The "sed" commands use the control character "\001" as their separator.
+#
 # N.B.
 # The config key must be formatted exactly as in the config option file, i.e. 
 # using camelCase. A list of the config keys can be found in 
@@ -274,7 +282,8 @@ writeSetupConfigOption () {
   local CONF_VALUE="${2:?}"
   local CONF_OPTION_STATUS=0
   local WRITE_STATUS=0
-  local ESCAPED_VALUE="$(printf '%s\n' "$CONF_VALUE" | sed 's/\\/\\\\/g')"
+  local SEPARATOR="$(printf '\001')"
+  local ESCAPED_VALUE="$(printf '%s\n' "$CONF_VALUE" | sed "s${SEPARATOR}\\\\${SEPARATOR}\\\\\\\\${SEPARATOR}g")"
   local EXISTING_CONF_VALUE
 
   checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY " || CONF_OPTION_STATUS="$?"
@@ -298,7 +307,7 @@ writeSetupConfigOption () {
   if [ "$CONF_OPTION_STATUS" -eq 0 ]; then
     printComment --warning "Overwriting existing value with $CONF_VALUE."
 
-    sed -i '/^'"$CONF_KEY"' /c\'"$CONF_KEY $ESCAPED_VALUE" "$SETUP_CONF_PATH" || WRITE_STATUS=1
+    sed -i "\\${SEPARATOR}^${CONF_KEY} ${SEPARATOR}c\\${CONF_KEY} ${ESCAPED_VALUE}" "$SETUP_CONF_PATH" || WRITE_STATUS=1
   else
     echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF_PATH" || WRITE_STATUS=1
   fi

@@ -229,10 +229,9 @@ readDockerEnvVariable () {
 # 2. "${2:?}" – an environment variable to replace; and
 # 3. "${3:?}" – the value of the variable.
 # 
-# The "sed" delimiter is "|" in this instance as both "/" and "@" will be
-# returned as part of string hashing or present in email addresses.
+# The "sed" commands use the control character "\001" as their separator.
 #
-# "\", "&" and "|" are escaped in the value, as "sed" treats them as special
+# "\" and "&" are escaped in the value, as "sed" treats them as special
 # characters in the replacement, e.g. "&" inserts the matched placeholder.
 # 
 # If "sed" fails, e.g. the file doesn't exist, the function prints an error and
@@ -246,7 +245,8 @@ replaceDockerEnvPlaceholderVariable () {
   local ENV_FILE_PATH="${1:?}"
   local ENV_VAR='${DKR_ENV: '"${2:?}"'}'
   local ENV_VALUE="${3:?}"
-  local ESCAPED_VALUE="$(printf '%s\n' "$ENV_VALUE" | sed 's/[\\&|]/\\&/g')"
+  local SEPARATOR="$(printf '\001')"
+  local ESCAPED_VALUE="$(printf '%s\n' "$ENV_VALUE" | sed "s${SEPARATOR}[\\\\&]${SEPARATOR}\\\\&${SEPARATOR}g")"
 
   printComment "Replacing placeholder $ENV_VAR with value $ENV_VALUE, in:"
   printComment -- "$ENV_FILE_PATH"
@@ -254,7 +254,7 @@ replaceDockerEnvPlaceholderVariable () {
   grep "$ENV_VAR" "$ENV_FILE_PATH"
   printSeparator
 
-  if ! sed -i 's|'"$ENV_VAR"'|'"$ESCAPED_VALUE"'|g' "$ENV_FILE_PATH"; then
+  if ! sed -i "s${SEPARATOR}${ENV_VAR}${SEPARATOR}${ESCAPED_VALUE}${SEPARATOR}g" "$ENV_FILE_PATH"; then
     printComment --error "Failed to replace $ENV_VAR in $ENV_FILE_PATH."
 
     return 1
@@ -284,9 +284,11 @@ replaceDockerEnvPlaceholderVariable () {
 # If no line starts with "$ENV_VAR=", or "sed" fails, the function prints an
 # error and returns 1. The variable is never added, only changed.
 #
+# The "sed" commands use the control character "\001" as their separator.
+#
 # N.B.
-# It's necessary to use single and double quotes, as well as escaped characters, 
-# to enable "sed" to parse the variables where required.
+# It's necessary to use double quotes, as well as escaped characters, to enable
+# "sed" to parse the variables where required.
 #
 # "\" is escaped in the value, as "sed" removes it from the replacement line,
 # e.g. "a\b" would be written as "ab".
@@ -298,7 +300,8 @@ setDockerEnvVariable () {
   local ENV_FILE_PATH="${1:-"$DKR_ENV_FILE_PATH"}"
   local ENV_VAR="${2:?}"
   local ENV_VALUE="${3:?}"
-  local ESCAPED_VALUE="$(printf '%s\n' "$ENV_VALUE" | sed 's/\\/\\\\/g')"
+  local SEPARATOR="$(printf '\001')"
+  local ESCAPED_VALUE="$(printf '%s\n' "$ENV_VALUE" | sed "s${SEPARATOR}\\\\${SEPARATOR}\\\\\\\\${SEPARATOR}g")"
 
   printComment "Setting $ENV_VAR to $ENV_VALUE in:"
   printComment -- "$ENV_FILE_PATH"
@@ -309,7 +312,7 @@ setDockerEnvVariable () {
     return 1
   fi
 
-  if ! sed -i '/^'"$ENV_VAR"='/c\\'"$ENV_VAR=$ESCAPED_VALUE" "$ENV_FILE_PATH"; then
+  if ! sed -i "\\${SEPARATOR}^${ENV_VAR}=${SEPARATOR}c\\\\${ENV_VAR}=${ESCAPED_VALUE}" "$ENV_FILE_PATH"; then
     printComment --error "Failed to set $ENV_VAR in $ENV_FILE_PATH."
 
     return 1
