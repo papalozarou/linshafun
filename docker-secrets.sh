@@ -57,12 +57,18 @@ getAndSetDockerSecret () {
 # Reads the value of a secret file. Takes one mandatory argument:
 # 
 # 1. "${1:?}" – the secret file, including directory path.
+#
+# The file is printed with "cat", as written. Returns 1 if the secret file
+# can't be read.
 # ------------------------------------------------------------------------------
 readDockerSecretFile () {
   local SECRET_FILE_PATH="${1:?}"
-  local SECRET_VALUE="$(cat "$SECRET_FILE_PATH")"
 
-  echo "$SECRET_VALUE"
+  if ! cat "$SECRET_FILE_PATH"; then
+    printComment --error "Failed to read the secret file at $SECRET_FILE_PATH."
+
+    return 1
+  fi
 }
 
 # ------------------------------------------------------------------------------

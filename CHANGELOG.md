@@ -54,6 +54,7 @@
 - `createDockerSecretFile` replaces an existing secret file instead of appending to it, writes the value with `printf` so values such as `-n` are written as given, lists the directory the file is in, and returns 1 with an error if the write fails. Previously a rerun gave a two-line secret, and a failed write reported success.
 - `createDockerSecretFile` takes the secret file's full path. Previously a name without "/" was put in `$DKR_SECRETS_DIR_PATH`.
 - `getAndSetDockerSecret`, `readDockerSecretFile` and `removeDockerSecretFile` take the secret file's full path. Previously `readDockerSecretFile` and `removeDockerSecretFile` added `$DKR_SECRETS_DIR_PATH/` in front of the name.
+- `readDockerSecretFile` returns 1 with the error "Failed to read the secret file at …." if the file can't be read, and prints the file as written, so `\` in the value is kept. Previously it returned 0 with an empty value, and `a\nb` was printed as two lines.
 
 ### `docker-services.sh`
 
