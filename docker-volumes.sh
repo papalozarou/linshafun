@@ -19,6 +19,8 @@ listDockerVolumeContents () {
   local VOLUME_NAME
   local VOLUME
   
+  shift
+
   for VOLUME_NAME in "$@"; do
     VOLUME="$PREFIX$VOLUME_NAME"
 
