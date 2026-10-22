@@ -13,9 +13,14 @@
 # N.B.
 # The prefix is converted to lower case and an underscore is added to the end to
 # enable "$PREFIX$VOLUME" to produce "prefix_volume".
+#
+# If "docker run" fails for a volume, the function prints an error, carries on
+# with the remaining volumes, and returns 1.
 # ------------------------------------------------------------------------------
 listDockerVolumeContents () {
   local PREFIX="$(changeCase "${1:?}" 'lower')_"
+  local VOLUME_STATUS=0
+  local STATUS=0
   local VOLUME_NAME
   local VOLUME
   
@@ -23,14 +28,22 @@ listDockerVolumeContents () {
 
   for VOLUME_NAME in "$@"; do
     VOLUME="$PREFIX$VOLUME_NAME"
+    VOLUME_STATUS=0
 
     printComment 'Listing contents of the following docker volume:'
     printComment -- "$VOLUME"
 
     printSeparator
-    docker run --rm -i -v="$VOLUME":/tmp/myvolume busybox ls -lna -R /tmp/myvolume
+    docker run --rm -i -v="$VOLUME":/tmp/myvolume busybox ls -lna -R /tmp/myvolume || VOLUME_STATUS=1
     printSeparator
+
+    if [ "$VOLUME_STATUS" -ne 0 ]; then
+      printComment --error "Failed to list the contents of $VOLUME."
+      STATUS=1
+    fi
   done
+
+  return "$STATUS"
 }
 
 # ------------------------------------------------------------------------------
