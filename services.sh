@@ -24,9 +24,9 @@ controlService () {
   printComment "Performing $ACTION for $SERVICE."
 
   if [ "$SERVICE" = 'ufw' ]; then
-    "$SERVICE" "$ACTION" || STATUS="$?"
+    "$SERVICE" "$ACTION" || STATUS=1
   else
-    systemctl "$ACTION" "$SERVICE" --no-pager || STATUS="$?"
+    systemctl "$ACTION" "$SERVICE" --no-pager || STATUS=1
   fi
   
   ACTION="$(changeCase "$ACTION" 'sentence')"

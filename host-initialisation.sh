@@ -179,7 +179,6 @@ disablePiLedsInConfigTxt () {
   local DISABLE_ETH_LED1='dtparam=eth_led1='
   local DISABLE_ACT_LED='dtparam=act_led_trigger=none'
   local DISABLE_PWR_LED='dtparam=pwr_led_activelow=off'
-  local STATUS=0
 
   if [ -z "$CONFIG_PATH" ]; then
     printComment --error 'config.txt file not found in /boot/firmware or /boot.'
@@ -208,15 +207,13 @@ disablePiLedsInConfigTxt () {
   printComment 'Disabling LEDs in config.txt file at:'
   printComment -- "$CONFIG_PATH"
 
-  cat <<EOF >> "$CONFIG_PATH" || STATUS="$?"
+  if ! cat <<EOF >> "$CONFIG_PATH"; then
 $COMMENT
 $DISABLE_ETH_LED0
 $DISABLE_ETH_LED1
 $DISABLE_ACT_LED
 $DISABLE_PWR_LED
 EOF
-
-  if [ "$STATUS" -ne 0 ]; then
     printComment --error 'Failed to disable LEDs in config.txt.'
 
     return 1
@@ -252,7 +249,6 @@ EOF
 disablePiWifiInConfigTxt () {
   local CONFIG_PATH="$(getPiBootFilePath 'config.txt')"
   local DISABLE_WIFI='dtoverlay=disable-wifi'
-  local STATUS=0
 
   if [ -z "$CONFIG_PATH" ]; then
     printComment --error 'config.txt file not found in /boot/firmware or /boot.'
@@ -269,12 +265,10 @@ disablePiWifiInConfigTxt () {
   printComment 'Disabling WiFi in config.txt file at:'
   printComment -- "$CONFIG_PATH"
 
-  cat <<EOF >> "$CONFIG_PATH" || STATUS="$?"
+  if ! cat <<EOF >> "$CONFIG_PATH"; then
 # Disable WiFi
 $DISABLE_WIFI
 EOF
-
-  if [ "$STATUS" -ne 0 ]; then
     printComment --error 'Failed to disable WiFi in config.txt.'
 
     return 1
@@ -320,7 +314,6 @@ enablePiPcieGen3InConfigTxt () {
   local CONFIG_PATH="$(getPiBootFilePath 'config.txt')"
   local ENABLE_PCIE1='dtparam=pciex1'
   local ENABLE_PCIE1_GEN3='dtparam=pciex1_gen=3'
-  local STATUS=0
 
   if [ -z "$CONFIG_PATH" ]; then
     printComment --error 'config.txt file not found in /boot/firmware or /boot.'
@@ -343,13 +336,11 @@ enablePiPcieGen3InConfigTxt () {
   printComment 'Enabling PCIe Gen 3 in config.txt file at:'
   printComment -- "$CONFIG_PATH"
 
-  cat <<EOF >> "$CONFIG_PATH" || STATUS="$?"
+  if ! cat <<EOF >> "$CONFIG_PATH"; then
 # Enable PCIe Gen 3
 $ENABLE_PCIE1
 $ENABLE_PCIE1_GEN3
 EOF
-
-  if [ "$STATUS" -ne 0 ]; then
     printComment --error 'Failed to enable PCIe Gen 3 in config.txt.'
 
     return 1
@@ -434,7 +425,7 @@ EOF
   fi
 
   if grep -q 'POWER_OFF_ON_HALT=1' "$TEMP_FILE_PATH"; then
-    rpi-eeprom-config --apply "$TEMP_FILE_PATH" || STATUS="$?"
+    rpi-eeprom-config --apply "$TEMP_FILE_PATH" || STATUS=1
   else
     STATUS=1
   fi
@@ -471,7 +462,7 @@ updatePiBootloader () {
 
   printComment "Updating Raspberry Pi bootloader…"
   printSeparator
-  rpi-eeprom-update -a || STATUS="$?"
+  rpi-eeprom-update -a || STATUS=1
   printSeparator
 
   if [ "$STATUS" -eq 0 ]; then
@@ -503,7 +494,7 @@ updatePiFirmware () {
 
   printComment "Updating Raspberry Pi firmware…"
   printSeparator
-  rpi-update || STATUS="$?"
+  rpi-update || STATUS=1
   printSeparator
 
   if [ "$STATUS" -eq 0 ]; then

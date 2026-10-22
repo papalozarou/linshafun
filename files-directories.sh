@@ -21,7 +21,7 @@
 # Returns 1 with an error if an option is unknown or comes after the other
 # arguments.
 #
-# "REPLACE_STATUS" stays 0 when the file or directory doesn't exist, so the
+# "STATUS" stays 0 when the file or directory doesn't exist, so the
 # function runs. It is only non-zero when the file or directory exists and the
 # user answers n/N.
 # ------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
   local FUNCTION
   local ACTION='recreate'
   local WARNING
-  local REPLACE_STATUS=0
+  local STATUS=0
 
   readOptions 'replace=REPLACE_TF' "$@" || return 1
   shift "$OPTION_COUNT"
@@ -50,12 +50,12 @@ checkAndCreateOrAskToReplaceFileOrDirectory () {
 
   if checkForFileOrDirectory "$FILE_OR_DIR_PATH"; then
     promptForUserInput "The file or directory exists. Do you want to $ACTION it (y/n)?" 'This cannot be undone if you answer y/Y.'
-    getUserInputYN || REPLACE_STATUS="$?"
+    getUserInputYN || STATUS=1
   else
     printComment "The file or directory does not exist."
   fi
 
-  if [ "$REPLACE_STATUS" -ne 0 ]; then
+  if [ "$STATUS" -ne 0 ]; then
     printComment 'No changes were made.'
   elif [ -n "$WARNING" ]; then
     ("$FUNCTION" "$FILE_OR_DIR_PATH" "$WARNING")

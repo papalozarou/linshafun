@@ -119,9 +119,9 @@ generateSshKey () {
   printSeparator
 
   if [ -z "$KEY_EMAIL" ]; then
-    ssh-keygen -t ed25519 -f "$KEY_PATH" || STATUS="$?"
+    ssh-keygen -t ed25519 -f "$KEY_PATH" || STATUS=1
   else
-    ssh-keygen -t ed25519 -f "$KEY_PATH" -C "$KEY_EMAIL" || STATUS="$?"
+    ssh-keygen -t ed25519 -f "$KEY_PATH" -C "$KEY_EMAIL" || STATUS=1
   fi
 
   printSeparator

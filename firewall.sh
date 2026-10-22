@@ -22,12 +22,12 @@ addRuleToUfw () {
   if [ -z "$PROTOCOL" ]; then
       printComment "Adding rule $ACTION $PORT to UFW."
       printSeparator
-      ufw "$ACTION" "$PORT" || STATUS="$?"
+      ufw "$ACTION" "$PORT" || STATUS=1
       printSeparator
   else
     printComment "Adding rule $ACTION $PORT/$PROTOCOL to UFW."
     printSeparator
-    ufw "$ACTION" "$PORT/$PROTOCOL" || STATUS="$?"
+    ufw "$ACTION" "$PORT/$PROTOCOL" || STATUS=1
     printSeparator
   fi
 

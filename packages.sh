@@ -146,7 +146,7 @@ updateAndUpgradePackages () {
   if [ "$TIME_DIFF" -ge 86400 ] || [ "$LAST_UPDATE" -eq 0 ]; then
     printComment 'Updating and upgrading packages…'
     printSeparator
-    { apt update && apt upgrade -y; } || STATUS="$?"
+    { apt update && apt upgrade -y; } || STATUS=1
     printSeparator
   else
     printComment 'Packages were updated less than 24 hours ago. Skipping update and upgrade.'

@@ -22,13 +22,11 @@
 createDockerSecretFile () {
   local SECRET_FILE_PATH="${1:?}"
   local SECRET_VALUE="${2:?}"
-  local STATUS=0
 
   printComment 'Generating a secret file at:'
   printComment -- "$SECRET_FILE_PATH"
-  printf '%s\n' "$SECRET_VALUE" > "$SECRET_FILE_PATH" || STATUS="$?"
 
-  if [ "$STATUS" -ne 0 ]; then
+  if ! printf '%s\n' "$SECRET_VALUE" > "$SECRET_FILE_PATH"; then
     printComment --error "Failed to write the secret file at $SECRET_FILE_PATH."
 
     return 1

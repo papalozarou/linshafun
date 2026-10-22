@@ -55,13 +55,13 @@ checkIfValidVariableName () {
 verifyVariablesSet () {
   local VAR_NAME
   local VAR_VALUE
-  local VARS_STATUS=0
+  local STATUS=0
 
   for VAR_NAME in "$@"; do
     if ! checkIfValidVariableName "$VAR_NAME"; then
       printComment --error -- "$VAR_NAME is not a valid variable name."
 
-      VARS_STATUS=1
+      STATUS=1
 
       continue
     fi
@@ -71,9 +71,9 @@ verifyVariablesSet () {
     if [ -z "$VAR_VALUE" ]; then
       printComment --error -- "$VAR_NAME is not set."
 
-      VARS_STATUS=1
+      STATUS=1
     fi
   done
 
-  return "$VARS_STATUS"
+  return "$STATUS"
 }

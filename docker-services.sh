@@ -25,18 +25,17 @@ controlDockerService () {
   local ACTION="${2:?}"
   local SERVICE="${3:?}"
   local FLAGS="$4"
+  local STATUS=0
 
   printComment "Performing $ACTION for $SERVICE, using compose file:"
   printComment -- "$COMPOSE_FILE_PATH"
   printSeparator
 
   if [ "$ACTION" = "up" ]; then
-    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" -d "$SERVICE" $FLAGS
+    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" -d "$SERVICE" $FLAGS || STATUS="$?"
   else
-    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" "$SERVICE" $FLAGS
+    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" "$SERVICE" $FLAGS || STATUS="$?"
   fi
-
-  local STATUS="$?"
 
   printSeparator
   ACTION="$(changeCase "$ACTION" 'sentence')"
@@ -68,18 +67,17 @@ controlDockerStack () {
   local COMPOSE_FILE_PATH="${1:-$DKR_COMPOSE_FILE_PATH}"
   local ACTION="${2:?}"
   local FLAGS="$3"
+  local STATUS=0
 
   printComment "Performing $ACTION for the stack, using compose file:"
   printComment -- "$COMPOSE_FILE_PATH"
   printSeparator
 
   if [ "$ACTION" = "up" ]; then
-    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" -d $FLAGS
+    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" -d $FLAGS || STATUS="$?"
   else
-    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" $FLAGS
+    docker compose -f "$COMPOSE_FILE_PATH" "$ACTION" $FLAGS || STATUS="$?"
   fi
-
-  local STATUS="$?"
 
   printSeparator
   ACTION="$(changeCase "$ACTION" 'sentence')"

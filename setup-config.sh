@@ -37,7 +37,7 @@ addSetupVar () {
   printComment 'Adding $'"$VAR_NAME variable to:"
   printComment -- "$VAR_FILE_PATH"
 
-  cat <<EOF >> "$VAR_FILE_PATH" || STATUS="$?"
+  cat <<EOF >> "$VAR_FILE_PATH" || STATUS=1
 $VAR_NAME="$VAR_VALUE"
 EOF
 
@@ -228,7 +228,6 @@ replaceSetupVar () {
   local VAR_FILE_PATH="${1:?}"
   local VAR_NAME="${2:?}"
   local VAR_VALUE="${3:?}"
-  local STATUS=0
   local SEPARATOR="$(printf '\001')"
   local ESCAPED_VALUE="$(printf '%s\n' "$VAR_VALUE" | sed "s${SEPARATOR}\\\\${SEPARATOR}\\\\\\\\${SEPARATOR}g")"
 
@@ -241,9 +240,7 @@ replaceSetupVar () {
   printComment 'Replacing $'"$VAR_NAME"' in:'
   printComment -- "$VAR_FILE_PATH"
 
-  sed -i "\\${SEPARATOR}^${VAR_NAME}=${SEPARATOR}c\\${VAR_NAME}=\"${ESCAPED_VALUE}\"" "$VAR_FILE_PATH" || STATUS="$?"
-
-  if [ "$STATUS" -eq 0 ] && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
+  if sed -i "\\${SEPARATOR}^${VAR_NAME}=${SEPARATOR}c\\${VAR_NAME}=\"${ESCAPED_VALUE}\"" "$VAR_FILE_PATH" && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
     printSeparator
     printComment '$'"$VAR_NAME variable replaced."
   else
@@ -281,12 +278,12 @@ writeSetupConfigOption () {
   local CONF_KEY="${1:?}"
   local CONF_VALUE="${2:?}"
   local CONF_OPTION_STATUS=0
-  local WRITE_STATUS=0
+  local STATUS=0
   local SEPARATOR="$(printf '\001')"
   local ESCAPED_VALUE="$(printf '%s\n' "$CONF_VALUE" | sed "s${SEPARATOR}\\\\${SEPARATOR}\\\\\\\\${SEPARATOR}g")"
   local EXISTING_CONF_VALUE
 
-  checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY " || CONF_OPTION_STATUS="$?"
+  checkFileContainsString "$SETUP_CONF_PATH" "^$CONF_KEY " || CONF_OPTION_STATUS=1
 
   printComment "Writing $CONF_KEY with value $CONF_VALUE to:"
   printComment -- "$SETUP_CONF_PATH"
@@ -307,12 +304,12 @@ writeSetupConfigOption () {
   if [ "$CONF_OPTION_STATUS" -eq 0 ]; then
     printComment --warning "Overwriting existing value with $CONF_VALUE."
 
-    sed -i "\\${SEPARATOR}^${CONF_KEY} ${SEPARATOR}c\\${CONF_KEY} ${ESCAPED_VALUE}" "$SETUP_CONF_PATH" || WRITE_STATUS=1
+    sed -i "\\${SEPARATOR}^${CONF_KEY} ${SEPARATOR}c\\${CONF_KEY} ${ESCAPED_VALUE}" "$SETUP_CONF_PATH" || STATUS=1
   else
-    echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF_PATH" || WRITE_STATUS=1
+    echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF_PATH" || STATUS=1
   fi
 
-  if [ "$WRITE_STATUS" -ne 0 ]; then
+  if [ "$STATUS" -ne 0 ]; then
     printComment --error "Failed to write $CONF_KEY to $SETUP_CONF_PATH."
 
     return 1

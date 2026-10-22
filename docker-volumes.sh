@@ -69,9 +69,9 @@ manageDockerVolumes () {
     printSeparator
 
     if [ "$ACTION" = 'rm' ]; then 
-      docker volume "$ACTION" -f "$VOLUME" || VOLUME_STATUS="$?"
+      docker volume "$ACTION" -f "$VOLUME" || VOLUME_STATUS=1
     else
-      docker volume "$ACTION" "$VOLUME" || VOLUME_STATUS="$?"
+      docker volume "$ACTION" "$VOLUME" || VOLUME_STATUS=1
     fi
 
     printSeparator
