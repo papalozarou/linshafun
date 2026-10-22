@@ -130,7 +130,7 @@ checkIfDockerEnvVariableSet () {
 # 
 # - https://unix.stackexchange.com/a/225951
 # 
-# "eval" is used to indirectly reference a variable, the name of which is stored 
+# "eval" is used to indirectly reference a variable, the name of which is stored
 # within "$ENV_VAR", as per:
 # 
 # - https://unix.stackexchange.com/a/41418

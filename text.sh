@@ -95,7 +95,7 @@ checkFileContainsString () {
 # 1. "${1:?}" – the string; and
 # 2. "${2:?}" – the substring to look for.
 #
-# POSIX parameter expansion is used to remove the substring from the string, and 
+# POSIX parameter expansion is used to remove the substring from the string, and
 # then a check is performed to see if the result matches the originally passed 
 # in string.
 #

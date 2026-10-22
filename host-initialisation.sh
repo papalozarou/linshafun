@@ -5,7 +5,7 @@
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# Adds cgroup memory options to the cmdline.txt file to enable memory limits for 
+# Adds cgroup memory options to the cmdline.txt file to enable memory limits for
 # containers in Docker Compose. Takes no arguments.
 #
 # The function checks for the cmdline.txt file first in "/boot/firmware", then

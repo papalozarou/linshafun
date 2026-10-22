@@ -6,7 +6,7 @@
 
 # ------------------------------------------------------------------------------
 # Checks to see if a file or directory exists. If the file or directory doesn't 
-# exist, or it does exist and the user wants to replace it, (re)create it. Takes 
+# exist, or it does exist and the user wants to replace it, (re)create it. Takes
 # four arguments, two of which are mandatory:
 # 
 # 1. "--replace" – an optional flag, passed first, to ask the user whether to
@@ -15,7 +15,7 @@
 #    including directory path;
 # 3. "${2:?}" – the function to execute if the file or directory doesn't exist, 
 #    or the user chooses to replace it; and
-# 4. "$3" – an optional warning to be displayed if the file is to be replaced or 
+# 4. "$3" – an optional warning to be displayed if the file is to be replaced or
 #    recreated.
 #
 # Returns 1 with an error if an option is unknown or comes after the other

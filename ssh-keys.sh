@@ -32,8 +32,8 @@ addKeyToAuthorizedKeys () {
 }
 
 # ------------------------------------------------------------------------------
-# Checks to see if the "~/.ssh/authorized_keys" file exist and creates it if not.
-# Takes no arguments.
+# Checks to see if the "~/.ssh/authorized_keys" file exists and creates it if
+# not. Takes no arguments.
 # ------------------------------------------------------------------------------
 checkForAndCreateAuthorizedKeys () {
   printComment 'Checking to see if an "~/.ssh/authorized_keys" file exists…'

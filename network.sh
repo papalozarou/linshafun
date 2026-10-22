@@ -58,7 +58,7 @@ generatePortNumber () {
 }
 
 # ------------------------------------------------------------------------------
-# Gets the name of a given network interface, using "nmcli". Takes one mandatory 
+# Gets the name of a given network interface, using "nmcli". Takes one mandatory
 # argument:
 # 
 # 1. "${1:?}" – the interface id, e.g. eth0 or enp3s0.

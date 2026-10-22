@@ -66,7 +66,7 @@ checkIfSystemRebooted () {
 }
 
 # ------------------------------------------------------------------------------
-# Compares the current Linux distribution version against a given version. Takes 
+# Compares the current Linux distribution version against a given version. Takes
 # one mandatory argument:
 #
 # 1. "${1:?}" – the OS version number to compare to.
