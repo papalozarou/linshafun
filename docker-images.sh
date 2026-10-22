@@ -10,6 +10,8 @@
 # 1. "${1:-"$DKR_COMPOSE_FILE_PATH"}" – the compose file, including directory 
 #    path and defaulting to "$DKR_COMPOSE_FILE_PATH"; and
 # 2. "$@" – one or more images to be built.
+#
+# The shell stops the script if no images are passed, or if any are empty.
 # 
 # The function takes the first argument and stores it as the compose file. It 
 # then shifts the argument position by 1, and loops through each of the rest of
@@ -26,6 +28,12 @@ buildDockerImages () {
   local IMAGE
 
   shift
+
+  : "${1:?}"
+
+  for IMAGE in "$@"; do
+    : "${IMAGE:?}"
+  done
 
   for IMAGE in "$@"; do
     printComment "Building $IMAGE."
@@ -56,9 +64,17 @@ listDockerImages () {
 # Removes one or more images. Takes at least one or more arguments:
 # 
 # 1. "$@" – one or more images to be removed.
+#
+# The shell stops the script if no images are passed, or if any are empty.
 # ------------------------------------------------------------------------------
 removeDockerImages () {
   local IMAGE
+
+  : "${1:?}"
+
+  for IMAGE in "$@"; do
+    : "${IMAGE:?}"
+  done
 
   for IMAGE in "$@"; do
     printComment 'Removing the following docker image:'

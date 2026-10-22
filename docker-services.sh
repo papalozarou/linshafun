@@ -98,6 +98,9 @@ controlDockerStack () {
 # 2. "$@" – one or more stack directory paths, e.g.
 #    "/volume1/docker/stack-one".
 #
+# The shell stops the script if no stack directory paths are passed, or if any
+# are empty.
+#
 # Each stack's compose file is found with "getDockerComposeFilePath", then
 # the action is performed via "controlDockerStack".
 #
@@ -113,6 +116,12 @@ controlDockerStacks () {
 
   shift
 
+  : "${1:?}"
+
+  for STACK_DIR_PATH in "$@"; do
+    : "${STACK_DIR_PATH:?}"
+  done
+
   for STACK_DIR_PATH in "$@"; do
     controlDockerStack "$(getDockerComposeFilePath "$STACK_DIR_PATH")" "$ACTION" || STATUS=1
   done
@@ -126,6 +135,8 @@ controlDockerStacks () {
 # 1. "${1:?}" – the action to perform, such as "up", "stop", "rm" or "down"; and
 # 2. "$@" – one or more services to perform the action on.
 #
+# The shell stops the script if no services are passed, or if any are empty.
+#
 # N.B.
 # Returns 1 if the action failed for any service, so callers can stop if an
 # action failed. The remaining services are still acted on, so every failure is
@@ -137,6 +148,12 @@ controlRelatedDockerServices () {
   local SERVICE
 
   shift
+
+  : "${1:?}"
+
+  for SERVICE in "$@"; do
+    : "${SERVICE:?}"
+  done
 
   for SERVICE in "$@"; do
     if [ "$ACTION" = 'up' ]; then

@@ -287,6 +287,8 @@ createDirectory () {
 # Creates one or more files. Takes one or more arguments:
 # 
 # 1. "$@" – one or more files to be created, including directory paths.
+#
+# The shell stops the script if no files are passed, or if any are empty.
 # 
 # The function loops through each passed argument and creates the file. If a
 # file can't be created, the function prints an error, carries on with the
@@ -295,6 +297,12 @@ createDirectory () {
 createFiles () {
   local STATUS=0
   local FILE_PATH
+
+  : "${1:?}"
+
+  for FILE_PATH in "$@"; do
+    : "${FILE_PATH:?}"
+  done
 
   for FILE_PATH in "$@"; do
     printComment 'Creating file at:'
@@ -391,6 +399,9 @@ listDirectories () {
 #    and everything in them; and
 # 2. "$@" – one or more files or directories to be removed, including directory 
 #    paths.
+#
+# The shell stops the script if no files or directories are passed, or if any
+# are empty.
 # 
 # The function loops through each passed argument and removes the file or 
 # directory. If a file or directory can't be removed, the function prints an
@@ -419,6 +430,12 @@ removeFilesOrDirectories () {
 
   readOptions 'recursive=RECURSIVE_TF' "$@" || return 1
   shift "$OPTION_COUNT"
+
+  : "${1:?}"
+
+  for FILE_OR_DIR_PATH in "$@"; do
+    : "${FILE_OR_DIR_PATH:?}"
+  done
 
   if [ "$RECURSIVE_TF" = true ]; then
     RM_OPTION='-R'

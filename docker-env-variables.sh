@@ -71,6 +71,9 @@ changeDockerEnvVariable () {
 # 1. "${1:-"$DKR_ENV_FILE_PATH"}" – the environment file, including the
 #    directory path and defaulting to "$DKR_ENV_FILE_PATH"; and
 # 2. "$@" – one or more environment variables to set.
+#
+# The shell stops the script if no environment variables are passed, or if any
+# are empty.
 # 
 # The function takes the first argument and stores it as the environment 
 # variable file. It then shifts the argument position by 1, and loops through 
@@ -83,6 +86,12 @@ checkAndSetDockerEnvVariables () {
   local ENV_VAR
 
   shift
+
+  : "${1:?}"
+
+  for ENV_VAR in "$@"; do
+    : "${ENV_VAR:?}"
+  done
 
   for ENV_VAR in "$@"; do
     printComment "Checking to see if $ENV_VAR is set…"
@@ -124,6 +133,9 @@ checkIfDockerEnvVariableSet () {
 #    directory path and defaulting to "$DKR_ENV_FILE_PATH"; and
 # 2. "$@" – the name(s) of the environment variable(s).
 #
+# The shell stops the script if no environment variables are passed, or if any
+# are empty.
+#
 # The function takes the first argument and stores it as the environment 
 # variable file. It then shifts the argument position by 1, and loops through 
 # each of the rest of the arguments. Taken from:
@@ -154,6 +166,12 @@ compareAndUpdateDockerEnvVariables () {
   local ENV_COMPARISON
 
   shift
+
+  : "${1:?}"
+
+  for ENV_VAR in "$@"; do
+    : "${ENV_VAR:?}"
+  done
 
   for ENV_VAR in "$@"; do
     if ! checkIfValidVariableName "$ENV_VAR"; then

@@ -37,6 +37,9 @@ checkIfValidVariableName () {
 #
 # 1. "$@" – one or more variable names to verify.
 #
+# The shell stops the script if no variable names are passed, or if any are
+# empty.
+#
 # The function prints an error for variables that are unset or empty, then 
 # returns 1 if any were so the calling script can stop before changing anything,
 # e.g.:
@@ -56,6 +59,12 @@ verifyVariablesSet () {
   local VAR_NAME
   local VAR_VALUE
   local STATUS=0
+
+  : "${1:?}"
+
+  for VAR_NAME in "$@"; do
+    : "${VAR_NAME:?}"
+  done
 
   for VAR_NAME in "$@"; do
     if ! checkIfValidVariableName "$VAR_NAME"; then

@@ -32,6 +32,7 @@
 - `changeDockerEnvVariable` shows "(not set)" as the current value when the variable is blank, missing or names an unset host variable. Previously the script exited with status 2.
 - `checkAndSetDockerEnvVariables` prints "H_A is set." or the warning "H_A is not set." instead of "Check returned true." or "Check returned false.".
 - `checkAndSetDockerEnvVariables` and `compareAndUpdateDockerEnvVariables` no longer set `ENV_VAR` in the calling script.
+- `checkAndSetDockerEnvVariables` and `compareAndUpdateDockerEnvVariables` exit the script with "1: parameter not set or null" if no variables are passed, or "ENV_VAR: parameter not set or null" if any are empty, before doing anything. Previously, with no variables they returned 0 and did nothing. An empty name stopped `checkAndSetDockerEnvVariables` partway through, and made `compareAndUpdateDockerEnvVariables` print "is not a valid variable name." and return 1.
 - `checkIfDockerEnvVariableSet` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `compareAndUpdateDockerEnvVariables` prints the error "H-A is not a valid variable name." for an invalid name, skips it and carries on. It returns 1 if any name was invalid or any change failed. Previously the name was passed to `eval` unchecked, so `H-A` was compared against `A`, and it returned the status of whatever ran last.
 - `compareAndUpdateDockerEnvVariables` compares an empty comparison value with the file value. Previously the script exited with status 2.
@@ -47,6 +48,7 @@
 
 - `buildDockerImages` returns 1 if any image fails to build, after carrying on with the rest, and no longer prints "Assuming there are no errors above, the image was built.". `controlDockerService` reports each build's result. Previously it always returned 0.
 - `buildDockerImages` and `removeDockerImages` no longer set `IMAGE` in the calling script.
+- `buildDockerImages` and `removeDockerImages` exit the script with "1: parameter not set or null" if no images are passed, or "IMAGE: parameter not set or null" if any are empty, before doing anything. Previously, with no images they returned 0 and did nothing, and an empty image stopped the script after the images before it were built or removed.
 
 ### `docker-secrets.sh`
 
@@ -58,6 +60,7 @@
 
 ### `docker-services.sh`
 
+- `controlDockerStacks` and `controlRelatedDockerServices` exit the script with "1: parameter not set or null" if no stacks or services are passed, or "STACK_DIR_PATH: parameter not set or null" or "SERVICE: parameter not set or null" if any are empty, before doing anything. Previously, with none they returned 0 and did nothing. An empty stack path acted on the compose file in `$DKR_COMPOSE_FILE_PATH` instead and returned 0, and an empty service stopped the script after the services before it.
 - `controlRelatedDockerServices` no longer sets `SERVICE` in the calling script.
 
 ### `docker-volumes.sh`
@@ -66,6 +69,7 @@
 - `listDockerVolumeContents` no longer lists the prefix as a volume, e.g. `listDockerVolumeContents Stack vol1` lists only `stack_vol1`. Previously it also listed `stack_Stack`. Called with no arguments, it exits the script after the error "shift: can't shift that many", as `manageDockerVolumes` does.
 - `listDockerVolumeContents` prints the error "Failed to list the contents of stack_vol1." if `docker run` fails for a volume, carries on with the rest, and returns 1. Previously it returned 0.
 - `listDockerVolumeContents` and `manageDockerVolumes` exit the script with "parameter not set or null" if the prefix is empty or missing. Previously they printed the error, carried on with an empty prefix, e.g. removed `_vol1`, and returned 0.
+- `listDockerVolumeContents` and `manageDockerVolumes` exit the script with "1: parameter not set or null" if no volumes are passed, or "VOLUME_NAME: parameter not set or null" if any are empty, before doing anything. Previously, with no volumes they returned 0 and did nothing, and an empty volume acted on the prefix alone, e.g. created `stack_`, and returned 0.
 - `manageDockerVolumes` passes the action unchanged for every volume. Previously it changed the action to sentence case after the first volume, so the rest ran `docker volume Rm …` without `-f` and failed. It no longer prints the debug line "rm and proj_".
 - `manageDockerVolumes` prints the error "Rm failed on proj_vol1." if `docker volume` fails for a volume, carries on with the rest, and returns 1. Previously it printed "Rm performed on proj_vol1." and returned 0.
 
@@ -78,9 +82,11 @@
 - `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createDirectories`, `createFiles`, `listDirectories` and `removeFilesOrDirectories` no longer set `DIR_PATH`, `FILE_OR_DIR_PATH`, `FILE_PATH`, `PARENT_DIR`, `SUB_DIR_NAME` or `SUB_DIR_PATH` in the calling script.
 - `createDirectories` creates each directory path before its subdirectories.
 - `createDirectory` takes optional permissions, owner and group as its second to fourth arguments, and sets them on the new directory only. If the directory exists, it returns 0 and prints nothing. It no longer creates missing parent directories: it returns 1 with an error if the parent doesn't exist, or if `mkdir`, `chmod` or `chown` fails. Previously it ran `mkdir -p`.
+- `createFiles` exits the script with "1: parameter not set or null" if no files are passed, or "FILE_PATH: parameter not set or null" if any are empty, before doing anything. Previously, with no files it returned 0 and did nothing, and an empty path stopped the script after the files before it were created.
 - `removeFileOrDirectory` is renamed to `removeFilesOrDirectories`, as it takes one or more paths.
 - `removeFilesOrDirectories` removes files only, unless `--recursive` is passed first, e.g. `removeFilesOrDirectories --recursive "$DIR_PATH"`. Without it, a directory is left in place, the function prints an error and returns 1. Previously it always ran `rm -R`, so any directory was removed with its contents. Callers that remove directories must add `--recursive`.
 - `removeFilesOrDirectories` returns 1 with an error, without removing anything, for an unknown option, e.g. `-R`, or an option after the paths. Previously a late `--recursive` was passed to `rm` as a path.
+- `removeFilesOrDirectories` exits the script with "1: parameter not set or null" if no paths are passed, with or without `--recursive`, or "FILE_OR_DIR_PATH: parameter not set or null" if any are empty, before removing anything. Previously, with no paths it returned 0 and did nothing, and an empty path stopped the script after the paths before it were removed.
 - `renameFileOrDirectory` prints an error if `mv` fails. It still returns 1.
 - `renameFileOrDirectory` takes the current and new full paths, like `mv`. Previously it took a directory, defaulting to ".", then the current and new names.
 
@@ -136,6 +142,7 @@
 - `checkForPackage` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
 - `checkForPackagesAndInstall` and `checkForPackagesAndRemove` no longer print "Check returned true." or "Check returned false." after "Checking to see if … is installed…".
 - `checkForPackagesAndInstall` and `checkForPackagesAndRemove` list every package passed. Previously only the first was listed.
+- `checkForPackagesAndInstall`, `checkForPackagesAndRemove` and `managePackages` exit the script with "1: parameter not set or null" if no packages are passed, or "PACKAGE: parameter not set or null" if any are empty, before doing anything. Previously, with no packages the first two printed "Starting installation of the following packages:" (or removal) and then exited the script, and `managePackages` returned 0 and did nothing. An empty package stopped the first two partway through, and `managePackages` ran `apt install "" -y`.
 - `checkForPackagesAndInstall`, `checkForPackagesAndRemove` and `managePackages` no longer set `PACKAGE` or `i` in the calling script.
 - `installRemovePackages` is renamed to `managePackages`, to match `manageDockerVolumes`.
 - `managePackages` returns 1 with the error "Unknown action "update". Use "install" or "remove"." if the first argument isn't "install" or "remove". Previously it printed "Exiting script with no changes." and exited the script.
@@ -200,3 +207,4 @@
 ### `variables.sh`
 
 - `checkIfValidVariableName` returns 0 or 1 and prints nothing. Previously it printed `true` or `false`.
+- `verifyVariablesSet` exits the script with "1: parameter not set or null" if no names are passed, or "VAR_NAME: parameter not set or null" if any are empty, before checking anything. Previously, with no names it returned 0, and an empty name printed "is not a valid variable name." and returned 1.

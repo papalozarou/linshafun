@@ -36,9 +36,17 @@ checkForPackage () {
 # installed. Takes one or more mandatory arguments:
 # 
 # 1. "$@" – the package or packages to be installed.
+#
+# The shell stops the script if no packages are passed, or if any are empty.
 # ------------------------------------------------------------------------------
 checkForPackagesAndInstall () {
   local PACKAGE
+
+  : "${1:?}"
+
+  for PACKAGE in "$@"; do
+    : "${PACKAGE:?}"
+  done
 
   printComment 'Starting installation of the following packages:'
   printComment -- "$*"
@@ -60,9 +68,17 @@ checkForPackagesAndInstall () {
 # removed. Takes one or more mandatory arguments:
 # 
 # 1. "$@" – the package or packages to be removed.
+#
+# The shell stops the script if no packages are passed, or if any are empty.
 # ------------------------------------------------------------------------------
 checkForPackagesAndRemove () {
   local PACKAGE
+
+  : "${1:?}"
+
+  for PACKAGE in "$@"; do
+    : "${PACKAGE:?}"
+  done
 
   printComment 'Starting removal of the following packages:'
   printComment -- "$*"
@@ -84,6 +100,8 @@ checkForPackagesAndRemove () {
 # 
 # 1. "${1:?}" – the action to be taken, either "install" or "remove"
 # 2. "$@" – one or more packages to install or remove.
+#
+# The shell stops the script if no packages are passed, or if any are empty.
 # 
 # The function tests to see if the an accepted value has been passed as the
 # first argument then stores it as the action to be taken. It then shifts the 
@@ -110,6 +128,12 @@ managePackages () {
   fi
 
   shift
+
+  : "${1:?}"
+
+  for PACKAGE in "$@"; do
+    : "${PACKAGE:?}"
+  done
 
   for PACKAGE; do
     printComment "Performing $ACTION for $PACKAGE."

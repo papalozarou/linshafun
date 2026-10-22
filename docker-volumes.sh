@@ -10,6 +10,8 @@
 # 1. "${1:?}" – the volume prefix, usually the compose "name" attribute; and
 # 2. "$@" – one or more volumes to be listed, excluding prefix.
 #
+# The shell stops the script if no volumes are passed, or if any are empty.
+#
 # N.B.
 # The prefix is converted to lower case and an underscore is added to the end to
 # enable "$PREFIX$VOLUME" to produce "prefix_volume".
@@ -25,6 +27,13 @@ listDockerVolumeContents () {
   local VOLUME
   
   shift
+
+  : "${1:?}"
+
+  for VOLUME_NAME in "$@"; do
+    : "${VOLUME_NAME:?}"
+  done
+
   PREFIX="$(changeCase "$PREFIX" 'lower')_"
 
   for VOLUME_NAME in "$@"; do
@@ -54,6 +63,8 @@ listDockerVolumeContents () {
 # 2. "${2:?}" – the prefix for the volumes; and
 # 3. "$@" – one or more volumes, excluding prefix.
 #
+# The shell stops the script if no volumes are passed, or if any are empty.
+#
 # N.B.
 # The prefix is converted to lower case and an underscore is added to the end to
 # enable "$PREFIX$VOLUME" to produce "prefix_volume".
@@ -75,6 +86,13 @@ manageDockerVolumes () {
   local VOLUME
 
   shift 2
+
+  : "${1:?}"
+
+  for VOLUME_NAME in "$@"; do
+    : "${VOLUME_NAME:?}"
+  done
+
   PREFIX="$(changeCase "$PREFIX" 'lower')_"
 
   for VOLUME_NAME in "$@"; do
