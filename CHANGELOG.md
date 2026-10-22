@@ -65,6 +65,7 @@
 - `listDockerVolumeContents` and `manageDockerVolumes` no longer set `VOLUME` in the calling script.
 - `listDockerVolumeContents` no longer lists the prefix as a volume, e.g. `listDockerVolumeContents Stack vol1` lists only `stack_vol1`. Previously it also listed `stack_Stack`. Called with no arguments, it exits the script after the error "shift: can't shift that many", as `manageDockerVolumes` does.
 - `listDockerVolumeContents` prints the error "Failed to list the contents of stack_vol1." if `docker run` fails for a volume, carries on with the rest, and returns 1. Previously it returned 0.
+- `listDockerVolumeContents` and `manageDockerVolumes` exit the script with "parameter not set or null" if the prefix is empty or missing. Previously they printed the error, carried on with an empty prefix, e.g. removed `_vol1`, and returned 0.
 - `manageDockerVolumes` passes the action unchanged for every volume. Previously it changed the action to sentence case after the first volume, so the rest ran `docker volume Rm …` without `-f` and failed. It no longer prints the debug line "rm and proj_".
 - `manageDockerVolumes` prints the error "Rm failed on proj_vol1." if `docker volume` fails for a volume, carries on with the rest, and returns 1. Previously it printed "Rm performed on proj_vol1." and returned 0.
 
@@ -97,6 +98,7 @@
 ### `host-information.sh`
 
 - `checkIfRaspberryPi`, `checkIfRunAsUser`, `checkIfRunWithSudo`, `checkIfSystemRebooted` and `compareOsVersion` return 0 for true and non-zero for false, and print nothing. `checkIfRaspberryPi` returns 2 when `/proc/device-tree/model` doesn't exist and `checkIfSystemRebooted` returns 2 when the timeframe isn't a number; otherwise they return 0 or 1. Previously they printed `true` or `false`, so callers must use `if checkIfRaspberryPi; then` instead of comparing `"$(checkIfRaspberryPi)"`.
+- `compareOsVersion` exits the script with "1: parameter not set or null" if the version is empty or missing. Previously it printed the error and "Illegal number", and returned 0.
 - `getKernalVersion` is renamed to `getKernelVersion`.
 
 ### `host-initialisation.sh`

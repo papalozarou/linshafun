@@ -18,13 +18,14 @@
 # with the remaining volumes, and returns 1.
 # ------------------------------------------------------------------------------
 listDockerVolumeContents () {
-  local PREFIX="$(changeCase "${1:?}" 'lower')_"
+  local PREFIX="${1:?}"
   local VOLUME_STATUS=0
   local STATUS=0
   local VOLUME_NAME
   local VOLUME
   
   shift
+  PREFIX="$(changeCase "$PREFIX" 'lower')_"
 
   for VOLUME_NAME in "$@"; do
     VOLUME="$PREFIX$VOLUME_NAME"
@@ -66,7 +67,7 @@ listDockerVolumeContents () {
 # ------------------------------------------------------------------------------
 manageDockerVolumes () {
   local ACTION="${1:?}"
-  local PREFIX="$(changeCase "${2:?}" 'lower')_"
+  local PREFIX="${2:?}"
   local ACTION_SENTENCE="$(changeCase "$ACTION" 'sentence')"
   local VOLUME_STATUS=0
   local STATUS=0
@@ -74,6 +75,7 @@ manageDockerVolumes () {
   local VOLUME
 
   shift 2
+  PREFIX="$(changeCase "$PREFIX" 'lower')_"
 
   for VOLUME_NAME in "$@"; do
     VOLUME="$PREFIX$VOLUME_NAME"

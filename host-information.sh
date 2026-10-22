@@ -85,8 +85,10 @@ checkIfSystemRebooted () {
 # any failure into 0.
 # ------------------------------------------------------------------------------
 compareOsVersion () {
-  local COMPARISON_OS="$(echo "${1:?}" | cut -d'.' -f1)"
+  local COMPARISON_OS="${1:?}"
   local CURRENT_OS="$(getOsVersion | cut -d'.' -f1)"
+
+  COMPARISON_OS="$(echo "$COMPARISON_OS" | cut -d'.' -f1)"
 
   ! [ "$CURRENT_OS" -gt "$COMPARISON_OS" ]
 }
