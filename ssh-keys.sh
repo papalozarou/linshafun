@@ -97,7 +97,7 @@ confirmPublicSshKeyCopied () {
 }
 
 # ------------------------------------------------------------------------------
-# Generates an ssh key. Takes two arguments:
+# Generates an ssh key. Takes two arguments, one of which is mandatory:
 #
 # 1. "${1:?}" – the key file, including directory path; and
 # 2. "$2" – an optional email address for the key.

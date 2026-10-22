@@ -5,7 +5,8 @@
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# Adds a host to "~/.ssh/config". Takes four arguments:
+# Adds a host to "~/.ssh/config". Takes four arguments, one of which is
+# mandatory:
 # 
 # 1. "${1:?}" – the name of the host;
 # 2. "$2" – the address of the host, either an IP address or a hostname;

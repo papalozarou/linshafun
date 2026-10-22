@@ -65,8 +65,8 @@ changeDockerEnvVariable () {
 }
 
 # ------------------------------------------------------------------------------
-# Checks for and sets multiple docker environment variables. Takes at least two 
-# arguments:
+# Checks for and sets multiple docker environment variables. Takes two or more 
+# arguments, one of which is mandatory:
 # 
 # 1. "${1:-"$DKR_ENV_FILE_PATH"}" – the environment file, including the
 #    directory path and defaulting to "$DKR_ENV_FILE_PATH"; and
@@ -127,7 +127,8 @@ checkIfDockerEnvVariableSet () {
 
 # ------------------------------------------------------------------------------
 # Compares an environment file value with a given value and updates the 
-# environment value if requested. Takes two or more arguments:
+# environment value if requested. Takes two or more arguments, one of which is
+# mandatory:
 # 
 # 1. "${1:-"$DKR_ENV_FILE_PATH"}" – the environment file, including the
 #    directory path and defaulting to "$DKR_ENV_FILE_PATH"; and

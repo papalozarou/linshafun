@@ -33,7 +33,7 @@ checkIfValidVariableName () {
 }
 
 # ------------------------------------------------------------------------------
-# Verifies variables are set. Takes one or more arguments:
+# Verifies variables are set. Takes one or more mandatory arguments:
 #
 # 1. "$@" – one or more variable names to verify.
 #

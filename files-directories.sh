@@ -170,7 +170,7 @@ copyAndRemovePostfixFromFiles () {
 
 # ------------------------------------------------------------------------------
 # Creates directories and subdirectories, using "createDirectory". Takes two 
-# arguments:
+# arguments, one of which is mandatory:
 # 
 # 1. "${1:?}" – a mandatory single directory path, or multiple directory paths 
 #    separated by spaces; and
@@ -284,7 +284,7 @@ createDirectory () {
 }
 
 # ------------------------------------------------------------------------------
-# Creates one or more files. Takes one or more arguments:
+# Creates one or more files. Takes one or more mandatory arguments:
 # 
 # 1. "$@" – one or more files to be created, including directory paths.
 #
@@ -393,7 +393,8 @@ listDirectories () {
 }
 
 # ------------------------------------------------------------------------------
-# Removes files or directories. Takes one or more arguments:
+# Removes files or directories. Takes two or more arguments, one of which is
+# mandatory:
 # 
 # 1. "--recursive" – an optional flag, passed first, to also remove directories
 #    and everything in them; and

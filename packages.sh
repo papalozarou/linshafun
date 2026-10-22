@@ -96,7 +96,7 @@ checkForPackagesAndRemove () {
 }
 
 # ------------------------------------------------------------------------------
-# Installs or removes a given package. Takes at least two or more arguments:
+# Installs or removes a given package. Takes two or more mandatory arguments:
 # 
 # 1. "${1:?}" – the action to be taken, either "install" or "remove"
 # 2. "$@" – one or more packages to install or remove.

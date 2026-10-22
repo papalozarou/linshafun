@@ -5,7 +5,7 @@
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# Lists the contents of docker volumes. Takes two or more arguments:
+# Lists the contents of docker volumes. Takes two or more mandatory arguments:
 # 
 # 1. "${1:?}" – the volume prefix, usually the compose "name" attribute; and
 # 2. "$@" – one or more volumes to be listed, excluding prefix.
@@ -57,7 +57,7 @@ listDockerVolumeContents () {
 }
 
 # ------------------------------------------------------------------------------
-# Manages docker volumes. Takes at least three mandatory arguments:
+# Manages docker volumes. Takes three or more mandatory arguments:
 #
 # 1. "${1:?}" – the action to perform; 
 # 2. "${2:?}" – the prefix for the volumes; and

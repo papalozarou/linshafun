@@ -5,7 +5,8 @@
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# Creates one or more images. Takes at least two or more arguments:
+# Creates one or more images. Takes two or more arguments, one of which is
+# mandatory:
 # 
 # 1. "${1:-"$DKR_COMPOSE_FILE_PATH"}" – the compose file, including directory 
 #    path and defaulting to "$DKR_COMPOSE_FILE_PATH"; and
@@ -61,7 +62,7 @@ listDockerImages () {
 }
 
 # ------------------------------------------------------------------------------
-# Removes one or more images. Takes at least one or more arguments:
+# Removes one or more images. Takes one or more mandatory arguments:
 # 
 # 1. "$@" – one or more images to be removed.
 #

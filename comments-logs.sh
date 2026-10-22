@@ -175,7 +175,7 @@ printComment () {
 
 # ------------------------------------------------------------------------------
 # Prints a comment line with the specified prefix and colour. Takes two
-# arguments:
+# arguments, one of which is mandatory:
 # 
 # 1. "${1:?}" – the comment line to print; and
 # 2. "${2:-regular}" – a flag indicating if the comment is "regular", a 
@@ -213,7 +213,7 @@ printLine () {
 
 # ------------------------------------------------------------------------------
 # Logs a comment line using the same prefixes as terminal output. Takes two
-# arguments:
+# arguments, one of which is mandatory:
 #
 # 1. "${1:?}" – the comment line to log; and
 # 2. "${2:-regular}" – a flag indicating if the comment is "regular", a
@@ -247,7 +247,7 @@ printLogLine () {
 }
 
 # ------------------------------------------------------------------------------
-# Tells the user that the script is exiting. Takes one optional argument:
+# Tells the user that the script is exiting. Takes one argument:
 #
 # 1. "--changes" – an optional flag to print the "changes were made" warning,
 #    instead of "Exiting script with no changes.".

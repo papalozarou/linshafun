@@ -91,8 +91,8 @@ controlDockerStack () {
 }
 
 # ------------------------------------------------------------------------------
-# Controls every service in multiple docker compose stacks. Takes at least two
-# arguments:
+# Controls every service in multiple docker compose stacks. Takes two or more
+# mandatory arguments:
 #
 # 1. "${1:?}" – the action to perform, such as "up", "stop" or "pull"; and
 # 2. "$@" – one or more stack directory paths, e.g.
@@ -130,7 +130,8 @@ controlDockerStacks () {
 }
 
 # ------------------------------------------------------------------------------
-# Controls multiple related docker services. Takes at least two arguments:
+# Controls multiple related docker services. Takes two or more mandatory
+# arguments:
 #
 # 1. "${1:?}" – the action to perform, such as "up", "stop", "rm" or "down"; and
 # 2. "$@" – one or more services to perform the action on.

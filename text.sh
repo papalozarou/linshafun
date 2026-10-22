@@ -114,7 +114,7 @@ checkStringContainsSubstring () {
 }
 
 # ------------------------------------------------------------------------------
-# Uncomments lines in files. Takes three arguments:
+# Uncomments lines in files. Takes three arguments, two of which are mandatory:
 # 
 # 1. "${1:?}" – the file containing the line to uncomment, including directory 
 #    path;
@@ -166,7 +166,8 @@ commentInLine () {
 }
 
 # ------------------------------------------------------------------------------
-# Comments out lines in files. Takes three arguments:
+# Comments out lines in files. Takes three arguments, two of which are
+# mandatory:
 # 
 # 1. "${1:?}" – the file containing the line to comment out, including directory
 #    path;

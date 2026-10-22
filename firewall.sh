@@ -5,7 +5,7 @@
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# Adds a port to ufw. Takes three arguments:
+# Adds a port to ufw. Takes three arguments, two of which are mandatory:
 #
 # 1. "${1:?}" – a mandatory action, either "allow", "deny" or "limit";
 # 2. "${2:?}" – a mandatory port number; and

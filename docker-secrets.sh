@@ -38,7 +38,8 @@ createDockerSecretFile () {
 }
 
 # ------------------------------------------------------------------------------
-# Creates a docker secret by asking for user input. Takes two arguments: 
+# Creates a docker secret by asking for user input. Takes two arguments, one of
+# which is mandatory: 
 # 
 # 1. "${1:?}" – the secret file, including directory path; and
 # 2. "$2" – an optional warning to be displayed.

@@ -37,7 +37,8 @@ getUserInputYN () {
 }
 
 # ------------------------------------------------------------------------------
-# Prompts for user input for consistency. Takes two arguments:
+# Prompts for user input for consistency. Takes two arguments, one of which is
+# mandatory:
 # 
 # 1. "${1:?}" – the question to ask the user; and
 # 2. "$2" – an optional warning message.
