@@ -10,24 +10,36 @@ Variables _try_ to be as explicit and consistent as possible, for example:
 Functions _try_ to use `verbValue` or `verbObject` as naming conventions, for example:
 
 * `addFooBar` – adds a value to an existing object;
+* `buildFooBar` – builds an object from its definition, e.g. Docker images from a compose file;
 * `changeFooBar` – changes an already set value;
 * `checkFooBar` – checks if a value or object exists;
 * `commentFooBar` – comments a line in or out of a file;
 * `compareFooBar` – compares a value with another value;
+* `confirmFooBar` – asks the user to confirm they have done something;
 * `controlFooBar` – performs an action on a service, e.g. start, stop or restart;
 * `copyFooBar` – copies an object;
 * `createFooBar` – creates an object;
 * `disableFooBar` – disables a feature in a config file;
+* `enableFooBar` – enables a feature in a config file;
+* `finaliseFooBar` – finishes a script or feature after it runs;
 * `generateFooBar` – generates a value or object automatically;
 * `getFooBar` – asks the user for input to set a value, or gets a substring from an existing value or object;
 * `initialiseFooBar` – sets up a script or feature before it runs;
 * `listFooBar` – lists objects, or the contents of an object;
+* `manageFooBar` – performs a given action on one or more objects, e.g. install or remove;
 * `printFooBar` – prints output to the terminal;
-* `readFooBar` – reads an already set value;
+* `promptFooBar` – prints a question for the user to answer;
+* `readFooBar` – reads an already set value, or the options passed to a function;
+* `rebootFooBar` – reboots the system;
+* `reloadFooBar` – loads an object again after it has changed, e.g. a variable file;
 * `removeFooBar` – removes a value or object;
+* `renameFooBar` – renames an object;
 * `replaceFooBar` – replaces a value with another value;
-* `setFooBar` – sets a value; and
-* `updateFooBar` – updates installed software or firmware.
+* `rotateFooBar` – archives an object and starts a new one, e.g. a log;
+* `setFooBar` – sets a value;
+* `updateFooBar` – updates installed software or firmware;
+* `verifyFooBar` – checks that values are set, printing an error for each one that isn't; and
+* `writeFooBar` – writes a value to a file.
 
 To make this setup as portable as possible all scripts are POSIX compliant, i.e. they use `#!/bin/sh` not `#!/bin/bash`, with some cheeky liberties taken for readability – usually using `local` variable declarations within functions for readability.
 
