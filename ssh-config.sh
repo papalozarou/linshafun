@@ -31,12 +31,12 @@ addHostToSshConfig () {
   printComment -- "$SSH_CONF_PATH"
 
   {
-    echo "Host $HOST"
-    [ -n "$HOST_ADDRESS" ] && echo "  Hostname $HOST_ADDRESS"
-    [ -n "$PORT" ] && echo "  Port $PORT"
-    [ -n "$HOST_USER" ] && echo "  User $HOST_USER"
-    [ -n "$IDENTITY_FILE_NAME" ] && echo "  IdentityFile ~/.ssh/$IDENTITY_FILE_NAME"
-    echo
+    printf '%s\n' "Host $HOST"
+    [ -n "$HOST_ADDRESS" ] && printf '%s\n' "  Hostname $HOST_ADDRESS"
+    [ -n "$PORT" ] && printf '%s\n' "  Port $PORT"
+    [ -n "$HOST_USER" ] && printf '%s\n' "  User $HOST_USER"
+    [ -n "$IDENTITY_FILE_NAME" ] && printf '%s\n' "  IdentityFile ~/.ssh/$IDENTITY_FILE_NAME"
+    printf '\n'
   } >> "$SSH_CONF_PATH"
 
   setPermissions 600 "$SSH_CONF_PATH"

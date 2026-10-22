@@ -493,7 +493,7 @@ rotateCommentLog () {
       ''|*[!0-9\ :-]*) LOG_TIMESTAMP="$CURRENT_TIMESTAMP-untimestamped" ;;
     esac
 
-    renameFileOrDirectory "$LOG_FILE_PATH" "$LOG_FILE_PATH.$(echo "$LOG_TIMESTAMP" | tr ' :' '--')"
+    renameFileOrDirectory "$LOG_FILE_PATH" "$LOG_FILE_PATH.$(printf '%s\n' "$LOG_TIMESTAMP" | tr ' :' '--')"
   fi
 
   removeArchivedCommentLogs "$LOG_FILE_PATH" "$LOG_MAX_AGE_DAYS"

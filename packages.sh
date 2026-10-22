@@ -163,7 +163,7 @@ managePackages () {
 updateAndUpgradePackages () {
   local PKGCACHE_PATH='/var/cache/apt/pkgcache.bin'
   local CURRENT_TIME="$(date +%s)"
-  local LAST_UPDATE="$(stat -c %Y "$PKGCACHE_PATH" 2>/dev/null || echo 0)"
+  local LAST_UPDATE="$(stat -c %Y "$PKGCACHE_PATH" 2>/dev/null || printf '0\n')"
   local TIME_DIFF=$((CURRENT_TIME - LAST_UPDATE))
   local STATUS=0
 

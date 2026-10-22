@@ -123,11 +123,11 @@ getPiBootFilePath () {
   local FILE_ALT_PATH="/boot/$FILE_NAME"
 
   if checkForFileOrDirectory "$FILE_PATH"; then
-    echo "$FILE_PATH"
+    printf '%s\n' "$FILE_PATH"
   elif checkForFileOrDirectory "$FILE_ALT_PATH"; then
-    echo "$FILE_ALT_PATH"
+    printf '%s\n' "$FILE_ALT_PATH"
   else
-    echo ""
+    printf '\n'
   fi
 }
 

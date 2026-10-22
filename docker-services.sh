@@ -197,5 +197,5 @@ getDockerComposeFilePath () {
     COMPOSE_FILE_PATH="$STACK_DIR_PATH/docker-compose.yml"
   fi
 
-  echo "$COMPOSE_FILE_PATH"
+  printf '%s\n' "$COMPOSE_FILE_PATH"
 }

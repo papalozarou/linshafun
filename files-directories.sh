@@ -344,7 +344,7 @@ getListOfFilesByPrefix () {
 
   local FILE_PATHS="$(find "$DIR_PATH" -name "$PREFIX*")"
 
-  echo "$FILE_PATHS"
+  printf '%s\n' "$FILE_PATHS"
 }
 
 # ------------------------------------------------------------------------------
@@ -368,7 +368,7 @@ getListOfFilesByPostfix () {
 
   local FILE_PATHS="$(find "$DIR_PATH" -name "*$POSTFIX")"
 
-  echo "$FILE_PATHS"
+  printf '%s\n' "$FILE_PATHS"
 }
 
 # ------------------------------------------------------------------------------

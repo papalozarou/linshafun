@@ -56,7 +56,7 @@ addScriptToCron () {
     CRON_LINE="$CRON_LINE >> $USER_LOG_DIR_PATH/$SNIPPET_NAME.log 2>&1"
   fi
 
-  if ! echo "$CRON_LINE" > "$SNIPPET_PATH"; then
+  if ! printf '%s\n' "$CRON_LINE" > "$SNIPPET_PATH"; then
     printComment --error 'An error occurred when creating the snippet.'
 
     return 1

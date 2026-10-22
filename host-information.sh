@@ -88,7 +88,7 @@ compareOsVersion () {
   local COMPARISON_OS="${1:?}"
   local CURRENT_OS="$(getOsVersion | cut -d'.' -f1)"
 
-  COMPARISON_OS="$(echo "$COMPARISON_OS" | cut -d'.' -f1)"
+  COMPARISON_OS="$(printf '%s\n' "$COMPARISON_OS" | cut -d'.' -f1)"
 
   ! [ "$CURRENT_OS" -gt "$COMPARISON_OS" ]
 }
@@ -99,7 +99,7 @@ compareOsVersion () {
 getHostArchitecture () {
   local HOST_ARCHITECTURE="$(dpkg --print-architecture)"
 
-  echo "$HOST_ARCHITECTURE"
+  printf '%s\n' "$HOST_ARCHITECTURE"
 }
 
 # ------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ getHostArchitecture () {
 getKernelVersion () {
   local KERNEL_VERSION="$(uname -r)"
 
-  echo "$KERNEL_VERSION"
+  printf '%s\n' "$KERNEL_VERSION"
 }
 
 # ------------------------------------------------------------------------------
@@ -117,9 +117,9 @@ getKernelVersion () {
 # bookworm, focal or jammy. Takes no arguments.
 # ------------------------------------------------------------------------------
 getOsCodename () {
-  local OS_CODENAME="$(. /etc/os-release && echo "$VERSION_CODENAME")"
+  local OS_CODENAME="$(. /etc/os-release && printf '%s\n' "$VERSION_CODENAME")"
 
-  echo "$OS_CODENAME"
+  printf '%s\n' "$OS_CODENAME"
 }
 
 # ------------------------------------------------------------------------------
@@ -127,9 +127,9 @@ getOsCodename () {
 # debian. Takes no arguments.
 # ------------------------------------------------------------------------------
 getOsDistribution () {
-  local OS_DISTRIBUTION="$(. /etc/os-release && echo "$ID")"
+  local OS_DISTRIBUTION="$(. /etc/os-release && printf '%s\n' "$ID")"
 
-  echo "$OS_DISTRIBUTION"
+  printf '%s\n' "$OS_DISTRIBUTION"
 }
 
 # ------------------------------------------------------------------------------
@@ -137,9 +137,9 @@ getOsDistribution () {
 # no arguments.
 # ------------------------------------------------------------------------------
 getOsVersion () {
-  local OS_VERSION="$(. /etc/os-release && echo "$VERSION_ID")"
+  local OS_VERSION="$(. /etc/os-release && printf '%s\n' "$VERSION_ID")"
 
-  echo "$OS_VERSION"
+  printf '%s\n' "$OS_VERSION"
 }
 
 # ------------------------------------------------------------------------------
@@ -160,6 +160,6 @@ getRaspberryPiModel () {
   if checkIfRaspberryPi; then
     MODEL="$(tr -d '\0' < "$MODEL_FILE_PATH" | grep -oi 'raspberry pi [0-9]' | cut -d' ' -f3)"
 
-    echo "$MODEL"
+    printf '%s\n' "$MODEL"
   fi
 }

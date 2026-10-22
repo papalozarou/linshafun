@@ -115,7 +115,7 @@ getServiceFromConfigKey () {
   if [ -z "${CONF_KEY##configured*}" ]; then
     SERVICE="$(changeCase "${CONF_KEY#'configured'}" 'lower')"
 
-    echo "$SERVICE"
+    printf '%s\n' "$SERVICE"
   fi
 }
 
@@ -147,7 +147,7 @@ readSetupConfigValue () {
   local CONF_KEY="${1:?}"
   local CONF_OPTION="$(grep "^$CONF_KEY " "$SETUP_CONF_PATH" | head -n 1)"
 
-  echo "${CONF_OPTION#"$CONF_KEY "}"
+  printf '%s\n' "${CONF_OPTION#"$CONF_KEY "}"
 }
 
 # ------------------------------------------------------------------------------
@@ -306,7 +306,7 @@ writeSetupConfigOption () {
 
     sed -i "\\${SEPARATOR}^${CONF_KEY} ${SEPARATOR}c\\${CONF_KEY} ${ESCAPED_VALUE}" "$SETUP_CONF_PATH" || STATUS=1
   else
-    echo "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF_PATH" || STATUS=1
+    printf '%s\n' "$CONF_KEY $CONF_VALUE" >> "$SETUP_CONF_PATH" || STATUS=1
   fi
 
   if [ "$STATUS" -ne 0 ]; then

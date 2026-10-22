@@ -16,7 +16,7 @@ addPrefix () {
 
   STRING="$PREFIX$STRING"
 
-  echo "$STRING"
+  printf '%s\n' "$STRING"
 }
 
 # ------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ addPostfix () {
 
   STRING="$STRING$POSTFIX"
 
-  echo "$STRING"
+  printf '%s\n' "$STRING"
 }
 
 # ------------------------------------------------------------------------------
@@ -59,14 +59,14 @@ changeCase () {
   local CASE="${2:?}"
 
   if [ "$CASE" = 'upper' ]; then
-    STRING="$(echo "$STRING" | tr '[:lower:]' '[:upper:]')"
+    STRING="$(printf '%s\n' "$STRING" | tr '[:lower:]' '[:upper:]')"
   elif [ "$CASE" = 'lower' ]; then
-    STRING="$(echo "$STRING" | tr '[:upper:]' '[:lower:]')"
+    STRING="$(printf '%s\n' "$STRING" | tr '[:upper:]' '[:lower:]')"
   elif [ "$CASE" = 'sentence' ]; then
-    STRING="$(echo "$STRING" | awk '{ print toupper(substr($0, 1, 1)) substr($0, 2) }')"
+    STRING="$(printf '%s\n' "$STRING" | awk '{ print toupper(substr($0, 1, 1)) substr($0, 2) }')"
   fi
 
-  echo "$STRING"
+  printf '%s\n' "$STRING"
 }
 
 # ------------------------------------------------------------------------------
@@ -227,7 +227,7 @@ generateRandomString () {
   local LENGTH="${1:-"64"}"
   local STRING="$(tr -cd '[:alnum:]' < /dev/urandom | fold -w "${LENGTH}" | head -n 1 | tr -d '\n')"
 
-  echo "$STRING"
+  printf '%s\n' "$STRING"
 }
 
 # ------------------------------------------------------------------------------
@@ -242,7 +242,7 @@ getFirstCharsFromFirstLine () {
   local CHAR_COUNT="${2:?}"
   local FIRST_CHARS="$(head -n 1 "$FILE_PATH" | cut -c "1-$CHAR_COUNT")"
 
-  echo "$FIRST_CHARS"
+  printf '%s\n' "$FIRST_CHARS"
 }
 
 # ------------------------------------------------------------------------------
@@ -261,7 +261,7 @@ removePrefix () {
 
   STRING="${STRING#"$PREFIX"}"
 
-  echo "$STRING"
+  printf '%s\n' "$STRING"
 }
 
 # ------------------------------------------------------------------------------
@@ -284,5 +284,5 @@ removePostfix () {
 
   STRING="${STRING%"$POSTFIX"}"
 
-  echo "$STRING"
+  printf '%s\n' "$STRING"
 }

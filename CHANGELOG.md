@@ -23,6 +23,7 @@
 - `addScriptToCron` no longer prints "Check returned true." or "Check returned false." after "Checking to see if …".
 - `addScriptToCron` returns 1 with an error if the snippet can't be written, instead of exiting the script, and no longer prints "Checking to see if the snippet was created…". Previously it checked that the snippet file existed, so a failed write over an existing snippet reported success.
 - `addScriptToCron` takes `--no-log` before the other arguments, in place of `false` as the fifth argument.
+- `addScriptToCron` writes `\` in the command or script path as given. Previously dash's `echo` changed sequences such as `\n` into the characters they stand for.
 - `checkForAndCreateUserLogDir` is removed. Use `createDirectory "$USER_LOG_DIR_PATH" '700' "$SUDO_USER"`.
 
 ### `docker-env-variables.sh`
@@ -38,6 +39,7 @@
 - `compareAndUpdateDockerEnvVariables` compares an empty comparison value with the file value. Previously the script exited with status 2.
 - `compareDockerEnvVariableWithValue` is removed. `compareAndUpdateDockerEnvVariables` compares the value it has already read with `readDockerEnvVariable`.
 - `readDockerEnvVariable` returns the whole value when it contains `=`, e.g. a base64 string ending in `==`. Previously the value was cut off at the second `=`.
+- `readDockerEnvVariable` returns `\` in the value as given, and returns a value of `-n` instead of nothing. Previously dash's `echo` changed sequences such as `\n` into the characters they stand for.
 - `readDockerEnvVariable` and `setDockerEnvVariable` only match a line that starts with the variable name, so `H_IP` no longer matches `C_PIH_IP=` or a commented-out `# H_IP=`. Previously the first line containing `H_IP=` was read, and `setDockerEnvVariable` overwrote every such line. A line starting with `export` or a space is no longer matched.
 - `replaceDockerEnvPlaceholderVariable` returns 1 with the error "Failed to replace ${DKR_ENV: H_A} in …" if `sed` fails, e.g. the file doesn't exist. Previously it printed "Placeholder variable replaced." and returned 0.
 - `replaceDockerEnvPlaceholderVariable` writes `&`, `|` and `\` in the value as given. Previously `&` was replaced with the placeholder, `|` made `sed` fail, and `\` was removed, so `a\b` was written as `ab`.
@@ -62,6 +64,7 @@
 
 - `controlDockerStacks` and `controlRelatedDockerServices` exit the script with "1: parameter not set or null" if no stacks or services are passed, or "STACK_DIR_PATH: parameter not set or null" or "SERVICE: parameter not set or null" if any are empty, before doing anything. Previously, with none they returned 0 and did nothing. An empty stack path acted on the compose file in `$DKR_COMPOSE_FILE_PATH` instead and returned 0, and an empty service stopped the script after the services before it.
 - `controlRelatedDockerServices` no longer sets `SERVICE` in the calling script.
+- `getDockerComposeFilePath` returns `\` in the stack path as given. Previously dash's `echo` changed sequences such as `\n` into the characters they stand for.
 
 ### `docker-volumes.sh`
 
@@ -83,6 +86,7 @@
 - `createDirectories` creates each directory path before its subdirectories.
 - `createDirectory` takes optional permissions, owner and group as its second to fourth arguments, and sets them on the new directory only. If the directory exists, it returns 0 and prints nothing. It no longer creates missing parent directories: it returns 1 with an error if the parent doesn't exist, or if `mkdir`, `chmod` or `chown` fails. Previously it ran `mkdir -p`.
 - `createFiles` exits the script with "1: parameter not set or null" if no files are passed, or "FILE_PATH: parameter not set or null" if any are empty, before doing anything. Previously, with no files it returned 0 and did nothing, and an empty path stopped the script after the files before it were created.
+- `getListOfFilesByPostfix` and `getListOfFilesByPrefix` return `\` in file paths as given. Previously dash's `echo` changed sequences such as `\n` into the characters they stand for.
 - `removeFileOrDirectory` is renamed to `removeFilesOrDirectories`, as it takes one or more paths.
 - `removeFilesOrDirectories` removes files only, unless `--recursive` is passed first, e.g. `removeFilesOrDirectories --recursive "$DIR_PATH"`. Without it, a directory is left in place, the function prints an error and returns 1. Previously it always ran `rm -R`, so any directory was removed with its contents. Callers that remove directories must add `--recursive`.
 - `removeFilesOrDirectories` returns 1 with an error, without removing anything, for an unknown option, e.g. `-R`, or an option after the paths. Previously a late `--recursive` was passed to `rm` as a path.
@@ -96,6 +100,7 @@
 
 ### `host-env-variables.sh`
 
+- `addHostEnvVariableToSudoersConf` and `setHostEnvVariable` write `\` in the variable name or value as given. Previously dash's `echo` changed sequences such as `\n` into the characters they stand for.
 - `addHostEnvVariableToSudoersConf` writes to `SUDOERS_DEFAULT_CONF_PATH`, skips a line that's already there, checks the new line with `visudo` before adding it, sets the file's mode to 440, and returns 1 with an error on failure. Previously it wrote to the unset `SUDOERS_DEFAULT_CONF`, so it always failed.
 - `checkForHostEnvVariable` returns 0 if the variable is present, 1 if not, or 2 if `PROFILE_PATH` can't be read, and prints nothing. Previously it printed `true` or `false`.
 - `checkForHostEnvVariable` only matches a line starting with `export NAME=`, so `HOST_DOMAIN` no longer matches `HOST_DOMAIN_OLD`, `MY_HOST_DOMAIN` or a comment, and `setHostEnvVariable` adds the variable instead of reporting it as already added. A variable set any other way, e.g. `HOST_DOMAIN=x` then `export HOST_DOMAIN`, is no longer found, so `setHostEnvVariable` appends an `export` line.
@@ -163,13 +168,14 @@
 - `checkForAndCreateSetupConfigFileAndDir` no longer prints "Check returned …" after each "Checking …" line.
 - `createSetupConfigDirectory` is removed. `checkForAndCreateSetupConfigFileAndDir` calls `createDirectory` with `SUDO_USER` as owner.
 - `readSetupConfigValue` matches the whole key, so `ssh` no longer matches `sshPort`. Values containing spaces or wildcards are returned as written. It no longer runs `set -f` in the calling script.
+- `readSetupConfigValue` returns `\` in the value as given, and returns a value of `-n` instead of nothing. Previously dash's `echo` changed sequences such as `\n` into the characters they stand for, so `writeSetupConfigOption` rewrote an unchanged value containing `\` instead of printing "No changes made.".
 - `removeSetupConfigOption` and `writeSetupConfigOption` match the whole key, so `ssh` no longer matches `sshPort`. Previously `writeSetupConfigOption ssh on` overwrote the `sshPort` line, and `removeSetupConfigOption ssh` deleted it.
 - `removeSetupConfigOption` returns 1 with the error "Failed to remove ssh from …" if `sed` fails. Previously it printed "ssh removed." and returned 0.
 - `replaceSetupVar` no longer sets `VAR_FILE_NAME`, `VAR_FILE_PATH`, `VAR_NAME` or `VAR_VALUE` in the calling script.
 - `replaceSetupVar` writes `\` in the value as given. Previously it was removed, so `a\b` was written as `ab`.
 - `writeSetupConfigOption` no longer has a "Something went wrong" branch that exited the script. It couldn't be reached, as the key check only ever returned found or not found.
 - `writeSetupConfigOption` returns 1 with the error "Failed to write ssh to …" if the option can't be written, and doesn't set the owner or list the setup config. Previously it printed "Config written." and returned 0.
-- `writeSetupConfigOption` writes `\` in the value as given when it overwrites an existing option. Previously it was removed, so `a\b` was written as `ab`. A new option is still written with `echo`, and dash's `echo` changes sequences such as `\n` into the characters they stand for.
+- `writeSetupConfigOption` writes `\` in the value as given. Previously it was removed when overwriting an existing option, so `a\b` was written as `ab`, and a new option was written with dash's `echo`, which changed sequences such as `\n` into the characters they stand for.
 
 ### `setup.sh`
 
@@ -179,6 +185,7 @@
 
 ### `ssh-config.sh`
 
+- `addHostToSshConfig` writes `\` in the host, address, port and user as given. Previously dash's `echo` changed sequences such as `\n` into the characters they stand for.
 - `checkForAndCreateSshConfig` no longer prints "Check returned true." or "Check returned false.".
 - `checkForAndCreateSshDir` is removed. Use `createDirectory "$SSH_DIR_PATH" '700' "$SUDO_USER"`.
 
@@ -195,6 +202,7 @@
 
 ### `text.sh`
 
+- `addPostfix`, `addPrefix`, `changeCase`, `getFirstCharsFromFirstLine`, `removePostfix` and `removePrefix` return `\` in the string as given, and return a string of `-n` instead of nothing. Previously dash's `echo` changed sequences such as `\n` into the characters they stand for.
 - `checkFileContainsString` returns 0 if the string is found, 1 if not, or 2 if the file can't be read, and `checkStringContainsSubstring` returns 0 or 1. Both print nothing. Previously they printed `true` or `false`.
 - `commentInLine` uncomments lines that use a comment character other than `#`, e.g. `;`. Previously it found the line, left it commented and reported success.
 - `commentInLine` and `commentOutLine` accept `/` and `|` in the partial and the comment character. Previously `/` as the comment character made `sed` fail.

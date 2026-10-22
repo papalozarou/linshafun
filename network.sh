@@ -41,7 +41,7 @@ generateAndCheckPort () {
     printComment --warning "Port $PORT is already used by $SERVICE. Re-running to generate another port number."
     generateAndCheckPort "$SERVICE"
   else
-    echo "$PORT"    
+    printf '%s\n' "$PORT"    
   fi
 }
 
@@ -54,7 +54,7 @@ generateAndCheckPort () {
 generatePortNumber () {
   local PORT="$(shuf -i 2000-65000 -n 1)"
 
-  echo "$PORT"
+  printf '%s\n' "$PORT"
 }
 
 # ------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ getInterfaceName () {
   local INTERFACE_ID="${1:?}"
   local INTERFACE_NAME="$(nmcli -g GENERAL.CONNECTION device show "$INTERFACE_ID")"
 
-  echo "$INTERFACE_NAME"
+  printf '%s\n' "$INTERFACE_NAME"
 }
 
 # ------------------------------------------------------------------------------
@@ -79,5 +79,5 @@ getInterfaceName () {
 readIpAddress () {
   local IP_ADDRESS="$(ip route get 8.8.8.8 | grep -oP 'src \K[^ ]+')"
 
-  echo "$IP_ADDRESS"
+  printf '%s\n' "$IP_ADDRESS"
 }

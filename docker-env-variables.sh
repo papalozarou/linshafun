@@ -236,7 +236,7 @@ readDockerEnvVariable () {
   local ENV_VAR="${2:?}"
   local ENV_VALUE="$(grep -m 1 "^$ENV_VAR=" "$ENV_FILE_PATH" | cut -d'=' -f2-)"
 
-  echo "$ENV_VALUE"
+  printf '%s\n' "$ENV_VALUE"
 }
 
 # ------------------------------------------------------------------------------

@@ -33,13 +33,13 @@ addHostEnvVariableToSudoersConf () {
     return 0
   fi
 
-  if ! echo "$ENV_KEEP" | visudo -c -f - > /dev/null; then
+  if ! printf '%s\n' "$ENV_KEEP" | visudo -c -f - > /dev/null; then
     printComment --error -- "$ENV_VAR failed the sudoers syntax check."
 
     return 1
   fi
 
-  if ! echo "$ENV_KEEP" >> "$SUDOERS_DEFAULT_CONF_PATH" \
+  if ! printf '%s\n' "$ENV_KEEP" >> "$SUDOERS_DEFAULT_CONF_PATH" \
     || ! chmod 440 "$SUDOERS_DEFAULT_CONF_PATH"; then
     printComment --error "Failed to add $ENV_VAR to $SUDOERS_DEFAULT_CONF_PATH."
 
@@ -99,7 +99,7 @@ setHostEnvVariable () {
   printComment "Adding $ENV_VAR=$ENV_VALUE to:"
   printComment -- "$PROFILE_PATH"
 
-  if ! echo "$EXPORT" >> "$PROFILE_PATH"; then
+  if ! printf '%s\n' "$EXPORT" >> "$PROFILE_PATH"; then
     printComment --error "Failed to add $ENV_VAR to $PROFILE_PATH."
 
     return 1
