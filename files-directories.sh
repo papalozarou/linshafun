@@ -446,12 +446,14 @@ removeFilesOrDirectories () {
     printComment 'Removing file or directory at:'
     printComment -- "$FILE_OR_DIR_PATH"
 
-    if rm ${RM_OPTION:+"$RM_OPTION"} "$FILE_OR_DIR_PATH"; then
-      printComment 'File or directory removed.'
-    else
+    if ! rm ${RM_OPTION:+"$RM_OPTION"} "$FILE_OR_DIR_PATH"; then
       printComment --error 'File or directory could not be removed. Please check it exists and that you have permission to remove it.'
       STATUS=1
+
+      continue
     fi
+
+    printComment 'File or directory removed.'
   done
 
   return "$STATUS"

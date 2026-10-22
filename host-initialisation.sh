@@ -465,17 +465,17 @@ updatePiBootloader () {
   rpi-eeprom-update -a || STATUS=1
   printSeparator
 
-  if [ "$STATUS" -eq 0 ]; then
-    printComment 'Bootloader updated.'
-    printComment --warning 'A reboot is required for changes to take effect.'
-
-    writeSetupConfigOption 'updatedPiBootloader' 'true'
-    printSeparator
-  else
+  if [ "$STATUS" -ne 0 ]; then
     printComment --error 'Failed to update bootloader.'
 
     return 1
   fi
+
+  printComment 'Bootloader updated.'
+  printComment --warning 'A reboot is required for changes to take effect.'
+
+  writeSetupConfigOption 'updatedPiBootloader' 'true'
+  printSeparator
 }
 
 # ------------------------------------------------------------------------------
@@ -497,15 +497,15 @@ updatePiFirmware () {
   rpi-update || STATUS=1
   printSeparator
 
-  if [ "$STATUS" -eq 0 ]; then
-    printComment 'Firmware updated.'
-    printComment --warning 'A reboot is required for changes to take effect.'
-
-    writeSetupConfigOption 'updatedPiFirmware' 'true'
-    printSeparator
-  else
+  if [ "$STATUS" -ne 0 ]; then
     printComment --error 'Failed to update firmware.'
 
     return 1
   fi
+
+  printComment 'Firmware updated.'
+  printComment --warning 'A reboot is required for changes to take effect.'
+
+  writeSetupConfigOption 'updatedPiFirmware' 'true'
+  printSeparator
 }

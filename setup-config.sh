@@ -43,15 +43,15 @@ EOF
 
   printSeparator
 
-  if [ "$STATUS" -eq 0 ] && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
-    printSeparator
-    printComment '$'"$VAR_NAME variable added."
-  else
+  if [ "$STATUS" -ne 0 ] || ! grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
     printComment --error 'There was a problem adding the $'"$VAR_NAME variable. Please check the variable file at:"
     printComment --error -- "$VAR_FILE_PATH"
 
     return 1
   fi
+
+  printSeparator
+  printComment '$'"$VAR_NAME variable added."
 
   reloadVarFile "$VAR_FILE_PATH"
 }
@@ -240,15 +240,15 @@ replaceSetupVar () {
   printComment 'Replacing $'"$VAR_NAME"' in:'
   printComment -- "$VAR_FILE_PATH"
 
-  if sed -i "\\${SEPARATOR}^${VAR_NAME}=${SEPARATOR}c\\${VAR_NAME}=\"${ESCAPED_VALUE}\"" "$VAR_FILE_PATH" && grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
-    printSeparator
-    printComment '$'"$VAR_NAME variable replaced."
-  else
+  if ! sed -i "\\${SEPARATOR}^${VAR_NAME}=${SEPARATOR}c\\${VAR_NAME}=\"${ESCAPED_VALUE}\"" "$VAR_FILE_PATH" || ! grep "^$VAR_NAME=" "$VAR_FILE_PATH"; then
     printComment --error 'There was a problem replacing the $'"$VAR_NAME variable. Please check the variable file at:"
     printComment --error -- "$VAR_FILE_PATH"
 
     return 1
   fi
+
+  printSeparator
+  printComment '$'"$VAR_NAME variable replaced."
 
   reloadVarFile "$VAR_FILE_PATH"
 }
