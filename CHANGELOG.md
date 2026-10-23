@@ -11,6 +11,7 @@
 - `createUserLogDir` is removed. `initialiseCommentLogs` creates the log directory's parent with `createDirectory`, with mode "700" and the log user as owner.
 - `initialiseCommentLogs` takes the log file's full path as its first argument, in place of the log directory and log file name, the log user as its mandatory second argument and an optional log group as its third. The maximum age moves to the fourth.
 - `initialiseCommentLogs` returns 1 with the error "Failed to create the log file at …. Logging is off for this run." if the log file can't be created. It clears `COMMENT_LOG_PATH`, so later comments print to the terminal only, and doesn't set the log directory's owner or permissions. Previously `COMMENT_LOG_PATH` stayed set, so every later comment also printed "cannot create … Directory nonexistent".
+- `initialiseCommentLogs` sets "700" on the log directory and every directory in it, and "600" on every file in it. Previously every file was also set to "700", i.e. executable.
 - `printCheckResult` is removed. Callers print "Checking …" with `printComment` and branch with `if checkFoo; then`. Previously it printed "Check returned true." or "Check returned false." and exited the script on any other value.
 - `printComment` prints warnings and errors to stderr, not stdout. Regular comments stay on stdout. This stops them being captured with the output of functions called using "$(…)".
 - `printComment` prints wildcards in a comment as written, e.g. `*.log`, instead of replacing them with matching file names. It no longer sets `CURRENT_LINE` and `WORD` in the calling script.
@@ -141,6 +142,7 @@
 ### `ownership-permissions.sh`
 
 - `setOwner` and `setPermissions` print an error if `chown` or `chmod` fails. They still return 1.
+- `setPermissions` changes only the given path. `--recursive`, passed first, sets the first permissions on the directory and every directory in it, and the third on every file in it, e.g. `setPermissions --recursive '700' "$LOG_DIR_PATH" '600'`. Previously `chmod -R` gave the files and directories the same permissions.
 
 ### `packages.sh`
 

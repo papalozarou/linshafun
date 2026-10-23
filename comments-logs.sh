@@ -50,7 +50,8 @@ COMMENT_LOG_TIMESTAMP_FORMAT='%Y-%m-%d %H:%M:%S'
 # user as owner, as "createDirectory" doesn't create missing parent
 # directories, and a directory created as root can't be opened by the user.
 # The owner is set last, so the new log and every archived log belong to the
-# user. "700" keeps the logs private, as they list file names and paths.
+# user. "700" on directories and "600" on files keep the logs private, as they
+# list file names and paths.
 #
 # N.B.
 # "COMMENT_LOG_PATH" is set after creating the log directory, as "printLogLine"
@@ -89,7 +90,7 @@ initialiseCommentLogs () {
   fi
 
   setOwner "$LOG_USER" "$LOG_DIR_PATH" "$LOG_GROUP"
-  setPermissions '700' "$LOG_DIR_PATH"
+  setPermissions --recursive '700' "$LOG_DIR_PATH" '600'
 }
 
 # ------------------------------------------------------------------------------
