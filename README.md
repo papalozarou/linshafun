@@ -43,6 +43,8 @@ Functions _try_ to use `verbValue` or `verbObject` as naming conventions, for ex
 
 To make this setup as portable as possible all scripts are POSIX compliant, i.e. they use `#!/bin/sh` not `#!/bin/bash`, with some cheeky liberties taken for readability – usually using `local` variable declarations within functions for readability.
 
+The shell syntax is POSIX, but some functions use GNU options, e.g. `sed -i`, `grep -m`, `grep -P`, `stat -c` and `date -d`. They need GNU `sed`, `grep`, coreutils, findutils and `tar`, as on Debian, Ubuntu and Synology DSM. BusyBox, e.g. on Alpine, isn't supported: `readIpAddress` and `checkIfSystemRebooted` fail on it.
+
 *N.B.*
 Most functions check the status of the commands they run. If a command fails, its own error is shown, the function prints an error saying what failed, and returns 1. The calling script decides what happens next.
 
