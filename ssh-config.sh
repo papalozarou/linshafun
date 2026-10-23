@@ -98,11 +98,11 @@ getSshHostDetails () {
 # 
 # N.B.
 # "printf" is used directly to allow the user to copy directly from the 
-# terminal, without "SETUP SCRIPT:" in each line."%4s" is used to add four 
-# spaces to the start of lines and "\n" ensures new lines are printed.
+# terminal, without "SETUP SCRIPT:" in each line. The four spaces at the start
+# of the format string indent each line after "Host".
 # ------------------------------------------------------------------------------
 printLocalSshConfig () {
-  local SSH_PORT=${1:?}
+  local SSH_PORT="${1:?}"
   local IP_ADDRESS="$(readIpAddress)"
   local SSH_KEY_FILE_NAME="$(readSetupConfigValue "sshKeyFile")"
 
@@ -110,10 +110,10 @@ printLocalSshConfig () {
   printComment '~/.ssh/ssh_config'
   printComment '~/.ssh/config'
   printSeparator
-  printf "Host $SSH_KEY_FILE_NAME\n"
-  printf "%4sHostname $IP_ADDRESS\n"
-  printf "%4sPort $SSH_PORT\n"
-  printf "%4sUser $SUDO_USER\n"
-  printf "%4sIdentityFile ~/.ssh/$SSH_KEY_FILE_NAME\n"
+  printf '%s\n' "Host $SSH_KEY_FILE_NAME"
+  printf '    %s\n' "Hostname $IP_ADDRESS"
+  printf '    %s\n' "Port $SSH_PORT"
+  printf '    %s\n' "User $SUDO_USER"
+  printf '    %s\n' "IdentityFile ~/.ssh/$SSH_KEY_FILE_NAME"
   printSeparator
 }

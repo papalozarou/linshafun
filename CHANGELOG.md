@@ -190,6 +190,7 @@
 - `addHostToSshConfig` writes `\` in the host, address, port and user as given. Previously dash's `echo` changed sequences such as `\n` into the characters they stand for.
 - `checkForAndCreateSshConfig` no longer prints "Check returned true." or "Check returned false.".
 - `checkForAndCreateSshDir` is removed. Use `createDirectory "$SSH_DIR_PATH" '700' "$SUDO_USER"`.
+- `printLocalSshConfig` prints `%` and `\` in the key file name, address, port and user as given. Previously a `%` caused a "printf: %\: invalid directive" error and ran the lines together, and `\` sequences such as `\n` were changed into the characters they stand for.
 
 ### `ssh-keys.sh`
 
