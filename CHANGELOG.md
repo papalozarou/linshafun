@@ -97,7 +97,8 @@
 
 ### `firewall.sh`
 
-- `addRuleToUfw` returns 1 with the error "Failed to add rule allow 22 to UFW." if `ufw` fails. Previously it printed "Rule added." and returned 0.
+- `addRuleToUfw` returns 1 with the error "Failed to add UFW rule "SSH": allow from any to any port 22 proto tcp." if `ufw` fails. Previously it printed "Rule added." and returned 0.
+- `addRuleToUfw` takes five mandatory arguments, i.e. the action, source, port, protocol and comment, e.g. `addRuleToUfw 'allow' 'any' '53' 'any' 'Pi-hole DNS'`, and runs `ufw ACTION from SOURCE to any port PORT proto PROTOCOL comment COMMENT`. A source and protocol of "any" add the same rule as before. Previously it took an action, a port and an optional protocol, and ran `ufw ACTION PORT/PROTOCOL`, so a rule couldn't have a source or a comment.
 
 ### `host-env-variables.sh`
 
