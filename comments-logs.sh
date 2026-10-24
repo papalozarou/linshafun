@@ -89,7 +89,7 @@ initialiseCommentLogs () {
     return 1
   fi
 
-  setOwner "$LOG_USER" "$LOG_DIR_PATH" "$LOG_GROUP"
+  setOwner --recursive "$LOG_USER" "$LOG_DIR_PATH" "$LOG_GROUP"
   setPermissions --recursive '700' "$LOG_DIR_PATH" '600'
 }
 

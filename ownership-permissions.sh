@@ -5,30 +5,54 @@
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# Sets ownership of a file or directory. Takes three arguments, two of which
+# Sets ownership of a file or directory. Takes four arguments, two of which
 # are mandatory:
 #
-# 1. "${1:?}" – the owner;
-# 2. "${2:?}" – the path of the file or directory; and
-# 3. "${3:-$1}" – the group, defaulting to the owner.
+# 1. "--recursive" – an optional flag, passed first, to also set ownership of
+#    every directory and file inside the directory;
+# 2. "${1:?}" – the owner;
+# 3. "${2:?}" – the path of the file or directory; and
+# 4. "${3:-$1}" – the group, defaulting to the owner.
+#
+# Without "--recursive" only the given path is changed, matching "chown".
+#
+# If the ownership can't be set, the function prints an error and returns 1.
+# It also returns 1 with an error if an option is unknown or comes after the
+# other arguments.
 #
 # N.B.
 # The group defaults to the owner name, which only works on systems that
 # create a group for each user. Pass the group on systems that do not, e.g.
 # "users" on Synology DSM.
 #
-# If the ownership can't be set, the function prints an error and returns 1.
+# "$CHOWN_OPTION" is not quoted in the "chown" command as we explicitly want
+# word splitting here. Without "--recursive" it is empty, so no empty argument
+# is passed to "chown".
 # ------------------------------------------------------------------------------
 setOwner () {
-  local OWNER="${1:?}"
-  local FILE_DIR_PATH="${2:?}"
-  local GROUP="${3:-$OWNER}"
+  local RECURSIVE_TF=false
+  local OPTION_COUNT=0
+  local OWNER
+  local FILE_DIR_PATH
+  local GROUP
+  local CHOWN_OPTION=
+
+  readOptions 'recursive=RECURSIVE_TF' "$@" || return 1
+  shift "$OPTION_COUNT"
+
+  OWNER="${1:?}"
+  FILE_DIR_PATH="${2:?}"
+  GROUP="${3:-$OWNER}"
+
+  if [ "$RECURSIVE_TF" = true ]; then
+    CHOWN_OPTION='-R'
+  fi
 
   printComment "Setting ownership of:"
   printComment -- "$FILE_DIR_PATH"
   printComment "to $OWNER:$GROUP."
 
-  if ! chown -R "$OWNER:$GROUP" "$FILE_DIR_PATH"; then
+  if ! chown $CHOWN_OPTION "$OWNER:$GROUP" "$FILE_DIR_PATH"; then
     printComment --error "Failed to set ownership of $FILE_DIR_PATH to $OWNER:$GROUP."
 
     return 1
