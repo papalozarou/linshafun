@@ -1,5 +1,12 @@
 # Changelog
 
+## v2.1.0 – 2026-10-24
+
+### `files-directories.sh`
+
+- `createDirectories` returns 1 if any directory or subdirectory can't be created, after carrying on with the rest. It skips the subdirectories of a directory it can't create, and doesn't list a directory it failed to create. Previously it always returned 0, tried to create the subdirectories anyway, and listed every path.
+- `createSubDirectories` is added. It creates subdirectories in a directory and lists each one, and returns 1 if any can't be created. `createDirectories` uses it.
+
 ## v2.0.1 – 2026-10-24
 
 ### `docker-services.sh`
