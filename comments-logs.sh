@@ -423,6 +423,10 @@ removeArchivedCommentLogs () {
   local LOG_FILE_NAME="${LOG_FILE_PATH##*/}"
   local ARCHIVED_LOG_FILE_PATHS="$(find "$LOG_DIR_PATH" -type f -name "$LOG_FILE_NAME.*" -mtime "+$LOG_MAX_AGE_DAYS")"
 
+  if [ -z "$ARCHIVED_LOG_FILE_PATHS" ]; then
+    return 0
+  fi
+
   removeFilesOrDirectories $ARCHIVED_LOG_FILE_PATHS
 }
 
