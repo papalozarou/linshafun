@@ -15,7 +15,8 @@
 # 4. "$4" – any optional flags.
 # 
 # N.B.
-# The optional flags, "$4", are not quoted as we explicitly want word splitting.
+# "$FLAGS" is not quoted in the "docker compose" commands as we explicitly want
+# word splitting here.
 #
 # Returns the exit status of "docker compose", so callers can stop if an action
 # failed, e.g. not archiving a database whose service failed to stop.
@@ -58,7 +59,8 @@ controlDockerService () {
 # 3. "$3" – any optional flags.
 #
 # N.B.
-# The optional flags, "$3", are not quoted as we explicitly want word splitting.
+# "$FLAGS" is not quoted in the "docker compose" commands as we explicitly want
+# word splitting here.
 #
 # Returns the exit status of "docker compose", so callers can stop if an action
 # failed.

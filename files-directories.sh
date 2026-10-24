@@ -86,8 +86,8 @@ checkForFileOrDirectory () {
 # 2. "${2:-".backup"}" – the postfix to add, defaulting to ".backup".
 # 
 # N.B.
-# In the "for" loop, "$FILES" is not quoted as we explicitly want word 
-# splitting.
+# "$FILE_PATHS" is not quoted in the "for" loop as we explicitly want word
+# splitting here.
 #
 # If adding a file extension, the "." must be included at the start of the 
 # second argument.
@@ -131,8 +131,8 @@ copyAndAddPostfixToFiles () {
 # 2. "${2:-".example"}" – the postfix to remove, defaulting to ".example".
 # 
 # N.B.
-# In the "for" loop, "$FILES" is not quoted as we explicitly want word 
-# splitting.
+# "$FILE_PATHS" is not quoted in the "for" loop as we explicitly want word
+# splitting here.
 #
 # If removing a file extension, the "." must be included at the start of the 
 # second argument.
@@ -182,8 +182,8 @@ copyAndRemovePostfixFromFiles () {
 # missing parent directories.
 # 
 # N.B.
-# "$DIR_PATH(S)" and "$SUB_DIR_NAME(S)" are not quoted as we explicitly want 
-# word splitting here.
+# "$DIR_PATHS" and "$SUB_DIR_NAMES" are not quoted in the "for" loops as we
+# explicitly want word splitting here.
 # 
 # And yes it's a nested loop. What of it?
 # ------------------------------------------------------------------------------
@@ -378,10 +378,11 @@ getListOfFilesByPostfix () {
 #    separated by spaces.
 # 
 # N.B.
-# "$DIR" is not quoted as we explicitly want word splitting here.
+# "$DIR_PATHS" is not quoted in the "for" loop as we explicitly want word
+# splitting here.
 # ------------------------------------------------------------------------------
 listDirectories () {
-  local DIR_PATHS=${1:?}
+  local DIR_PATHS="${1:?}"
   local DIR_PATH
 
   for DIR_PATH in $DIR_PATHS; do
