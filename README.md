@@ -48,6 +48,8 @@ The shell syntax is POSIX, but some functions use GNU options, e.g. `sed -i`, `g
 *N.B.*
 Most functions check the status of the commands they run. If a command fails, its own error is shown, the function prints an error saying what failed, and returns 1. The calling script decides what happens next.
 
+Once `initialiseCommentLogs` has run, everything printed with `printComment` is also written to the log, including warnings, errors and separators. Anything else, e.g. a command's own output and errors from `cat`, `grep` or `ls`, appears only in the terminal.
+
 Functions named `checkFooBar`, e.g. `checkForPackage`, return 0 or 1 and print nothing, so they can be used directly in `if checkFooBar; then`. Functions named `checkFooAndBar`, e.g. `checkForAndCreateSshConfig`, check something and then act on it.
 
 Options, e.g. `--warning` or `--recursive`, go before any other arguments, e.g. `printComment --warning 'Text.'` or `removeFilesOrDirectories --recursive "$DIR_PATH"`. A function returns 1 with an error for an option it doesn't know, or for one placed after the other arguments. A value that starts with `-` must follow `--`, e.g. `printComment -- "$TEXT"`.
