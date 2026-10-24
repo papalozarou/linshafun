@@ -1,5 +1,15 @@
 # Changelog
 
+## v2.0.1 – 2026-10-24
+
+### `docker-services.sh`
+
+- `controlDockerService` and `controlDockerStack` comments name "$FLAGS" as the unquoted variable. Previously they named "$4" and "$3".
+
+### `files-directories.sh`
+
+- `copyAndAddPostfixToFiles`, `copyAndRemovePostfixFromFiles`, `createDirectories` and `listDirectories` comments name the unquoted variables, "$FILE_PATHS", "$DIR_PATHS" and "$SUB_DIR_NAMES". Previously they named "$FILES", "$DIR_PATH(S)", "$SUB_DIR_NAME(S)" and "$DIR", which don't exist.
+
 ## v2.0.0 – 2026-10-24
 
 ### `archives.sh`
