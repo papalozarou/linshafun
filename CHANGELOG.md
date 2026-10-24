@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.0.0 – 2026-10-25
+
+### `ownership-permissions.sh`
+
+- `setOwner` changes only the given path. `--recursive`, passed first, also sets the owner of every directory and file in it, e.g. `setOwner --recursive "$LOG_USER" "$LOG_DIR_PATH" "$LOG_GROUP"`. Previously it always used `chown -R`.
+
 ## v2.1.0 – 2026-10-24
 
 ### `files-directories.sh`
