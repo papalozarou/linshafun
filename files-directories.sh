@@ -177,42 +177,41 @@ copyAndRemovePostfixFromFiles () {
 # 2. "$2" – an optional subdirectory name, or multiple subdirectory names
 #    separated by spaces.
 #
-# Each directory path is created before its subdirectories. Directories above
-# the given directory paths are not created, as "createDirectory" doesn't create
-# missing parent directories.
-# 
+# Each directory path is created before its subdirectories, using
+# "createSubDirectories". Directories above the given directory paths are not
+# created, as "createDirectory" doesn't create missing parent directories.
+#
+# If a directory path can't be created, its subdirectories are skipped. The
+# function carries on with the remaining directory paths, and returns 1 if any
+# directory or subdirectory can't be created.
+#
 # N.B.
-# "$DIR_PATHS" and "$SUB_DIR_NAMES" are not quoted in the "for" loops as we
-# explicitly want word splitting here.
-# 
-# And yes it's a nested loop. What of it?
+# "$DIR_PATHS" is not quoted in the "for" loop as we explicitly want word
+# splitting here.
 # ------------------------------------------------------------------------------
 createDirectories () {
   local DIR_PATHS="${1:?}"
   local SUB_DIR_NAMES="$2"
+  local STATUS=0
   local DIR_PATH
-  local PARENT_DIR
-  local SUB_DIR_NAME
-  local SUB_DIR_PATH
 
-  if [ -z "$SUB_DIR_NAMES" ]; then
-    for DIR_PATH in $DIR_PATHS; do
-      createDirectory "$DIR_PATH"
+  for DIR_PATH in $DIR_PATHS; do
+    if ! createDirectory "$DIR_PATH"; then
+      STATUS=1
+
+      continue
+    fi
+
+    if [ -z "$SUB_DIR_NAMES" ]; then
       listDirectories "$DIR_PATH"
-    done
-  else
-    for DIR_PATH in $DIR_PATHS; do
-      PARENT_DIR="$DIR_PATH"
-      createDirectory "$PARENT_DIR"
 
-      for SUB_DIR_NAME in $SUB_DIR_NAMES; do
-        SUB_DIR_PATH="$PARENT_DIR/$SUB_DIR_NAME"
+      continue
+    fi
 
-        createDirectory "$SUB_DIR_PATH"
-        listDirectories "$SUB_DIR_PATH"
-      done
-    done
-  fi
+    createSubDirectories "$DIR_PATH" "$SUB_DIR_NAMES" || STATUS=1
+  done
+
+  return "$STATUS"
 }
 
 # ------------------------------------------------------------------------------
@@ -318,6 +317,41 @@ createFiles () {
     printSeparator
     listDirectories "$FILE_PATH"
     printComment 'File created.'
+  done
+
+  return "$STATUS"
+}
+
+# ------------------------------------------------------------------------------
+# Creates subdirectories in a directory, using "createDirectory", and lists
+# each one. Takes two mandatory arguments:
+#
+# 1. "${1:?}" – the directory to create the subdirectories in, including
+#    directory path; and
+# 2. "${2:?}" – a single subdirectory name, or multiple subdirectory names
+#    separated by spaces.
+#
+# If a subdirectory can't be created, the function carries on with the
+# remaining subdirectories, and returns 1.
+#
+# N.B.
+# "$SUB_DIR_NAMES" is not quoted in the "for" loop as we explicitly want word
+# splitting here.
+# ------------------------------------------------------------------------------
+createSubDirectories () {
+  local PARENT_DIR_PATH="${1:?}"
+  local SUB_DIR_NAMES="${2:?}"
+  local STATUS=0
+  local SUB_DIR_NAME
+
+  for SUB_DIR_NAME in $SUB_DIR_NAMES; do
+    if ! createDirectory "$PARENT_DIR_PATH/$SUB_DIR_NAME"; then
+      STATUS=1
+
+      continue
+    fi
+
+    listDirectories "$PARENT_DIR_PATH/$SUB_DIR_NAME"
   done
 
   return "$STATUS"
