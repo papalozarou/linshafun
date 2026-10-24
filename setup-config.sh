@@ -68,8 +68,13 @@ EOF
 # 1. the setup config file exists so the directory must exist;
 # 2. the setup config directory doesn't exist so the file can't; or
 # 3. the setup config directory exists and the file doesn't.
+#
+# Returns 1 if the directory or file can't be created, or if the file's
+# permissions or owner can't be set. The called functions print the error.
 # ------------------------------------------------------------------------------
 checkForAndCreateSetupConfigFileAndDir () {
+  local STATUS=0
+
   printComment 'Checking to see if a "~/.config" directory exists…'
   printComment 'Checking to see if a setup config file exists…'
 
@@ -78,12 +83,15 @@ checkForAndCreateSetupConfigFileAndDir () {
   elif ! checkForFileOrDirectory "$SETUP_CONF_DIR_PATH"; then
     printComment --warning 'The setup config file and directory do not exist.'
 
-    createDirectory "$SETUP_CONF_DIR_PATH" '' "$SUDO_USER"
-    createSetupConfigFile
+    { createDirectory "$SETUP_CONF_DIR_PATH" '' "$SUDO_USER" && createSetupConfigFile; } || STATUS=1
   else
     printComment --warning 'The setup config file does not exist.'
 
-    createSetupConfigFile
+    createSetupConfigFile || STATUS=1
+  fi
+
+  if [ "$STATUS" -ne 0 ]; then
+    return 1
   fi
 
   listDirectories "$SETUP_CONF_DIR_PATH"
@@ -92,10 +100,13 @@ checkForAndCreateSetupConfigFileAndDir () {
 # ------------------------------------------------------------------------------
 # Creates the setup config file and sets the correct permissions and ownership.
 # Takes no arguments.
+#
+# Returns 1 if the file can't be created, or if its permissions or owner can't
+# be set. The called functions print the error.
 # ------------------------------------------------------------------------------
 createSetupConfigFile () {
-  createFiles "$SETUP_CONF_PATH"
-  setPermissions 600 "$SETUP_CONF_PATH"
+  createFiles "$SETUP_CONF_PATH" || return 1
+  setPermissions 600 "$SETUP_CONF_PATH" || return 1
   setOwner "$SUDO_USER" "$SETUP_CONF_PATH"
 }
 

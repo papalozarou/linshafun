@@ -5,19 +5,25 @@
 # ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
-# Adds a host to "~/.ssh/config". Takes four arguments, one of which is
+# Adds a host to "~/.ssh/config". Takes five arguments, one of which is
 # mandatory:
-# 
+#
 # 1. "${1:?}" – the name of the host;
 # 2. "$2" – the address of the host, either an IP address or a hostname;
-# 3. "$3" – the ssh port for the host; and
-# 4. "$4" – the user used to login to the host.
+# 3. "$3" – the ssh port for the host;
+# 4. "$4" – the user used to login to the host; and
+# 5. "${5:-$1}" – the name of the key file in "~/.ssh", defaulting to the name
+#    of the host.
 #
-# The function tests the three non-mandatory arguments to see if they are set,
-# and if so adds them to the host config.
+# The function tests the non-mandatory arguments to see if they are set, and if
+# so adds them to the host config. Pass an empty string to skip an argument,
+# e.g. "addHostToSshConfig 'github.com' '' '' '' 'github'".
+#
+# Returns 1 with an error if the host can't be added to the file, or if the
+# file's permissions or owner can't be set.
 #
 # N.B.
-# Although these variables may exist in the global scope if "getSshHostDetails" 
+# Although these variables may exist in the global scope if "getSshHostDetails"
 # has been used, this allows fixed details to be passed in if required.
 # ------------------------------------------------------------------------------
 addHostToSshConfig () {
@@ -25,7 +31,8 @@ addHostToSshConfig () {
   local HOST_ADDRESS="$2"
   local PORT="$3"
   local HOST_USER="$4"
-  local IDENTITY_FILE_NAME="$HOST"
+  local IDENTITY_FILE_NAME="${5:-$HOST}"
+  local STATUS=0
 
   printComment "Adding host, $HOST, to ssh config file at:"
   printComment -- "$SSH_CONF_PATH"
@@ -35,31 +42,42 @@ addHostToSshConfig () {
     [ -n "$HOST_ADDRESS" ] && printf '%s\n' "  Hostname $HOST_ADDRESS"
     [ -n "$PORT" ] && printf '%s\n' "  Port $PORT"
     [ -n "$HOST_USER" ] && printf '%s\n' "  User $HOST_USER"
-    [ -n "$IDENTITY_FILE_NAME" ] && printf '%s\n' "  IdentityFile ~/.ssh/$IDENTITY_FILE_NAME"
+    printf '%s\n' "  IdentityFile ~/.ssh/$IDENTITY_FILE_NAME"
     printf '\n'
-  } >> "$SSH_CONF_PATH"
+  } >> "$SSH_CONF_PATH" || STATUS=1
 
-  setPermissions 600 "$SSH_CONF_PATH"
+  if [ "$STATUS" -ne 0 ]; then
+    printComment --error "Failed to add host, $HOST, to $SSH_CONF_PATH."
+
+    return 1
+  fi
+
+  setPermissions 600 "$SSH_CONF_PATH" || return 1
   setOwner "$SUDO_USER" "$SSH_CONF_PATH"
 }
 
 # ------------------------------------------------------------------------------
-# Checks to see if the "~/.ssh/config" file exist and creates it if not, adding
-# a basic config to the created file. Takes no arguments.
+# Checks to see if the "~/.ssh/config" file exist and creates it if not. Takes
+# no arguments.
+#
+# Returns 1 with an error if the file can't be created, or if its permissions
+# or owner can't be set.
 # ------------------------------------------------------------------------------
 checkForAndCreateSshConfig () {
   printComment 'Checking to see if an "~/.ssh/config" file exists…'
 
   if checkForFileOrDirectory "$SSH_CONF_PATH"; then
     printComment 'The ssh config file already exists.'
-  else
-    printComment 'Creating an ssh config file at:'
-    printComment -- "$SSH_CONF_PATH"
-    createFiles "$SSH_CONF_PATH"
 
-    setPermissions 600 "$SSH_CONF_PATH"
-    setOwner "$SUDO_USER" "$SSH_CONF_PATH"
+    return 0
   fi
+
+  printComment 'Creating an ssh config file at:'
+  printComment -- "$SSH_CONF_PATH"
+
+  createFiles "$SSH_CONF_PATH" || return 1
+  setPermissions 600 "$SSH_CONF_PATH" || return 1
+  setOwner "$SUDO_USER" "$SSH_CONF_PATH"
 }
 
 # ------------------------------------------------------------------------------

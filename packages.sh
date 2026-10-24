@@ -38,9 +38,13 @@ checkForPackage () {
 # 1. "$@" – the package or packages to be installed.
 #
 # The shell stops the script if no packages are passed, or if any are empty.
+#
+# If a package can't be installed, the function carries on with the remaining
+# packages, and returns 1. "managePackages" prints the error.
 # ------------------------------------------------------------------------------
 checkForPackagesAndInstall () {
   local PACKAGE
+  local STATUS=0
 
   : "${1:?}"
 
@@ -56,11 +60,15 @@ checkForPackagesAndInstall () {
 
     if checkForPackage "$PACKAGE"; then
       printComment "You have already installed $PACKAGE."
-    else
-      printComment --warning "You need to install $PACKAGE."
-      managePackages "install" "$PACKAGE"
+
+      continue
     fi
+
+    printComment --warning "You need to install $PACKAGE."
+    managePackages "install" "$PACKAGE" || STATUS=1
   done
+
+  return "$STATUS"
 }
 
 # ------------------------------------------------------------------------------
@@ -70,9 +78,13 @@ checkForPackagesAndInstall () {
 # 1. "$@" – the package or packages to be removed.
 #
 # The shell stops the script if no packages are passed, or if any are empty.
+#
+# If a package can't be removed, the function carries on with the remaining
+# packages, and returns 1. "managePackages" prints the error.
 # ------------------------------------------------------------------------------
 checkForPackagesAndRemove () {
   local PACKAGE
+  local STATUS=0
 
   : "${1:?}"
 
@@ -86,13 +98,17 @@ checkForPackagesAndRemove () {
   for PACKAGE in "$@"; do
     printComment "Checking to see if $PACKAGE is installed…"
 
-    if checkForPackage "$PACKAGE"; then
-      printComment --warning "You need to remove $PACKAGE."
-      managePackages "remove" "$PACKAGE"
-    else
+    if ! checkForPackage "$PACKAGE"; then
       printComment "You have already removed $PACKAGE."
+
+      continue
     fi
+
+    printComment --warning "You need to remove $PACKAGE."
+    managePackages "remove" "$PACKAGE" || STATUS=1
   done
+
+  return "$STATUS"
 }
 
 # ------------------------------------------------------------------------------

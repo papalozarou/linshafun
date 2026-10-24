@@ -1,5 +1,30 @@
 # Changelog
 
+## v2.2.0 – 2026-10-24
+
+### `host-information.sh`
+
+- `getRaspberryPiModel` returns the model number for Compute Modules, e.g. "4" for "Raspberry Pi Compute Module 4". Previously it returned an empty string, so callers comparing the model with `-ge` printed "integer expression expected" and skipped steps for Pi 4 and 5 boards.
+
+### `packages.sh`
+
+- `checkForPackagesAndInstall` and `checkForPackagesAndRemove` return 1 if any package can't be installed or removed, after carrying on with the rest. Previously they always returned 0.
+
+### `setup-config.sh`
+
+- `checkForAndCreateSetupConfigFileAndDir` and `createSetupConfigFile` return 1 if the directory or file can't be created, or if the file's permissions or owner can't be set. `checkForAndCreateSetupConfigFileAndDir` doesn't list the directory when this happens. Previously both always returned 0.
+
+### `ssh-config.sh`
+
+- `addHostToSshConfig` takes an optional fifth argument, the name of the key file in `~/.ssh`, e.g. `addHostToSshConfig 'github.com' '' '' '' 'github'`. It defaults to the host name, as before.
+- `addHostToSshConfig` returns 1 with the error "Failed to add host, …, to …." if the host can't be written, and returns 1 if the file's permissions or owner can't be set. Previously it always returned the status of `setOwner`.
+- `checkForAndCreateSshConfig` returns 1 if the file can't be created, or if its permissions or owner can't be set. Previously it always returned 0. Its comment no longer says it adds a basic config, which it never did.
+
+### `ssh-keys.sh`
+
+- `checkForAndCreateAuthorizedKeys` returns 1 if the file can't be created, or if its permissions or owner can't be set. Previously it always returned 0.
+- `generateSshKey` returns 1 if the permissions or owner of either key file can't be set. Previously it carried on and returned 0.
+
 ## v2.1.0 – 2026-10-24
 
 ### `files-directories.sh`

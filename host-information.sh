@@ -143,22 +143,28 @@ getOsVersion () {
 }
 
 # ------------------------------------------------------------------------------
-# Gets the Raspberry Pi model number if the host machine is a Raspberry Pi. If 
+# Gets the Raspberry Pi model number if the host machine is a Raspberry Pi. If
 # the host machine is not a Raspberry Pi an empty string is returned. Takes no
 # arguments.
-# 
+#
+# Compute Modules return their model number, e.g. "4" for "Raspberry Pi
+# Compute Module 4". The Pi 400 and 500 return "4" and "5". Models without a
+# number after "Raspberry Pi" or "Compute Module", e.g. "Raspberry Pi Zero 2
+# W", return an empty string.
+#
 # N.B.
-# The model number is extracted from the binary file "/proc/device-tree/model", 
-# trimming null bytes with "tr -d '\0'" to enable safe parsing as text, then 
-# using "grep -oi" to case insensitively match only the pattern 
-# "raspberry pi [0-9]", and then cut to extract just the model number.
+# The model number is extracted from the binary file "/proc/device-tree/model",
+# trimming null bytes with "tr -d '\0'" to enable safe parsing as text, then
+# using "grep -oiE" to case insensitively match only the pattern
+# "raspberry pi (compute module )?[0-9]", and then "grep -o" to extract just
+# the model number.
 # ------------------------------------------------------------------------------
 getRaspberryPiModel () {
   local MODEL_FILE_PATH='/proc/device-tree/model'
   local MODEL
 
   if checkIfRaspberryPi; then
-    MODEL="$(tr -d '\0' < "$MODEL_FILE_PATH" | grep -oi 'raspberry pi [0-9]' | cut -d' ' -f3)"
+    MODEL="$(tr -d '\0' < "$MODEL_FILE_PATH" | grep -oiE 'raspberry pi (compute module )?[0-9]' | grep -o '[0-9]$')"
 
     printf '%s\n' "$MODEL"
   fi

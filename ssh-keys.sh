@@ -33,21 +33,26 @@ addKeyToAuthorizedKeys () {
 
 # ------------------------------------------------------------------------------
 # Checks to see if the "~/.ssh/authorized_keys" file exists and creates it if
-# not. Takes no arguments.
+# not, with mode "600" and "$SUDO_USER" as owner. Takes no arguments.
+#
+# Returns 1 with an error if the file can't be created, or if its permissions
+# or owner can't be set.
 # ------------------------------------------------------------------------------
 checkForAndCreateAuthorizedKeys () {
   printComment 'Checking to see if an "~/.ssh/authorized_keys" file exists…'
 
   if checkForFileOrDirectory "$SSH_AUTH_KEYS_PATH"; then
     printComment --warning 'The authorized keys file already exists.'
-  else
-    printComment 'Creating an authorized_keys file at:'
-    printComment -- "$SSH_AUTH_KEYS_PATH"
-    createFiles "$SSH_AUTH_KEYS_PATH"
 
-    setPermissions 600 "$SSH_AUTH_KEYS_PATH"
-    setOwner "$SUDO_USER" "$SSH_AUTH_KEYS_PATH"
+    return 0
   fi
+
+  printComment 'Creating an authorized_keys file at:'
+  printComment -- "$SSH_AUTH_KEYS_PATH"
+
+  createFiles "$SSH_AUTH_KEYS_PATH" || return 1
+  setPermissions 600 "$SSH_AUTH_KEYS_PATH" || return 1
+  setOwner "$SUDO_USER" "$SSH_AUTH_KEYS_PATH"
 }
 
 # ------------------------------------------------------------------------------
@@ -103,7 +108,8 @@ confirmPublicSshKeyCopied () {
 # 2. "$2" – an optional email address for the key.
 #
 # If "ssh-keygen" fails, the function prints an error and returns 1, without
-# setting the permissions or owner of the key files.
+# setting the permissions or owner of the key files. It also returns 1 if the
+# permissions or owner of either key file can't be set.
 #
 # N.B.
 # "ssh-keygen" asks before overwriting an existing key, and exits with 1 if the
@@ -133,10 +139,10 @@ generateSshKey () {
   fi
 
   printComment 'Key generated.'
-  setPermissions 600 "$KEY_PATH"
-  setOwner "$SUDO_USER" "$KEY_PATH"
-  setPermissions 600 "$KEY_PATH.pub"
-  setOwner "$SUDO_USER" "$KEY_PATH.pub"
+  setPermissions 600 "$KEY_PATH" || return 1
+  setOwner "$SUDO_USER" "$KEY_PATH" || return 1
+  setPermissions 600 "$KEY_PATH.pub" || return 1
+  setOwner "$SUDO_USER" "$KEY_PATH.pub" || return 1
 
   listDirectories "$KEY_PATH"
 }
