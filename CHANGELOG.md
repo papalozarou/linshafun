@@ -213,6 +213,7 @@
 - `commentInLine` uncomments lines that use a comment character other than `#`, e.g. `;`. Previously it found the line, left it commented and reported success.
 - `commentInLine` and `commentOutLine` accept `/` and `|` in the partial and the comment character. Previously `/` as the comment character made `sed` fail.
 - `commentInLine` and `commentOutLine` match partials literally, so `\`, `[`, `.`, `*`, `^` and `$` are no longer treated as regular expression characters. Previously `[main]` matched any line starting with `m`, `a`, `i` or `n`.
+- `commentInLine` and `commentOutLine` print the error "Failed to uncomment the line in …." or "Failed to comment out the line in …." and return 1 if `sed` can't change the line. Previously they printed no error and returned `sed`'s own status, e.g. 4.
 
 ### `user-input.sh`
 

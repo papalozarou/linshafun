@@ -136,7 +136,8 @@ checkStringContainsSubstring () {
 # command is used directly as the condition, i.e. "grep" returns 0 – success – 
 # if a match is found, or 1 – failure – if not.
 #
-# If the line is not found at all the function prints an error and returns 1.
+# If the line is not found at all, or "sed" fails to change it, the function
+# prints an error and returns 1.
 # ------------------------------------------------------------------------------
 commentInLine () {
   local FILE_PATH="${1:?}"
@@ -150,17 +151,27 @@ commentInLine () {
     printComment -- "$PARTIAL"
     printComment 'is already uncommented in:'
     printComment -- "$FILE_PATH."
-  elif grep -q "^[[:space:]]*${CHAR}[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
-    printComment 'Uncommenting line starting with:'
-    printComment -- "$CHAR $PARTIAL"
-    printComment 'in:'
-    printComment -- "$FILE_PATH"
-    sed -i "\\${SEPARATOR}^[[:space:]]*${CHAR}[[:space:]]*${ESCAPED_PARTIAL}${SEPARATOR}s${SEPARATOR}^\([[:space:]]*\)${CHAR}[[:space:]]*${SEPARATOR}\1${SEPARATOR}" "$FILE_PATH"
-  else
+
+    return 0
+  fi
+
+  if ! grep -q "^[[:space:]]*${CHAR}[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment --error 'A line starting with:'
     printComment --error -- "$PARTIAL"
     printComment --error 'not found in:'
     printComment --error -- "$FILE_PATH"
+
+    return 1
+  fi
+
+  printComment 'Uncommenting line starting with:'
+  printComment -- "$CHAR $PARTIAL"
+  printComment 'in:'
+  printComment -- "$FILE_PATH"
+
+  if ! sed -i "\\${SEPARATOR}^[[:space:]]*${CHAR}[[:space:]]*${ESCAPED_PARTIAL}${SEPARATOR}s${SEPARATOR}^\([[:space:]]*\)${CHAR}[[:space:]]*${SEPARATOR}\1${SEPARATOR}" "$FILE_PATH"; then
+    printComment --error "Failed to uncomment the line in $FILE_PATH."
+
     return 1
   fi
 }
@@ -189,7 +200,8 @@ commentInLine () {
 # command is used directly as the condition, i.e. "grep" returns 0 – success – 
 # if a match is found, or 1 – failure – if not.
 #
-# If the line is not found at all the function prints an error and returns 1.
+# If the line is not found at all, or "sed" fails to change it, the function
+# prints an error and returns 1.
 # ------------------------------------------------------------------------------
 commentOutLine () {
   local FILE_PATH="${1:?}"
@@ -203,17 +215,27 @@ commentOutLine () {
     printComment -- "$PARTIAL"
     printComment 'is already commented out in:'
     printComment -- "$FILE_PATH."
-  elif grep -q "^[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
-    printComment 'Commenting out line starting with:'
-    printComment -- "$PARTIAL"
-    printComment 'in:'
-    printComment -- "$FILE_PATH"
-    sed -i "\\${SEPARATOR}^[[:space:]]*${ESCAPED_PARTIAL}${SEPARATOR}s${SEPARATOR}^\([[:space:]]*\)${SEPARATOR}\1${CHAR} ${SEPARATOR}" "$FILE_PATH"
-  else
+
+    return 0
+  fi
+
+  if ! grep -q "^[[:space:]]*${ESCAPED_PARTIAL}" "$FILE_PATH"; then
     printComment --error 'A line starting with:'
     printComment --error -- "$PARTIAL"
     printComment --error 'not found in:'
     printComment --error -- "$FILE_PATH"
+
+    return 1
+  fi
+
+  printComment 'Commenting out line starting with:'
+  printComment -- "$PARTIAL"
+  printComment 'in:'
+  printComment -- "$FILE_PATH"
+
+  if ! sed -i "\\${SEPARATOR}^[[:space:]]*${ESCAPED_PARTIAL}${SEPARATOR}s${SEPARATOR}^\([[:space:]]*\)${SEPARATOR}\1${CHAR} ${SEPARATOR}" "$FILE_PATH"; then
+    printComment --error "Failed to comment out the line in $FILE_PATH."
+
     return 1
   fi
 }
